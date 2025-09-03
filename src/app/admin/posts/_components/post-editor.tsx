@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -66,45 +67,61 @@ interface PostEditorProps {
 }
 
 export function PostEditor({ postId }: PostEditorProps) {
+  const router = useRouter();
   const [, setActiveTab] = useState("edit");
   const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!postId);
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialize the form with default values or existing post data
+  // Initialize the form with synchronous default values
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: async () => {
-      if (postId) {
-        // In a real app, fetch the post data from your API/database
-        // For now, we'll use mock data based on the ID
-        console.log(`Fetching post data for ID: ${postId}`);
-        
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Mock data for editing - in a real app, this would come from your API
-        return {
-          title: `Sample Post ${postId}`,
-          slug: `sample-post-${postId}`,
-          excerpt: `This is a sample excerpt for post ${postId}.`,
-          content: `# Sample Post ${postId}\n\nThis is a sample content for post ${postId}.\n\n## Section 1\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.\n\n## Section 2\n\n- Item 1\n- Item 2\n- Item 3`,
-          category: "investing",
-          status: "draft",
-        };
-      }
-      
-      // Default values for new post
-      return {
-        title: "",
-        slug: "",
-        excerpt: "",
-        content: "",
-        category: "",
-        status: "draft",
-      };
+    defaultValues: {
+      title: "",
+      slug: "",
+      excerpt: "",
+      content: "",
+      category: "",
+      status: "draft",
     },
   });
+
+  // Load existing post data if editing
+  useEffect(() => {
+    if (postId) {
+      const loadPostData = async () => {
+        setIsLoading(true);
+        try {
+          // In a real app, fetch the post data from your API/database
+          // For now, we'll use mock data based on the ID
+          console.log(`Fetching post data for ID: ${postId}`);
+          
+          // Simulate API call delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Mock data for editing - in a real app, this would come from your API
+          const postData = {
+            title: `Sample Post ${postId}`,
+            slug: `sample-post-${postId}`,
+            excerpt: `This is a sample excerpt for post ${postId}.`,
+            content: `# Sample Post ${postId}\n\nThis is a sample content for post ${postId}.\n\n## Section 1\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.\n\n## Section 2\n\n- Item 1\n- Item 2\n- Item 3`,
+            category: "investing",
+            status: "draft" as const,
+          };
+          
+          // Reset form with loaded data
+          form.reset(postData);
+        } catch (error) {
+          console.error('Error loading post data:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      loadPostData();
+    }
+  }, [postId, form]);
 
   // Generate slug from title
   const generateSlug = (title: string) => {
@@ -174,8 +191,16 @@ export function PostEditor({ postId }: PostEditorProps) {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="edit" className="space-y-4">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading post data...</p>
+              </div>
+            </div>
+          ) : (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -311,13 +336,18 @@ export function PostEditor({ postId }: PostEditorProps) {
               />
 
               <div className="flex justify-end space-x-4">
-                <Button variant="outline" type="button">
+                <Button 
+                  variant="outline" 
+                  type="button"
+                  onClick={() => router.push('/admin/posts')}
+                >
                   Cancel
                 </Button>
                 <Button type="submit">Save Post</Button>
               </div>
             </form>
           </Form>
+          )}
         </TabsContent>
         <TabsContent value="preview" className="space-y-4">
           <div className="rounded-md border p-6">
