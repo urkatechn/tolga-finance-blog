@@ -1,25 +1,21 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { Metadata } from "next";
 import { 
   FileText, 
   Eye, 
   MessageSquare, 
-  BarChart, 
   Clock, 
-  ArrowRight,
-  FileEdit,
-  MessageCircle
+  ArrowRight
 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getDashboardStats, getPostViewsData } from "@/lib/api/dashboard";
-import { formatDistanceToNow } from "@/lib/utils";
 import { DashboardChart } from "./_components/dashboard-chart";
-import { DashboardActivity } from "./_components/dashboard-activity";
+import { DashboardActivity } from "@/app/admin/dashboard/_components/dashboard-activity";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Dashboard | Finance Blog Admin",
   description: "Admin dashboard for Finance Blog",
 };
@@ -164,12 +160,12 @@ function StatsCardsSkeleton() {
       {Array(4).fill(0).map((_, i) => (
         <Card key={i}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-4 w-4" />
+            <div className="h-5 w-20 bg-muted rounded animate-pulse" />
+            <div className="h-4 w-4 bg-muted rounded animate-pulse" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-8 w-16 mb-1" />
-            <Skeleton className="h-4 w-24" />
+            <div className="h-8 w-16 mb-1 bg-muted rounded animate-pulse" />
+            <div className="h-4 w-24 bg-muted rounded animate-pulse" />
           </CardContent>
         </Card>
       ))}
@@ -181,11 +177,11 @@ function ChartSkeleton() {
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <Skeleton className="h-6 w-32" />
-        <Skeleton className="h-4 w-64" />
+        <div className="h-6 w-32 bg-muted rounded animate-pulse" />
+        <div className="h-4 w-64 bg-muted rounded animate-pulse" />
       </CardHeader>
       <CardContent>
-        <Skeleton className="h-[200px] w-full" />
+        <div className="h-[200px] w-full bg-muted rounded animate-pulse" />
       </CardContent>
     </Card>
   );
@@ -195,24 +191,24 @@ function ActivitySkeleton() {
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <Skeleton className="h-6 w-32" />
-        <Skeleton className="h-4 w-64" />
+        <div className="h-6 w-32 bg-muted rounded animate-pulse" />
+        <div className="h-4 w-64 bg-muted rounded animate-pulse" />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {Array(5).fill(0).map((_, i) => (
             <div key={i} className="flex items-center gap-4">
-              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
               <div className="space-y-2">
-                <Skeleton className="h-4 w-40" />
-                <Skeleton className="h-4 w-24" />
+                <div className="h-4 w-40 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-24 bg-muted rounded animate-pulse" />
               </div>
             </div>
           ))}
         </div>
       </CardContent>
       <CardFooter>
-        <Skeleton className="h-10 w-full" />
+        <div className="h-10 w-full bg-muted rounded animate-pulse" />
       </CardFooter>
     </Card>
   );

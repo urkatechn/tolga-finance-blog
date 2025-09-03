@@ -1,4 +1,4 @@
-// This file contains Firebase configuration and initialization
+// This file will contain Firebase configuration and initialization
 // In a real app, you would use actual Firebase credentials
 
 interface PostData {
@@ -41,6 +41,294 @@ export const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+};
+
+// Mock Firebase Auth functions
+export const auth = {
+  currentUser: {
+    uid: "admin-user-123",
+    email: "admin@example.com",
+    displayName: "Admin User",
+    photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
+  },
+  signInWithEmailAndPassword: async (email: string, password: string) => {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    // Mock authentication - in real app, this would validate credentials
+    if (email === "admin@example.com" && password === "password") {
+      return {
+        user: {
+          uid: "admin-user-123",
+          email: "admin@example.com",
+          displayName: "Admin User",
+          photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
+        },
+      };
+    }
+    
+    throw new Error("Invalid credentials");
+  },
+  signOut: async () => {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return Promise.resolve();
+  },
+};
+
+export const db = {
+  collection: (collectionName: string) => ({
+    get: async () => {
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      
+      if (collectionName === "posts") {
+        return {
+          docs: Object.entries(mockPosts).map(([id, data]) => ({
+            id,
+            data: () => data,
+            exists: true,
+          })),
+        };
+      }
+      
+      if (collectionName === "users") {
+        return {
+          docs: Object.entries(mockUsers).map(([id, data]) => ({
+            id,
+            data: () => data,
+            exists: true,
+          })),
+        };
+      }
+      
+      return { docs: [] };
+    },
+    doc: (id: string) => ({
+      get: async () => {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        
+        if (collectionName === "posts" && mockPosts[id]) {
+          return {
+            id,
+            data: () => mockPosts[id],
+            exists: true,
+          };
+        }
+        
+        if (collectionName === "users" && mockUsers[id]) {
+          return {
+            id,
+            data: () => mockUsers[id],
+            exists: true,
+          };
+        }
+        
+        return {
+          id,
+          data: () => null,
+          exists: false,
+        };
+      },
+      set: async (data: PostData) => {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        
+        if (collectionName === "posts") {
+          mockPosts[id] = data;
+        }
+        
+        if (collectionName === "users") {
+          mockUsers[id] = data as unknown as FirebaseUser;
+        }
+        
+        return Promise.resolve();
+      },
+      update: async (data: Partial<PostData>) => {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        
+        if (collectionName === "posts" && mockPosts[id]) {
+          mockPosts[id] = { ...mockPosts[id], ...data };
+        }
+        
+        if (collectionName === "users" && mockUsers[id]) {
+          mockUsers[id] = { ...mockUsers[id], ...data as Partial<FirebaseUser> };
+        }
+        
+        return Promise.resolve();
+      },
+      delete: async () => {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        
+        if (collectionName === "posts") {
+          delete mockPosts[id];
+        }
+        
+        if (collectionName === "users") {
+          delete mockUsers[id];
+        }
+        
+        return Promise.resolve();
+      },
+    }),
+    add: async (data: PostData | FirebaseUser) => {
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      
+      const id = `${collectionName}-${Date.now()}`;
+      
+      if (collectionName === "posts") {
+        mockPosts[id] = data as PostData;
+      }
+      
+      if (collectionName === "users") {
+        mockUsers[id] = data as FirebaseUser;
+      }
+      
+      return {
+        id,
+      };
+    },
+    where: (field: string, operator: string, value: string | number | boolean) => ({
+      get: async () => {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        
+        if (collectionName === "posts") {
+          const filteredPosts = Object.entries(mockPosts).filter(([, post]) => {
+            const fieldValue = post[field as keyof PostData];
+            if (operator === "==") {
+              return fieldValue === value;
+            } else if (operator === "!=") {
+              return fieldValue !== value;
+            }
+            return false;
+          });
+          return {
+            docs: filteredPosts.map(([id, data]) => ({
+              id,
+              data: () => data,
+              exists: true,
+            })),
+          };
+        }
+        
+        return { docs: [] };
+      },
+      orderBy: (orderField: string, direction: 'asc' | 'desc' = 'asc') => ({
+        get: async () => {
+          // Simulate network delay
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          
+          if (collectionName === "posts") {
+            const filteredPosts = Object.entries(mockPosts).filter(([, post]) => {
+              const fieldValue = post[field as keyof PostData];
+              return fieldValue === value;
+            });
+            
+            // Sort by the specified field
+            filteredPosts.sort(([, a], [, b]) => {
+              const aValue = a[orderField as keyof PostData];
+              const bValue = b[orderField as keyof PostData];
+              
+              if (typeof aValue === 'string' && typeof bValue === 'string') {
+                return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+              }
+              return 0;
+            });
+            
+            return {
+              docs: filteredPosts.map(([id, data]) => ({
+                id,
+                data: () => data,
+                exists: true,
+              })),
+            };
+          }
+          
+          return { docs: [] };
+        },
+        limit: (limitCount: number) => ({
+          get: async () => {
+            // Simulate network delay
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            
+            if (collectionName === "posts") {
+              const filteredPosts = Object.entries(mockPosts).filter(([, post]) => {
+                const fieldValue = post[field as keyof PostData];
+                return fieldValue === value;
+              });
+              
+              // Sort by the specified field
+              filteredPosts.sort(([, a], [, b]) => {
+                const aValue = a[orderField as keyof PostData];
+                const bValue = b[orderField as keyof PostData];
+                
+                if (typeof aValue === 'string' && typeof bValue === 'string') {
+                  return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                }
+                return 0;
+              });
+              
+              return {
+                docs: filteredPosts.slice(0, limitCount).map(([id, data]) => ({
+                  id,
+                  data: () => data,
+                  exists: true,
+                })),
+              };
+            }
+            
+            return { docs: [] };
+          },
+        }),
+      }),
+    }),
+    orderBy: (field: string, direction: 'asc' | 'desc' = 'asc') => ({
+      limit: (limitCount: number) => ({
+        get: async () => {
+          // Simulate network delay
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          
+          if (collectionName === "posts") {
+            const posts = Object.entries(mockPosts);
+            
+            // Sort by the specified field
+            posts.sort(([, a], [, b]) => {
+              const aValue = a[field as keyof PostData];
+              const bValue = b[field as keyof PostData];
+              
+              if (typeof aValue === 'string' && typeof bValue === 'string') {
+                return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+              }
+              return 0;
+            });
+            
+            return {
+              docs: posts.slice(0, limitCount).map(([id, data]) => ({
+                id,
+                data: () => data,
+                exists: true,
+              })),
+            };
+          }
+          
+          return { docs: [] };
+        },
+      }),
+    }),
+  }),
+};
+
+// Mock Storage functions
+export const uploadFile = async (_file: File, path: string): Promise<string> => {
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  
+  return `https://firebasestorage.googleapis.com/v0/b/mock-bucket/o/${path}?alt=media`;
 };
 
 // Mock data
@@ -96,314 +384,11 @@ const mockUsers: Record<string, FirebaseUser> = {
   },
 };
 
-// Mock Firebase Auth functions
-export const auth = {
-  currentUser: {
-    uid: "admin-user-123",
-    email: "admin@example.com",
-    displayName: "Admin User",
-    photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
-  },
-  signInWithEmailAndPassword: async (email: string, password: string) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    if (email === "admin@example.com" && password === "password") {
-      return {
-        user: {
-          uid: "admin-user-123",
-          email: "admin@example.com",
-          displayName: "Admin User",
-          photoURL: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
-        },
-      };
-    }
-    
-    throw new Error("Invalid credentials");
-  },
-  signOut: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    return Promise.resolve();
-  },
-};
-
-export const db = {
-  collection: (collectionName: string) => ({
-    get: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      
-      if (collectionName === "posts") {
-        return {
-          docs: Object.entries(mockPosts).map(([id, data]) => ({
-            id,
-            data: () => data,
-            exists: true,
-          })),
-        };
-      }
-      
-      if (collectionName === "users") {
-        return {
-          docs: Object.entries(mockUsers).map(([id, data]) => ({
-            id,
-            data: () => data,
-            exists: true,
-          })),
-        };
-      }
-      
-      return { docs: [] };
-    },
-    doc: (id: string) => ({
-      get: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        
-        if (collectionName === "posts" && mockPosts[id]) {
-          return {
-            id,
-            data: () => mockPosts[id],
-            exists: true,
-          };
-        }
-        
-        if (collectionName === "users" && mockUsers[id]) {
-          return {
-            id,
-            data: () => mockUsers[id],
-            exists: true,
-          };
-        }
-        
-        return {
-          id,
-          data: () => null,
-          exists: false,
-        };
-      },
-      set: async (data: PostData) => {
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        
-        if (collectionName === "posts") {
-          mockPosts[id] = data;
-        }
-        
-        if (collectionName === "users") {
-          mockUsers[id] = data as unknown as FirebaseUser;
-        }
-        
-        return Promise.resolve();
-      },
-      update: async (data: Partial<PostData>) => {
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        
-        if (collectionName === "posts" && mockPosts[id]) {
-          mockPosts[id] = { ...mockPosts[id], ...data };
-        }
-        
-        if (collectionName === "users" && mockUsers[id]) {
-          mockUsers[id] = { ...mockUsers[id], ...data as Partial<FirebaseUser> };
-        }
-        
-        return Promise.resolve();
-      },
-      delete: async () => {
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        
-        if (collectionName === "posts") {
-          delete mockPosts[id];
-        }
-        
-        if (collectionName === "users") {
-          delete mockUsers[id];
-        }
-        
-        return Promise.resolve();
-      },
-    }),
-    add: async (data: PostData | FirebaseUser) => {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      
-      const id = `${collectionName}-${Date.now()}`;
-      
-      if (collectionName === "posts") {
-        mockPosts[id] = data as PostData;
-      }
-      
-      if (collectionName === "users") {
-        mockUsers[id] = data as FirebaseUser;
-      }
-      
-      return {
-        id,
-      };
-    },
-    where: (field: string, operator: string, value: string | number | boolean) => {
-      const createQueryBuilder = (filters: Array<{field: string, operator: string, value: string | number | boolean}>) => ({
-        get: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          
-          if (collectionName === "posts") {
-            let filteredPosts = Object.entries(mockPosts);
-            
-            // Apply all filters
-            for (const filter of filters) {
-              filteredPosts = filteredPosts.filter(([, post]) => {
-                const fieldValue = post[filter.field as keyof PostData];
-                if (filter.operator === "==") {
-                  return fieldValue === filter.value;
-                } else if (filter.operator === "!=") {
-                  return fieldValue !== filter.value;
-                }
-                return false;
-              });
-            }
-            
-            return {
-              docs: filteredPosts.map(([id, data]) => ({
-                id,
-                data: () => data,
-                exists: true,
-              })),
-            };
-          }
-          
-          return { docs: [] };
-        },
-        where: (nextField: string, nextOperator: string, nextValue: string | number | boolean) => {
-          return createQueryBuilder([...filters, {field: nextField, operator: nextOperator, value: nextValue}]);
-        },
-        orderBy: (orderField: string, direction: 'asc' | 'desc' = 'asc') => ({
-          get: async () => {
-            await new Promise((resolve) => setTimeout(resolve, 300));
-            
-            if (collectionName === "posts") {
-              let filteredPosts = Object.entries(mockPosts);
-              
-              // Apply all filters
-              for (const filter of filters) {
-                filteredPosts = filteredPosts.filter(([, post]) => {
-                  const fieldValue = post[filter.field as keyof PostData];
-                  if (filter.operator === "==") {
-                    return fieldValue === filter.value;
-                  } else if (filter.operator === "!=") {
-                    return fieldValue !== filter.value;
-                  }
-                  return false;
-                });
-              }
-              
-              // Apply sorting
-              filteredPosts.sort(([, a], [, b]) => {
-                const aValue = a[orderField as keyof PostData];
-                const bValue = b[orderField as keyof PostData];
-                
-                if (typeof aValue === 'string' && typeof bValue === 'string') {
-                  return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-                }
-                return 0;
-              });
-              
-              return {
-                docs: filteredPosts.map(([id, data]) => ({
-                  id,
-                  data: () => data,
-                  exists: true,
-                })),
-              };
-            }
-            
-            return { docs: [] };
-          },
-          limit: (limitCount: number) => ({
-            get: async () => {
-              await new Promise((resolve) => setTimeout(resolve, 300));
-              
-              if (collectionName === "posts") {
-                let filteredPosts = Object.entries(mockPosts);
-                
-                // Apply all filters
-                for (const filter of filters) {
-                  filteredPosts = filteredPosts.filter(([, post]) => {
-                    const fieldValue = post[filter.field as keyof PostData];
-                    if (filter.operator === "==") {
-                      return fieldValue === filter.value;
-                    } else if (filter.operator === "!=") {
-                      return fieldValue !== filter.value;
-                    }
-                    return false;
-                  });
-                }
-                
-                // Apply sorting
-                filteredPosts.sort(([, a], [, b]) => {
-                  const aValue = a[orderField as keyof PostData];
-                  const bValue = b[orderField as keyof PostData];
-                  
-                  if (typeof aValue === 'string' && typeof bValue === 'string') {
-                    return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-                  }
-                  return 0;
-                });
-                
-                return {
-                  docs: filteredPosts.slice(0, limitCount).map(([id, data]) => ({
-                    id,
-                    data: () => data,
-                    exists: true,
-                  })),
-                };
-              }
-              
-              return { docs: [] };
-            },
-          }),
-        }),
-      });
-      
-      return createQueryBuilder([{field, operator, value}]);
-    },
-    orderBy: (field: string, direction: 'asc' | 'desc' = 'asc') => ({
-      limit: (limitCount: number) => ({
-        get: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          
-          if (collectionName === "posts") {
-            const posts = Object.entries(mockPosts);
-            
-            posts.sort(([, a], [, b]) => {
-              const aValue = a[field as keyof PostData];
-              const bValue = b[field as keyof PostData];
-              
-              if (typeof aValue === 'string' && typeof bValue === 'string') {
-                return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-              }
-              return 0;
-            });
-            
-            return {
-              docs: posts.slice(0, limitCount).map(([id, data]) => ({
-                id,
-                data: () => data,
-                exists: true,
-              })),
-            };
-          }
-          
-          return { docs: [] };
-        },
-      }),
-    }),
-  }),
-};
-
-// Mock Storage functions
-export const uploadFile = async (file: File, path: string): Promise<string> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return `https://firebasestorage.googleapis.com/v0/b/mock-bucket/o/${path}?alt=media`;
-};
-
+// Mock Storage object
 export const storage = {
   ref: (path: string) => ({
     put: async (_file: File) => {
+      // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
       return {
@@ -415,11 +400,10 @@ export const storage = {
       };
     },
     delete: async () => {
+      // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 300));
+      
       return Promise.resolve();
     },
   }),
 };
-
-// Export firestore for compatibility
-export const firestore = db;

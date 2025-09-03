@@ -417,7 +417,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                         placeholder: "# Start writing your post here...\n\nYou can use **Markdown** and _MDX_ syntax.\n\n## Features\n- Live preview\n- Syntax highlighting\n- Image support\n- Tables\n- Code blocks",
                       }}
                       onPaste={async (event) => {
-                        const clipboardEvent = event as ClipboardEvent;
+                        const clipboardEvent = event as unknown as ClipboardEvent;
                         const result = await handleImagePaste(clipboardEvent.clipboardData);
                         if (result) {
                           const textarea = event.target as HTMLTextAreaElement;
@@ -475,7 +475,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                         </span>
                         {form.watch("tags") && (
                           <div className="flex flex-wrap gap-2">
-                            {form.watch("tags").split(',').map((tag, index) => (
+                            {form.watch("tags")?.split(',').map((tag, index) => (
                               <span key={index} className="inline-flex items-center px-2 py-1 rounded-md bg-muted text-muted-foreground text-xs">
                                 #{tag.trim()}
                               </span>
