@@ -48,13 +48,37 @@ export function MDXEditorToolbar({ textareaRef }: MDXEditorToolbarProps) {
     const selectedText = textarea.value.substring(start, end);
     const newText = before + selectedText + after;
     
+    const beforeText = textarea.value.substring(0, start);
+    const afterText = textarea.value.substring(end);
+    const fullText = beforeText + newText + afterText;
+    
+    textarea.value = fullText;
     textarea.focus();
-    document.execCommand("insertText", false, newText);
+    
+    // Set cursor position after the inserted text
+    const newCursorPos = start + newText.length;
+    textarea.setSelectionRange(newCursorPos, newCursorPos);
+    
+    // Trigger change event for form
+    const event = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(event);
   };
 
   const insertHeading = (level: number) => {
+    if (!textareaRef.current) return;
+    
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const beforeText = textarea.value.substring(0, start);
+    
+    // Check if we're at the beginning of a line
+    const lastNewlineIndex = beforeText.lastIndexOf('\n');
+    const isAtLineStart = lastNewlineIndex === beforeText.length - 1 || beforeText.length === 0;
+    
     const prefix = "#".repeat(level) + " ";
-    insertText(prefix);
+    const textToInsert = isAtLineStart ? prefix : "\n" + prefix;
+    
+    insertText(textToInsert);
   };
 
   const toolbarItems: ToolbarItem[] = [
@@ -86,17 +110,17 @@ export function MDXEditorToolbar({ textareaRef }: MDXEditorToolbarProps) {
     {
       icon: <List className="h-4 w-4" />,
       name: "Bullet List",
-      action: () => insertText("- "),
+      action: () => insertText("\n- "),
     },
     {
       icon: <ListOrdered className="h-4 w-4" />,
       name: "Numbered List",
-      action: () => insertText("1. "),
+      action: () => insertText("\n1. "),
     },
     {
       icon: <Quote className="h-4 w-4" />,
       name: "Quote",
-      action: () => insertText("> "),
+      action: () => insertText("\n> "),
     },
     {
       icon: <Code className="h-4 w-4" />,

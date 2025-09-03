@@ -1,5 +1,5 @@
 ---
-trigger: always_on
+trigger: manual
 ---
 
 # AI Behavior Contract — Senior Frontend Developer (React • Next.js • TypeScript)

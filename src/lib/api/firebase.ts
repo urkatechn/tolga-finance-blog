@@ -1,6 +1,39 @@
 // This file will contain Firebase configuration and initialization
 // In a real app, you would use actual Firebase credentials
 
+interface PostData {
+  id?: string;
+  title?: string;
+  slug?: string;
+  excerpt?: string;
+  content?: string;
+  category?: string;
+  status?: 'draft' | 'published' | 'archived' | 'deleted';
+  publishedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  author?: string | {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  };
+  featuredImage?: string;
+  coverImage?: string;
+  tags?: string[];
+  featured?: boolean;
+  readTime?: number;
+  [key: string]: unknown;
+}
+
+interface FirebaseUser {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+}
+
+
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -64,7 +97,7 @@ export const firestore = {
           id,
         };
       },
-      set: async (data: any) => {
+      set: async (data: Partial<PostData>) => {
         // Simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 300));
         
@@ -78,7 +111,7 @@ export const firestore = {
         
         return Promise.resolve();
       },
-      update: async (data: any) => {
+      update: async (data: Partial<PostData>) => {
         // Simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 300));
         
@@ -107,7 +140,7 @@ export const firestore = {
         return Promise.resolve();
       },
     }),
-    add: async (data: any) => {
+    add: async (data: PostData) => {
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 300));
       
@@ -125,14 +158,29 @@ export const firestore = {
         id,
       };
     },
-    where: () => ({
+    where: (field: string, operator: string, value: string | number | boolean) => ({
       get: async () => {
         // Simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 300));
         
         if (collectionName === "posts") {
+          const filteredPosts = Object.entries(mockPosts).filter(([, post]) => {
+            if (operator === "==") {
+              return post[field] === value;
+            } else if (operator === "!=") {
+              return post[field] !== value;
+            } else if (operator === ">") {
+              return post[field] > value;
+            } else if (operator === "<") {
+              return post[field] < value;
+            } else if (operator === ">=") {
+              return post[field] >= value;
+            } else if (operator === "<=") {
+              return post[field] <= value;
+            }
+          });
           return {
-            docs: Object.entries(mockPosts).map(([id, data]) => ({
+            docs: filteredPosts.map(([id, data]) => ({
               id,
               data: () => data,
               exists: true,
@@ -141,8 +189,23 @@ export const firestore = {
         }
         
         if (collectionName === "users") {
+          const filteredUsers = Object.entries(mockUsers).filter(([, user]) => {
+            if (operator === "==") {
+              return user[field] === value;
+            } else if (operator === "!=") {
+              return user[field] !== value;
+            } else if (operator === ">") {
+              return user[field] > value;
+            } else if (operator === "<") {
+              return user[field] < value;
+            } else if (operator === ">=") {
+              return user[field] >= value;
+            } else if (operator === "<=") {
+              return user[field] <= value;
+            }
+          });
           return {
-            docs: Object.entries(mockUsers).map(([id, data]) => ({
+            docs: filteredUsers.map(([id, data]) => ({
               id,
               data: () => data,
               exists: true,
@@ -195,9 +258,17 @@ export const firestore = {
 };
 
 // Mock Storage functions
+export const uploadFile = async (_file: File, path: string): Promise<string> => {
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  
+  return `https://firebasestorage.googleapis.com/v0/b/mock-bucket/o/${path}?alt=media`;
+};
+
+// Mock Storage object
 export const storage = {
   ref: (path: string) => ({
-    put: async (file: File) => {
+    put: async (_file: File) => {
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
@@ -219,7 +290,7 @@ export const storage = {
 };
 
 // Mock data
-const mockPosts: Record<string, any> = {
+const mockPosts: Record<string, PostData> = {
   "post-1": {
     id: "post-1",
     title: "Understanding Market Volatility",
@@ -291,7 +362,7 @@ const mockPosts: Record<string, any> = {
   },
 };
 
-const mockUsers: Record<string, any> = {
+const mockUsers: Record<string, FirebaseUser> = {
   "admin-user-123": {
     id: "admin-user-123",
     email: "admin@example.com",

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { serialize } from "next-mdx-remote/serialize";
-import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import { compile, run } from "@mdx-js/mdx";
+import remarkGfm from "remark-gfm";
+import * as runtime from "react/jsx-runtime";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +29,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
 
 // Define the form schema with zod
 const formSchema = z.object({
@@ -68,10 +68,11 @@ interface PostEditorProps {
 
 export function PostEditor({ postId }: PostEditorProps) {
   const router = useRouter();
-  const [, setActiveTab] = useState("edit");
-  const [mdxSource, setMdxSource] = useState<MDXRemoteSerializeResult | null>(null);
+  const [activeTab, setActiveTab] = useState("edit");
+  const [mdxContent, setMdxContent] = useState<React.ComponentType | null>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(!!postId);
+  const [lastPreviewContent, setLastPreviewContent] = useState("");
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Initialize the form with synchronous default values
@@ -142,26 +143,63 @@ export function PostEditor({ postId }: PostEditorProps) {
     }
   };
 
-  // Handle preview tab click
-  const handlePreviewClick = async () => {
-    const content = form.getValues("content");
+  // Update preview content
+  const updatePreview = useCallback(async (content: string) => {
+    if (content === lastPreviewContent) return;
     
-    if (content) {
+    setLastPreviewContent(content);
+    
+    if (content.trim()) {
       setIsPreviewLoading(true);
       try {
-        const mdxSource = await serialize(content, {
-          mdxOptions: {
-            development: process.env.NODE_ENV === "development",
-          },
+        // Clean up the content - fix common markdown issues
+        const cleanContent = content
+          .replace(/\*\*\*\*(.+?)\*\*\*\*/g, '**$1**') // Fix quadruple asterisks to double
+          .replace(/\*\*(.+?)\*\*\*(.+?)\*\*/g, '**$1** *$2*') // Fix mixed bold/italic
+          .trim();
+        
+        
+        // Compile MDX to JavaScript
+        const compiledMdx = await compile(cleanContent, {
+          remarkPlugins: [remarkGfm],
+          rehypePlugins: [],
+          format: 'mdx',
         });
-        setMdxSource(mdxSource);
+
+        // Run the compiled MDX to get a React component
+        const mdxModule = await run(compiledMdx, runtime);
+        const MDXComponent = mdxModule.default;
+
+        setMdxContent(MDXComponent);
       } catch (error) {
-        console.error("Error serializing MDX:", error);
+        console.error("Error compiling MDX:", error);
+        setMdxContent(null);
       } finally {
         setIsPreviewLoading(false);
       }
+    } else {
+      setMdxContent(null);
     }
+  }, [lastPreviewContent]);
+
+  // Handle preview tab click
+  const handlePreviewClick = async () => {
+    const content = form.getValues("content");
+    await updatePreview(content);
   };
+
+  // Watch for content changes and update preview if on preview tab
+  const watchedContent = form.watch("content");
+  
+  useEffect(() => {
+    if (activeTab === "preview") {
+      const timeoutId = setTimeout(() => {
+        updatePreview(watchedContent || "");
+      }, 500); // Debounce updates
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [watchedContent, activeTab, updatePreview]);
 
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
@@ -195,7 +233,7 @@ export function PostEditor({ postId }: PostEditorProps) {
             <div className="flex items-center justify-center p-8">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Loading post data...</p>
+                <p className="text-sm text-muted-foreground">No preview content available. Start typing to see your content rendered.</p>
               </div>
             </div>
           ) : (
@@ -353,16 +391,21 @@ export function PostEditor({ postId }: PostEditorProps) {
           <div className="rounded-md border p-6">
             {isPreviewLoading ? (
               <div className="flex h-[400px] items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
-            ) : mdxSource ? (
-              <div className="prose dark:prose-invert max-w-none">
-                <h1>{form.getValues("title")}</h1>
-                <MDXRemote {...mdxSource} />
+            ) : mdxContent ? (
+              <div className="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-strong:text-gray-900 dark:prose-strong:text-gray-100 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
+                {form.getValues("title") && (
+                  <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">{form.getValues("title")}</h1>
+                )}
+                {mdxContent && React.createElement(mdxContent)}
               </div>
             ) : (
               <div className="flex h-[400px] items-center justify-center text-muted-foreground">
-                No content to preview
+                <div className="text-center">
+                  <p className="text-lg mb-2">No content to preview</p>
+                  <p className="text-sm">Add some content in the editor and click Preview to see the rendered output.</p>
+                </div>
               </div>
             )}
           </div>
