@@ -8,7 +8,9 @@ import {
   Tag, 
   Settings, 
   Upload, 
-  MessageSquare
+  MessageSquare,
+  Users,
+  BarChart3
 } from "lucide-react";
 
 import {
@@ -24,12 +26,14 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
 import { UserMenu } from "@/components/admin/user-menu";
 
 interface NavItem {
   title: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
 }
 
 const navItems: NavItem[] = [
@@ -52,11 +56,24 @@ const navItems: NavItem[] = [
     title: "Comments",
     href: "/admin/comments",
     icon: MessageSquare,
+    badge: "BETA",
   },
   {
     title: "Media",
     href: "/admin/media",
     icon: Upload,
+  },
+  {
+    title: "Users",
+    href: "/admin/users",
+    icon: Users,
+    badge: "SOON",
+  },
+  {
+    title: "Analytics",
+    href: "/admin/analytics",
+    icon: BarChart3,
+    badge: "SOON",
   },
   {
     title: "Settings",
@@ -107,6 +124,14 @@ export function AppSidebar() {
                       <Link href={item.href}>
                         <item.icon className="size-4" />
                         <span>{item.title}</span>
+                        {item.badge && (
+                          <Badge 
+                            variant={item.badge === 'BETA' ? 'secondary' : 'outline'} 
+                            className="ml-auto text-xs px-1.5 py-0.5"
+                          >
+                            {item.badge}
+                          </Badge>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

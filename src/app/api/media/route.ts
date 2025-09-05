@@ -41,7 +41,7 @@ export async function GET() {
         try {
           // For now, let's use public URLs and see if they work
           fileUrl = publicUrl;
-        } catch (error) {
+        } catch {
           // Fallback to signed URL (24 hour expiry)
           const { data: signedUrl } = await supabase.storage
             .from('blog-images')

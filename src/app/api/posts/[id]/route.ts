@@ -174,9 +174,9 @@ export async function DELETE(
     const { id } = await params
     
     // Get the post to check ownership
-    const { data: post, error: fetchError } = await supabase
+    const { error: fetchError } = await supabase
       .from('posts')
-      .select('author_id, title')
+      .select('id')
       .eq('id', id)
       .single()
     

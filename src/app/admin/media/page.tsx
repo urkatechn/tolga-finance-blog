@@ -110,7 +110,7 @@ export default function MediaPage() {
         throw new Error(error.error || 'Upload failed');
       }
 
-      const result = await response.json();
+      await response.json();
       
       toast({
         title: "Success",
@@ -459,7 +459,7 @@ export default function MediaPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Image</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{selectedFile?.name}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{selectedFile?.name}&rdquo;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
