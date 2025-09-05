@@ -32,7 +32,8 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Save, X } from "lucide-react";
+import { Loader2, Save, X, ImageIcon } from "lucide-react";
+import { MediaPicker } from '@/components/admin/media-picker';
 
 // Dynamically import the editor to avoid SSR issues
 const MDEditor = dynamic(
@@ -110,6 +111,8 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingAuthors, setLoadingAuthors] = useState(true);
   const [defaultAuthorId, setDefaultAuthorId] = useState<string>('');
+  const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [mediaPickerTarget, setMediaPickerTarget] = useState<'cover' | 'content'>('cover');
   const { toast } = useToast();
 
   // Fetch categories from API
@@ -275,6 +278,27 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
       return await uploadImage(imageFile);
     }
   }, []);
+
+  // Handle media picker selection
+  const handleMediaSelect = (file: { id: string; name: string; url: string; size: number; type: string; created_at: string }) => {
+    if (mediaPickerTarget === 'cover') {
+      // Set cover image
+      form.setValue('coverImage', file.url);
+    } else {
+      // Insert into content at cursor position
+      const markdownImage = `![${file.name}](${file.url})`;
+      const currentContent = content;
+      const newContent = currentContent + '\n\n' + markdownImage;
+      setContent(newContent);
+      form.setValue('content', newContent);
+    }
+    setShowMediaPicker(false);
+  };
+
+  const handleOpenMediaPicker = (target: 'cover' | 'content') => {
+    setMediaPickerTarget(target);
+    setShowMediaPicker(true);
+  };
 
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
@@ -556,12 +580,43 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                 name="coverImage"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cover Image URL</FormLabel>
+                    <FormLabel>Cover Image</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="https://example.com/image.jpg" 
-                        {...field} 
-                      />
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <Input 
+                            placeholder="https://example.com/image.jpg" 
+                            {...field} 
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenMediaPicker('cover')}
+                          >
+                            <ImageIcon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {field.value && (
+                          <div className="relative">
+                            <img
+                              src={field.value}
+                              alt="Cover preview"
+                              className="w-full h-32 object-cover rounded-md border"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-2 right-2"
+                              onClick={() => form.setValue('coverImage', '')}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -571,9 +626,22 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
 
             {/* Content Editor Tab */}
             <TabsContent value="content" className="mt-6">
-              <Card className="overflow-hidden">
-                <CardContent className="p-0">
-                  <div data-color-mode="light" className="min-h-[700px]">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Content Editor</h3>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleOpenMediaPicker('content')}
+                  >
+                    <ImageIcon className="mr-2 h-4 w-4" />
+                    Insert Image
+                  </Button>
+                </div>
+                <Card className="overflow-hidden">
+                  <CardContent className="p-0">
+                    <div data-color-mode="light" className="min-h-[700px]">
                     <MDEditor
                       value={content}
                       onChange={(val) => setContent(val || "")}
@@ -603,19 +671,20 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                     />
                   </div>
                 </CardContent>
-              </Card>
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem className="hidden">
-                    <FormControl>
-                      <input type="hidden" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                </Card>
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem className="hidden">
+                      <FormControl>
+                        <input type="hidden" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </TabsContent>
 
             {/* Full Preview Tab */}
@@ -688,6 +757,18 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
           </Tabs>
         </form>
       </Form>
+      
+      {/* Media Picker Modal */}
+      <MediaPicker
+        open={showMediaPicker}
+        onOpenChange={setShowMediaPicker}
+        onSelect={handleMediaSelect}
+        title={mediaPickerTarget === 'cover' ? 'Select Cover Image' : 'Insert Image'}
+        description={mediaPickerTarget === 'cover' 
+          ? 'Choose an image for your post cover.' 
+          : 'Choose an image to insert into your post content.'
+        }
+      />
     </div>
   );
 }
