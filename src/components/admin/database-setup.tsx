@@ -3,16 +3,18 @@
 import { useState } from 'react'
 import { useSupabase } from '@/components/supabase-provider'
 
-export default function DatabaseSetup() {
+export default function DatabaseVerify() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [needsMigration, setNeedsMigration] = useState(false)
   const { user } = useSupabase()
 
-  const runSetup = async () => {
+  const runVerify = async () => {
     setIsLoading(true)
     setMessage('')
     setError('')
+    setNeedsMigration(false)
 
     try {
       const response = await fetch('/api/setup', {
@@ -27,11 +29,14 @@ export default function DatabaseSetup() {
       if (response.ok) {
         setMessage(data.message)
       } else {
-        setError(data.error || 'Setup failed')
+        setError(data.error || 'Verification failed')
+        if (data.details?.needsMigration) {
+          setNeedsMigration(true)
+        }
       }
     } catch (err) {
       setError('Network error occurred')
-      console.error('Setup error:', err)
+      console.error('Verification error:', err)
     } finally {
       setIsLoading(false)
     }
@@ -40,35 +45,53 @@ export default function DatabaseSetup() {
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Database Setup
+        Database Verification
       </h3>
       
       <div className="space-y-4">
         <p className="text-gray-600">
-          This will create the necessary database tables for your finance blog:
+          This will verify your database setup and initialize default data:
         </p>
         
         <ul className="list-disc list-inside space-y-1 text-sm text-gray-600 ml-4">
-          <li><strong>categories</strong> - Blog post categories</li>
-          <li><strong>posts</strong> - Blog posts with full content</li>
-          <li>Database indexes for optimal performance</li>
-          <li>Automatic timestamp triggers</li>
-          <li>Default finance-related categories</li>
+          <li><strong>Verify tables exist</strong> - categories and posts tables</li>
+          <li><strong>Check database structure</strong> - indexes and triggers</li>
+          <li><strong>Initialize default data</strong> - finance-related categories</li>
         </ul>
+        
+        {needsMigration && (
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <h4 className="text-sm font-semibold text-yellow-800 mb-2">
+              Migration Required
+            </h4>
+            <p className="text-sm text-yellow-700 mb-2">
+              Please run the <code className="bg-yellow-100 px-1 rounded">supabase-migration.sql</code> file 
+              in your Supabase SQL Editor first to create the required tables.
+            </p>
+            <a 
+              href="https://supabase.com/dashboard" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm text-yellow-700 underline hover:text-yellow-800"
+            >
+              Open Supabase Dashboard →
+            </a>
+          </div>
+        )}
         
         <div className="flex items-center gap-4">
           <button
-            onClick={runSetup}
+            onClick={runVerify}
             disabled={isLoading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Setting up...' : 'Run Database Setup'}
+            {isLoading ? 'Verifying...' : 'Verify Database'}
           </button>
           
           {isLoading && (
             <div className="flex items-center text-sm text-gray-500">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-              Creating tables...
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2"></div>
+              Verifying database...
             </div>
           )}
         </div>

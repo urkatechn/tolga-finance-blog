@@ -14,18 +14,22 @@ export async function POST() {
       )
     }
     
-    // Run database setup
+    // Run database verification
     const result = await setupDatabase()
     
     if (result.success) {
       return NextResponse.json(
-        { message: 'Database setup completed successfully!' },
+        { message: 'Database verification completed successfully!' },
         { status: 200 }
       )
     } else {
+      const statusCode = result.needsMigration ? 400 : 500
       return NextResponse.json(
-        { error: 'Database setup failed', details: result.error },
-        { status: 500 }
+        { 
+          error: result.error || 'Database verification failed', 
+          details: { needsMigration: result.needsMigration } 
+        },
+        { status: statusCode }
       )
     }
   } catch (error) {
@@ -39,8 +43,8 @@ export async function POST() {
 
 export async function GET() {
   return NextResponse.json({
-    message: 'Database Setup API',
-    usage: 'Send a POST request to this endpoint to run database setup',
-    note: 'You must be authenticated to run this setup'
+    message: 'Database Verification API',
+    usage: 'Send a POST request to this endpoint to verify database setup',
+    note: 'You must be authenticated to run this verification'
   })
 }
