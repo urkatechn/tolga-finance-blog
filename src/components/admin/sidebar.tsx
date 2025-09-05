@@ -6,9 +6,7 @@ import {
   LayoutDashboard, 
   FileText, 
   Tag, 
-  Users, 
   Settings, 
-  BarChart, 
   Upload, 
   MessageSquare,
   User
@@ -63,16 +61,6 @@ const navItems: NavItem[] = [
     icon: Upload,
   },
   {
-    title: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart,
-  },
-  {
-    title: "Users",
-    href: "/admin/users",
-    icon: Users,
-  },
-  {
     title: "Settings",
     href: "/admin/settings",
     icon: Settings,
@@ -90,7 +78,7 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/admin" className="flex items-center gap-2">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <BarChart className="size-4" />
+                  <LayoutDashboard className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">

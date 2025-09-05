@@ -39,12 +39,20 @@ export type Post = {
     slug: string;
     color: string;
   } | null;
+  author?: {
+    id: string;
+    name: string;
+    email: string | null;
+    avatar_url: string | null;
+  } | null;
 };
 
 export const createColumns = (
   handlePublishPost?: (id: string) => void,
   handleUnpublishPost?: (id: string) => void,
-  handleDeletePost?: (id: string) => void
+  handleDeletePost?: (id: string) => void,
+  handleArchivePost?: (id: string) => void,
+  handleUnarchivePost?: (id: string) => void
 ): ColumnDef<Post>[] => [
   {
     id: "select",
@@ -84,10 +92,17 @@ export const createColumns = (
     cell: ({ row }) => {
       const title = row.getValue("title") as string;
       const slug = row.original.slug;
+      const status = row.original.status;
       return (
         <div className="flex items-center space-x-3">
           <div className="flex-shrink-0">
-            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+            <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
+              status === 'published' 
+                ? 'bg-gradient-to-br from-green-400 to-blue-500'
+                : status === 'archived'
+                ? 'bg-gradient-to-br from-orange-400 to-red-500'
+                : 'bg-gradient-to-br from-gray-400 to-gray-600'
+            }`}>
               <FileText className="h-5 w-5 text-white" />
             </div>
           </div>
@@ -119,7 +134,12 @@ export const createColumns = (
               ? "default"
               : status === "draft"
               ? "outline"
-              : "secondary"
+              : "destructive"
+          }
+          className={
+            status === "archived" 
+              ? "bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-300"
+              : ""
           }
         >
           {status}
@@ -168,23 +188,32 @@ export const createColumns = (
     },
   },
   {
-    accessorKey: "author_id",
+    accessorKey: "author",
     header: "Author",
     cell: ({ row }) => {
-      const authorId = row.getValue("author_id") as string | null;
-      if (!authorId) {
+      const post = row.original;
+      if (!post.author) {
         return <span className="text-muted-foreground">No author</span>;
       }
       
-      // For now, show a placeholder. In a real app, you'd fetch user data
-      const initials = "AU"; // Author Unknown
+      const initials = post.author.name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase();
+        
       return (
         <div className="flex items-center space-x-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="" alt="Author" />
+            <AvatarImage src={post.author.avatar_url || ''} alt={post.author.name} />
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
-          <span className="font-medium text-muted-foreground">Author</span>
+          <div>
+            <div className="font-medium">{post.author.name}</div>
+            {post.author.email && (
+              <div className="text-xs text-muted-foreground">{post.author.email}</div>
+            )}
+          </div>
         </div>
       );
     },
@@ -231,8 +260,13 @@ export const createColumns = (
                 <span>Unpublish</span>
               </DropdownMenuItem>
             ) : null}
-            {post.status !== 'archived' && (
-              <DropdownMenuItem>
+            {post.status === 'archived' ? (
+              <DropdownMenuItem onClick={() => handleUnarchivePost?.(post.id)}>
+                <Archive className="mr-2 h-4 w-4" />
+                <span>Unarchive</span>
+              </DropdownMenuItem>
+            ) : post.status !== 'archived' && (
+              <DropdownMenuItem onClick={() => handleArchivePost?.(post.id)}>
                 <Archive className="mr-2 h-4 w-4" />
                 <span>Archive</span>
               </DropdownMenuItem>

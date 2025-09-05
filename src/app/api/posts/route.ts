@@ -19,7 +19,8 @@ export async function GET(request: NextRequest) {
       .from('posts')
       .select(`
         *,
-        category:categories(id, name, slug, color)
+        category:categories(id, name, slug, color),
+        author:authors(id, name, email, avatar_url)
       `)
       .order('created_at', { ascending: false })
     
@@ -135,7 +136,8 @@ export async function POST(request: NextRequest) {
       }])
       .select(`
         *,
-        category:categories(id, name, slug, color)
+        category:categories(id, name, slug, color),
+        author:authors(id, name, email, avatar_url)
       `)
       .single()
     

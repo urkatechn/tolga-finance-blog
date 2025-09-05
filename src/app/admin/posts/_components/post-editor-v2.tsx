@@ -66,6 +66,7 @@ const formSchema = z.object({
   excerpt: z.string().optional(),
   content: z.string().optional(),
   category: z.string().optional(),
+  author: z.string().optional(),
   coverImage: z.string().optional(),
   tags: z.string().optional(),
 });
@@ -84,9 +85,19 @@ interface Category {
   updated_at: string;
 }
 
+// Author interface
+interface Author {
+  id: string;
+  name: string;
+  email: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  is_default: boolean;
+}
+
 interface PostEditorV2Props {
   postId?: string;
-  initialData?: Partial<FormValues>;
+  initialData?: Partial<FormValues> & { author_id?: string };
 }
 
 export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
@@ -95,7 +106,10 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
   const [content, setContent] = useState(initialData?.content || "");
   const [activeTab, setActiveTab] = useState("metadata");
   const [categories, setCategories] = useState<Category[]>([]);
+  const [authors, setAuthors] = useState<Author[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingAuthors, setLoadingAuthors] = useState(true);
+  const [defaultAuthorId, setDefaultAuthorId] = useState<string>('');
   const { toast } = useToast();
 
   // Fetch categories from API
@@ -119,6 +133,42 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
     }
   };
 
+  // Fetch authors from API
+  const fetchAuthors = async () => {
+    try {
+      const response = await fetch('/api/authors');
+      if (!response.ok) {
+        throw new Error('Failed to fetch authors');
+      }
+      const data = await response.json();
+      setAuthors(data);
+    } catch (error) {
+      console.error('Error fetching authors:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load authors",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAuthors(false);
+    }
+  };
+
+  // Fetch default settings
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings');
+      if (!response.ok) {
+        throw new Error('Failed to fetch settings');
+      }
+      const data = await response.json();
+      setDefaultAuthorId(data.default_author_id || '');
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+      // Don't show error toast for settings as it's not critical
+    }
+  };
+
   // Initialize the form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -128,15 +178,26 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
       excerpt: initialData?.excerpt || "",
       content: initialData?.content || "",
       category: initialData?.category || "",
+      author: initialData?.author_id || "",
       coverImage: initialData?.coverImage || "",
       tags: initialData?.tags || "",
     },
   });
 
-  // Fetch categories on component mount
+  // Fetch data on component mount
   useEffect(() => {
-    fetchCategories();
+    const loadData = async () => {
+      await Promise.all([fetchCategories(), fetchAuthors(), fetchSettings()]);
+    };
+    loadData();
   }, []);
+
+  // Set default author when available and no author is selected
+  useEffect(() => {
+    if (defaultAuthorId && !form.getValues('author') && !postId) {
+      form.setValue('author', defaultAuthorId);
+    }
+  }, [defaultAuthorId, form, postId]);
 
   // Update form content when editor changes
   useEffect(() => {
@@ -223,6 +284,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
         content: data.content || null,
         featured_image_url: data.coverImage || null,
         category_id: data.category || null,
+        author_id: data.author || defaultAuthorId || null,
         status: 'draft', // Always save as draft from editor
         featured: false,
         meta_title: title,
@@ -409,24 +471,76 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
-                  name="tags"
+                  name="author"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tags</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="tag1, tag2, tag3 (comma separated)" 
-                          {...field} 
-                        />
-                      </FormControl>
+                      <FormLabel>Author</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select an author" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {loadingAuthors ? (
+                            <div className="flex items-center justify-center p-4">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span className="ml-2 text-sm">Loading authors...</span>
+                            </div>
+                          ) : authors.length === 0 ? (
+                            <div className="p-4 text-center text-sm text-muted-foreground">
+                              No authors available. Add authors in Settings.
+                            </div>
+                          ) : (
+                            authors.map((author) => (
+                              <SelectItem 
+                                key={author.id} 
+                                value={author.id}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs">
+                                    {author.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <div className="font-medium">{author.name}</div>
+                                    {author.is_default && (
+                                      <div className="text-xs text-muted-foreground">Default</div>
+                                    )}
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="tag1, tag2, tag3 (comma separated)" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

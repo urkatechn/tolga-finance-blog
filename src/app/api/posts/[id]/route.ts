@@ -14,7 +14,8 @@ export async function GET(
       .from('posts')
       .select(`
         *,
-        category:categories(id, name, slug, color)
+        category:categories(id, name, slug, color),
+        author:authors(id, name, email, avatar_url)
       `)
       .eq('id', id)
       .single()
@@ -139,7 +140,8 @@ export async function PUT(
       .eq('id', id)
       .select(`
         *,
-        category:categories(id, name, slug, color)
+        category:categories(id, name, slug, color),
+        author:authors(id, name, email, avatar_url)
       `)
       .single()
     

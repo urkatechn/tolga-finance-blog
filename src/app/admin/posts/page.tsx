@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Download, Trash2, Loader2 } from "lucide-react";
+import { Plus, Search, Filter, Download, Trash2, Loader2, Archive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useToast } from '@/hooks/use-toast';
 import { BulkDeleteDialog } from './_components/bulk-delete-dialog';
 import { DeletePostDialog } from './_components/delete-post-dialog';
+import { BulkArchiveDialog } from './_components/bulk-archive-dialog';
 
 interface PostStats {
   total: number;
@@ -48,6 +49,9 @@ export default function PostsPage() {
   const [postToDelete, setPostToDelete] = useState<Post | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isBulkArchiving, setIsBulkArchiving] = useState(false);
+  const [showBulkArchiveDialog, setShowBulkArchiveDialog] = useState(false);
+  const [isArchiveAction, setIsArchiveAction] = useState(true); // true for archive, false for unarchive
   const { toast } = useToast();
 
   const fetchPosts = async (showLoader = false) => {
@@ -239,6 +243,70 @@ export default function PostsPage() {
     }
   };
 
+  const handleArchivePost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'archived' }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to archive post');
+      }
+      
+      toast({
+        title: "Success",
+        description: "Post archived successfully!",
+      });
+      
+      // Refresh the data
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error('Error archiving post:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to archive post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUnarchivePost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'draft' }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to unarchive post');
+      }
+      
+      toast({
+        title: "Success",
+        description: "Post unarchived and saved as draft!",
+      });
+      
+      // Refresh the data
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error('Error unarchiving post:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to unarchive post",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleBulkDeleteClick = () => {
     if (selectedPosts.length === 0) {
       return;
@@ -286,6 +354,60 @@ export default function PostsPage() {
     } finally {
       setIsBulkDeleting(false);
       setShowBulkDeleteDialog(false);
+    }
+  };
+
+  const handleBulkArchiveClick = () => {
+    if (selectedPosts.length === 0) return;
+    
+    const archivedCount = selectedPosts.filter(post => post.status === 'archived').length;
+    const isAllArchived = archivedCount === selectedPosts.length;
+    
+    setIsArchiveAction(!isAllArchived);
+    setShowBulkArchiveDialog(true);
+  };
+
+  const handleBulkArchiveConfirm = async () => {
+    setIsBulkArchiving(true);
+    setShowBulkArchiveDialog(false);
+    
+    try {
+      const postIds = selectedPosts.map(post => post.id);
+      const targetStatus = isArchiveAction ? 'archived' : 'draft';
+      
+      const response = await fetch('/api/posts/bulk-archive', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postIds, status: targetStatus }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to ${isArchiveAction ? 'archive' : 'unarchive'} posts`);
+      }
+      
+      const result = await response.json();
+      
+      toast({
+        title: "Success",
+        description: result.message,
+      });
+      
+      // Clear selection and refresh data
+      setSelectedPosts([]);
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error(`Error bulk ${isArchiveAction ? 'archiving' : 'unarchiving'} posts:`, error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : `Failed to ${isArchiveAction ? 'archive' : 'unarchive'} posts`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsBulkArchiving(false);
+      setShowBulkArchiveDialog(false);
     }
   };
 
@@ -479,23 +601,54 @@ export default function PostsPage() {
           </Select>
         </div>
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            disabled={selectedPosts.length === 0 || loading || fetchingPosts || isBulkDeleting}
-            onClick={handleBulkDeleteClick}
-          >
-            {isBulkDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <Trash2 className="mr-2 h-4 w-4" />
-            Bulk Delete {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
-          </Button>
+          {(() => {
+            const archivedCount = selectedPosts.filter(post => post.status === 'archived').length;
+            const nonArchivedCount = selectedPosts.length - archivedCount;
+            const isAllArchived = selectedPosts.length > 0 && archivedCount === selectedPosts.length;
+            const hasMixed = archivedCount > 0 && nonArchivedCount > 0;
+            
+            return (
+              <>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  disabled={selectedPosts.length === 0 || loading || fetchingPosts || isBulkArchiving}
+                  onClick={handleBulkArchiveClick}
+                >
+                  {isBulkArchiving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Archive className="mr-2 h-4 w-4" />
+                  {isAllArchived 
+                    ? `Unarchive ${selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}` 
+                    : `Archive ${selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}`
+                  }
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  disabled={selectedPosts.length === 0 || loading || fetchingPosts || isBulkDeleting}
+                  onClick={handleBulkDeleteClick}
+                >
+                  {isBulkDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Bulk Delete {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
+                </Button>
+              </>
+            )
+          })()
+          }
         </div>
       </div>
 
       {/* Data Table */}
       <div>
         <DataTable 
-          columns={createColumns(handlePublishPost, handleUnpublishPost, handleDeletePostClick)} 
+          columns={createColumns(
+            handlePublishPost, 
+            handleUnpublishPost, 
+            handleDeletePostClick, 
+            handleArchivePost, 
+            handleUnarchivePost
+          )} 
           data={posts}
           onRowSelectionChange={setSelectedPosts}
         />
@@ -517,6 +670,16 @@ export default function PostsPage() {
         post={postToDelete}
         onConfirm={handleDeletePostConfirm}
         isDeleting={isDeleting}
+      />
+
+      {/* Bulk Archive Dialog */}
+      <BulkArchiveDialog
+        open={showBulkArchiveDialog}
+        onOpenChange={setShowBulkArchiveDialog}
+        selectedPosts={selectedPosts}
+        onConfirm={handleBulkArchiveConfirm}
+        isArchiving={isBulkArchiving}
+        isArchive={isArchiveAction}
       />
     </div>
   );
