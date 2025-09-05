@@ -36,18 +36,27 @@ export default function LoginForm() {
       })
 
       if (error) {
-        setError(error.message)
+        console.error('Supabase auth error:', error)
+        setError(error.message || 'Authentication failed')
         return
       }
 
       if (data.user) {
+        // Small delay to ensure session is properly set
+        await new Promise(resolve => setTimeout(resolve, 100))
         // Redirect to admin panel
         router.push('/admin')
         router.refresh()
       }
     } catch (err) {
-      setError('An unexpected error occurred')
       console.error('Login error:', err)
+      if (err instanceof Error) {
+        setError(err.message.includes('fetch failed') 
+          ? 'Network error. Please check your connection and try again.' 
+          : 'An unexpected error occurred')
+      } else {
+        setError('An unexpected error occurred')
+      }
     } finally {
       setIsLoading(false)
     }

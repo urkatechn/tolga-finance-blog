@@ -1,5 +1,7 @@
-import { Metadata } from "next";
-import { Plus, Search, Filter, Download, Trash2 } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from 'react';
+import { Plus, Search, Filter, Download, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -11,97 +13,365 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DataTable } from "./data-table";
-import { columns, Post } from "./columns";
+import { createColumns, Post } from "./columns";
 import Link from "next/link";
+import { useToast } from '@/hooks/use-toast';
+import { BulkDeleteDialog } from './_components/bulk-delete-dialog';
+import { DeletePostDialog } from './_components/delete-post-dialog';
 
-export const metadata: Metadata = {
-  title: "Posts | Admin Dashboard",
-  description: "Manage your blog posts",
-};
+interface PostStats {
+  total: number;
+  published: number;
+  draft: number;
+  archived: number;
+}
 
-// Mock data for posts
-const posts: Post[] = [
-  {
-    id: "post-1",
-    title: "Understanding Market Volatility: A Beginner's Guide",
-    slug: "understanding-market-volatility",
-    status: "published",
-    category: "Investing",
-    publishedAt: "2025-08-15",
-    author: "Jane Smith",
-  },
-  {
-    id: "post-2",
-    title: "10 Ways to Save for Your First Home",
-    slug: "10-ways-to-save-for-first-home",
-    status: "published",
-    category: "Saving",
-    publishedAt: "2025-08-10",
-    author: "John Doe",
-  },
-  {
-    id: "post-3",
-    title: "Cryptocurrency: Investment or Speculation?",
-    slug: "cryptocurrency-investment-speculation",
-    status: "published",
-    category: "Crypto",
-    publishedAt: "2025-08-05",
-    author: "Alex Johnson",
-  },
-  {
-    id: "post-4",
-    title: "Retirement Planning in Your 30s",
-    slug: "retirement-planning-30s",
-    status: "draft",
-    category: "Retirement",
-    publishedAt: "",
-    author: "Sarah Williams",
-  },
-  {
-    id: "post-5",
-    title: "The Psychology of Spending",
-    slug: "psychology-of-spending",
-    status: "draft",
-    category: "Personal Finance",
-    publishedAt: "",
-    author: "Michael Brown",
-  },
-  {
-    id: "post-6",
-    title: "Understanding Tax-Advantaged Accounts",
-    slug: "tax-advantaged-accounts",
-    status: "archived",
-    category: "Taxes",
-    publishedAt: "2025-07-01",
-    author: "Emily Davis",
-  },
-  {
-    id: "post-7",
-    title: "How to Read Financial Statements",
-    slug: "how-to-read-financial-statements",
-    status: "published",
-    category: "Education",
-    publishedAt: "2025-07-15",
-    author: "Robert Wilson",
-  },
-  {
-    id: "post-8",
-    title: "The Impact of Inflation on Your Savings",
-    slug: "inflation-impact-on-savings",
-    status: "published",
-    category: "Economy",
-    publishedAt: "2025-07-20",
-    author: "Lisa Thompson",
-  },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
 
 export default function PostsPage() {
-  const publishedCount = posts.filter(p => p.status === 'published').length;
-  const draftCount = posts.filter(p => p.status === 'draft').length;
-  const archivedCount = posts.filter(p => p.status === 'archived').length;
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [stats, setStats] = useState<PostStats>({ total: 0, published: 0, draft: 0, archived: 0 });
+  const [loading, setLoading] = useState(true);
+  const [fetchingPosts, setFetchingPosts] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [selectedPosts, setSelectedPosts] = useState<Post[]>([]);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<Post | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+
+  const fetchPosts = async (showLoader = false) => {
+    try {
+      if (showLoader) setFetchingPosts(true);
+      
+      const params = new URLSearchParams();
+      if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (categoryFilter !== 'all') params.append('category_id', categoryFilter);
+      if (searchTerm.trim()) params.append('search', searchTerm.trim());
+      
+      const response = await fetch(`/api/posts?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      
+      const data = await response.json();
+      setPosts(data.posts || []);
+      
+      // Clear selection when posts are refreshed
+      if (showLoader) {
+        setSelectedPosts([]);
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load posts",
+        variant: "destructive",
+      });
+    } finally {
+      if (showLoader) setFetchingPosts(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/posts/stats');
+      if (!response.ok) throw new Error('Failed to fetch stats');
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      if (!response.ok) throw new Error('Failed to fetch categories');
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  // Initial data load
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchPosts(), fetchStats(), fetchCategories()]);
+      setLoading(false);
+    };
+    loadData();
+  }, []);
+
+  // Handle filter changes (except search)
+  useEffect(() => {
+    if (!loading) {
+      fetchPosts(true);
+    }
+  }, [statusFilter, categoryFilter]);
+
+  // Debounce search
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => {
+        fetchPosts(true);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [searchTerm]);
+
+  const handlePublishPost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'published' }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to publish post');
+      }
+      
+      toast({
+        title: "Success",
+        description: "Post published successfully!",
+      });
+      
+      // Refresh the data
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error('Error publishing post:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to publish post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUnpublishPost = async (postId: string) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'draft' }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to unpublish post');
+      }
+      
+      toast({
+        title: "Success",
+        description: "Post unpublished and saved as draft!",
+      });
+      
+      // Refresh the data
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error('Error unpublishing post:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to unpublish post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeletePostClick = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setPostToDelete(post);
+      setShowDeleteDialog(true);
+    }
+  };
+
+  const handleDeletePostConfirm = async () => {
+    if (!postToDelete) return;
+    
+    setIsDeleting(true);
+    setShowDeleteDialog(false);
+    
+    try {
+      const response = await fetch(`/api/posts/${postToDelete.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete post');
+      }
+      
+      toast({
+        title: "Success",
+        description: "Post deleted successfully!",
+      });
+      
+      // Refresh the data
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete post",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setPostToDelete(null);
+      setShowDeleteDialog(false);
+    }
+  };
+
+  const handleBulkDeleteClick = () => {
+    if (selectedPosts.length === 0) {
+      return;
+    }
+    setShowBulkDeleteDialog(true);
+  };
+
+  const handleBulkDeleteConfirm = async () => {
+    setIsBulkDeleting(true);
+    setShowBulkDeleteDialog(false);
+    
+    try {
+      const postIds = selectedPosts.map(post => post.id);
+      
+      const response = await fetch('/api/posts/bulk-delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postIds }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete posts');
+      }
+      
+      const result = await response.json();
+      
+      toast({
+        title: "Success",
+        description: result.message,
+      });
+      
+      // Clear selection and refresh data
+      setSelectedPosts([]);
+      await Promise.all([fetchPosts(), fetchStats()]);
+    } catch (error) {
+      console.error('Error bulk deleting posts:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete posts",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBulkDeleting(false);
+      setShowBulkDeleteDialog(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        {/* Header Skeleton */}
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="h-8 bg-gray-200 rounded w-32 mb-2 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded w-48 animate-pulse"></div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-9 bg-gray-200 rounded w-20 animate-pulse"></div>
+            <div className="h-9 bg-gray-200 rounded w-24 animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid gap-4 md:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="rounded-lg border p-4 animate-pulse">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
+                  <div className="h-8 bg-gray-200 rounded w-12"></div>
+                </div>
+                <div className="h-6 bg-gray-200 rounded w-8"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Filters Skeleton */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-1">
+            <div className="h-10 bg-gray-200 rounded w-64 animate-pulse"></div>
+            <div className="h-10 bg-gray-200 rounded w-44 animate-pulse"></div>
+            <div className="h-10 bg-gray-200 rounded w-44 animate-pulse"></div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-9 bg-gray-200 rounded w-28 animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="rounded-md border">
+          <div className="h-12 border-b bg-gray-50 animate-pulse"></div>
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="h-16 border-b animate-pulse">
+              <div className="flex items-center space-x-4 p-4">
+                <div className="h-4 w-4 bg-gray-200 rounded"></div>
+                <div className="flex items-center space-x-3 flex-1">
+                  <div className="h-10 w-10 bg-gray-200 rounded-lg"></div>
+                  <div>
+                    <div className="h-4 bg-gray-200 rounded w-48 mb-1"></div>
+                    <div className="h-3 bg-gray-200 rounded w-32"></div>
+                  </div>
+                </div>
+                <div className="h-6 bg-gray-200 rounded w-20"></div>
+                <div className="h-4 bg-gray-200 rounded w-24"></div>
+                <div className="h-4 bg-gray-200 rounded w-20"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-16"></div>
+                </div>
+                <div className="h-8 w-8 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
+      {/* Loading Overlay for Updates */}
+      {fetchingPosts && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span className="text-sm font-medium">Updating...</span>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -111,11 +381,11 @@ export default function PostsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" disabled={loading || fetchingPosts}>
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Button asChild>
+          <Button asChild disabled={loading || fetchingPosts}>
             <Link href="/admin/posts/new">
               <Plus className="mr-2 h-4 w-4" />
               New Post
@@ -130,36 +400,36 @@ export default function PostsPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Total Posts</p>
-              <p className="text-2xl font-bold">{posts.length}</p>
+              <p className="text-2xl font-bold">{stats.total}</p>
             </div>
-            <Badge variant="secondary">{posts.length}</Badge>
+            <Badge variant="secondary">{stats.total}</Badge>
           </div>
         </div>
         <div className="rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Published</p>
-              <p className="text-2xl font-bold">{publishedCount}</p>
+              <p className="text-2xl font-bold">{stats.published}</p>
             </div>
-            <Badge variant="default">{publishedCount}</Badge>
+            <Badge variant="default">{stats.published}</Badge>
           </div>
         </div>
         <div className="rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Drafts</p>
-              <p className="text-2xl font-bold">{draftCount}</p>
+              <p className="text-2xl font-bold">{stats.draft}</p>
             </div>
-            <Badge variant="outline">{draftCount}</Badge>
+            <Badge variant="outline">{stats.draft}</Badge>
           </div>
         </div>
         <div className="rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Archived</p>
-              <p className="text-2xl font-bold">{archivedCount}</p>
+              <p className="text-2xl font-bold">{stats.archived}</p>
             </div>
-            <Badge variant="secondary">{archivedCount}</Badge>
+            <Badge variant="secondary">{stats.archived}</Badge>
           </div>
         </div>
       </div>
@@ -172,9 +442,12 @@ export default function PostsPage() {
             <Input
               placeholder="Search posts..."
               className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              disabled={loading || fetchingPosts}
             />
           </div>
-          <Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading || fetchingPosts}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
@@ -185,39 +458,66 @@ export default function PostsPage() {
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-          <Select>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter} disabled={loading || fetchingPosts}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All categories</SelectItem>
-              <SelectItem value="investing">Investing</SelectItem>
-              <SelectItem value="saving">Saving</SelectItem>
-              <SelectItem value="crypto">Crypto</SelectItem>
-              <SelectItem value="retirement">Retirement</SelectItem>
-              <SelectItem value="personal-finance">Personal Finance</SelectItem>
-              <SelectItem value="taxes">Taxes</SelectItem>
-              <SelectItem value="education">Education</SelectItem>
-              <SelectItem value="economy">Economy</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: category.color }}
+                    />
+                    {category.name}
+                  </div>
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="mr-2 h-4 w-4" />
-            More Filters
-          </Button>
-          <Button variant="outline" size="sm" disabled>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            disabled={selectedPosts.length === 0 || loading || fetchingPosts || isBulkDeleting}
+            onClick={handleBulkDeleteClick}
+          >
+            {isBulkDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <Trash2 className="mr-2 h-4 w-4" />
-            Bulk Delete
+            Bulk Delete {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
           </Button>
         </div>
       </div>
 
       {/* Data Table */}
       <div>
-        <DataTable columns={columns} data={posts} />
+        <DataTable 
+          columns={createColumns(handlePublishPost, handleUnpublishPost, handleDeletePostClick)} 
+          data={posts}
+          onRowSelectionChange={setSelectedPosts}
+        />
       </div>
+
+      {/* Bulk Delete Dialog */}
+      <BulkDeleteDialog
+        open={showBulkDeleteDialog}
+        onOpenChange={setShowBulkDeleteDialog}
+        selectedPosts={selectedPosts}
+        onConfirm={handleBulkDeleteConfirm}
+        isDeleting={isBulkDeleting}
+      />
+
+      {/* Single Post Delete Dialog */}
+      <DeletePostDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        post={postToDelete}
+        onConfirm={handleDeletePostConfirm}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

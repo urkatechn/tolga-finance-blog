@@ -26,10 +26,16 @@ export default function CategoriesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const { toast } = useToast()
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (showRefreshLoader = false) => {
     try {
+      if (showRefreshLoader) {
+        setRefreshing(true)
+      }
       const response = await fetch('/api/categories')
       if (!response.ok) {
         throw new Error('Failed to fetch categories')
@@ -45,6 +51,7 @@ export default function CategoriesPage() {
       })
     } finally {
       setLoading(false)
+      setRefreshing(false)
     }
   }
 
@@ -68,6 +75,7 @@ export default function CategoriesPage() {
   }
 
   const handleCategorySubmit = async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => {
+    setSubmitting(true)
     try {
       const url = editingCategory ? `/api/categories/${editingCategory.id}` : '/api/categories'
       const method = editingCategory ? 'PUT' : 'POST'
@@ -92,7 +100,7 @@ export default function CategoriesPage() {
 
       setDialogOpen(false)
       setEditingCategory(null)
-      fetchCategories()
+      await fetchCategories(true)
     } catch (error) {
       console.error('Error saving category:', error)
       toast({
@@ -100,12 +108,15 @@ export default function CategoriesPage() {
         description: error instanceof Error ? error.message : "Failed to save category",
         variant: "destructive",
       })
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCategoryDelete = async () => {
     if (!deletingCategory) return
 
+    setDeleting(true)
     try {
       const response = await fetch(`/api/categories/${deletingCategory.id}`, {
         method: 'DELETE',
@@ -123,7 +134,7 @@ export default function CategoriesPage() {
 
       setDeleteDialogOpen(false)
       setDeletingCategory(null)
-      fetchCategories()
+      await fetchCategories(true)
     } catch (error) {
       console.error('Error deleting category:', error)
       toast({
@@ -131,6 +142,8 @@ export default function CategoriesPage() {
         description: error instanceof Error ? error.message : "Failed to delete category",
         variant: "destructive",
       })
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -168,7 +181,7 @@ export default function CategoriesPage() {
           <h1 className="text-3xl font-bold">Categories</h1>
           <p className="text-muted-foreground">Manage your blog categories</p>
         </div>
-        <Button onClick={handleCreateCategory}>
+        <Button onClick={handleCreateCategory} disabled={refreshing}>
           <Plus className="mr-2 h-4 w-4" />
           Add Category
         </Button>
@@ -182,7 +195,7 @@ export default function CategoriesPage() {
             <p className="text-muted-foreground text-center mb-4">
               Create your first category to organize your blog posts
             </p>
-            <Button onClick={handleCreateCategory}>
+            <Button onClick={handleCreateCategory} disabled={refreshing}>
               <Plus className="mr-2 h-4 w-4" />
               Add Category
             </Button>
@@ -206,6 +219,7 @@ export default function CategoriesPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEditCategory(category)}
+                      disabled={refreshing || submitting || deleting}
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -213,6 +227,7 @@ export default function CategoriesPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDeleteCategory(category)}
+                      disabled={refreshing || submitting || deleting}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -240,6 +255,7 @@ export default function CategoriesPage() {
         onOpenChange={setDialogOpen}
         category={editingCategory}
         onSubmit={handleCategorySubmit}
+        isSubmitting={submitting}
       />
 
       <DeleteCategoryDialog
@@ -247,6 +263,7 @@ export default function CategoriesPage() {
         onOpenChange={setDeleteDialogOpen}
         category={deletingCategory}
         onConfirm={handleCategoryDelete}
+        isDeleting={deleting}
       />
     </div>
   )

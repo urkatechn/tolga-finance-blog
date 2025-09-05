@@ -21,13 +21,31 @@ export type Post = {
   id: string;
   title: string;
   slug: string;
+  excerpt: string | null;
+  content: string;
+  featured_image_url: string | null;
+  author_id: string | null;
+  category_id: string | null;
   status: "draft" | "published" | "archived";
-  category: string;
-  publishedAt: string;
-  author: string;
+  featured: boolean;
+  meta_title: string | null;
+  meta_description: string | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+    color: string;
+  } | null;
 };
 
-export const columns: ColumnDef<Post>[] = [
+export const createColumns = (
+  handlePublishPost?: (id: string) => void,
+  handleUnpublishPost?: (id: string) => void,
+  handleDeletePost?: (id: string) => void
+): ColumnDef<Post>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -112,10 +130,24 @@ export const columns: ColumnDef<Post>[] = [
   {
     accessorKey: "category",
     header: "Category",
-    cell: ({ row }) => <div>{row.getValue("category")}</div>,
+    cell: ({ row }) => {
+      const post = row.original;
+      if (!post.category) {
+        return <Badge variant="outline">No Category</Badge>;
+      }
+      return (
+        <div className="flex items-center gap-2">
+          <div 
+            className="w-3 h-3 rounded-full" 
+            style={{ backgroundColor: post.category.color }}
+          />
+          <span>{post.category.name}</span>
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "publishedAt",
+    accessorKey: "published_at",
     header: ({ column }) => {
       return (
         <Button
@@ -127,21 +159,32 @@ export const columns: ColumnDef<Post>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue("publishedAt")}</div>,
+    cell: ({ row }) => {
+      const publishedAt = row.getValue("published_at") as string | null;
+      if (!publishedAt) {
+        return <span className="text-muted-foreground">Not published</span>;
+      }
+      return <div>{new Date(publishedAt).toLocaleDateString()}</div>;
+    },
   },
   {
-    accessorKey: "author",
+    accessorKey: "author_id",
     header: "Author",
     cell: ({ row }) => {
-      const author = row.getValue("author") as string;
-      const initials = author.split(' ').map(n => n[0]).join('').toUpperCase();
+      const authorId = row.getValue("author_id") as string | null;
+      if (!authorId) {
+        return <span className="text-muted-foreground">No author</span>;
+      }
+      
+      // For now, show a placeholder. In a real app, you'd fetch user data
+      const initials = "AU"; // Author Unknown
       return (
         <div className="flex items-center space-x-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="" alt={author} />
+            <AvatarImage src="" alt="Author" />
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
-          <span className="font-medium">{author}</span>
+          <span className="font-medium text-muted-foreground">Author</span>
         </div>
       );
     },
@@ -177,13 +220,28 @@ export const columns: ColumnDef<Post>[] = [
               <span>Copy Link</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            {post.status === 'draft' ? (
+              <DropdownMenuItem onClick={() => handlePublishPost?.(post.id)}>
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Publish</span>
+              </DropdownMenuItem>
+            ) : post.status === 'published' ? (
+              <DropdownMenuItem onClick={() => handleUnpublishPost?.(post.id)}>
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Unpublish</span>
+              </DropdownMenuItem>
+            ) : null}
             {post.status !== 'archived' && (
               <DropdownMenuItem>
                 <Archive className="mr-2 h-4 w-4" />
                 <span>Archive</span>
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="text-destructive"
+              onClick={() => handleDeletePost?.(post.id)}
+            >
               <Trash className="mr-2 h-4 w-4" />
               <span>Delete</span>
             </DropdownMenuItem>
@@ -193,3 +251,6 @@ export const columns: ColumnDef<Post>[] = [
     },
   },
 ];
+
+// Export default columns for backward compatibility
+export const columns = createColumns();

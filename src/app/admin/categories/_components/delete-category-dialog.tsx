@@ -26,13 +26,15 @@ interface DeleteCategoryDialogProps {
   onOpenChange: (open: boolean) => void
   category: Category | null
   onConfirm: () => void
+  isDeleting?: boolean
 }
 
 export function DeleteCategoryDialog({ 
   open, 
   onOpenChange, 
   category, 
-  onConfirm 
+  onConfirm,
+  isDeleting = false
 }: DeleteCategoryDialogProps) {
   if (!category) return null
 
@@ -48,12 +50,13 @@ export function DeleteCategoryDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
           <AlertDialogAction 
             onClick={onConfirm}
+            disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            Delete Category
+            {isDeleting ? 'Deleting...' : 'Delete Category'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

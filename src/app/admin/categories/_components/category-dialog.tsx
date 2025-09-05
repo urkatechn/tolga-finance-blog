@@ -29,16 +29,16 @@ interface CategoryDialogProps {
   onOpenChange: (open: boolean) => void
   category?: Category | null
   onSubmit: (data: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => void
+  isSubmitting?: boolean
 }
 
-export function CategoryDialog({ open, onOpenChange, category, onSubmit }: CategoryDialogProps) {
+export function CategoryDialog({ open, onOpenChange, category, onSubmit, isSubmitting = false }: CategoryDialogProps) {
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     description: '',
     color: '#3B82F6'
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     if (category) {
@@ -76,18 +76,13 @@ export function CategoryDialog({ open, onOpenChange, category, onSubmit }: Categ
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitting(true)
 
-    try {
-      await onSubmit({
-        name: formData.name,
-        slug: formData.slug,
-        description: formData.description || null,
-        color: formData.color
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+    await onSubmit({
+      name: formData.name,
+      slug: formData.slug,
+      description: formData.description || null,
+      color: formData.color
+    })
   }
 
   const isValid = formData.name.trim() && formData.slug.trim()

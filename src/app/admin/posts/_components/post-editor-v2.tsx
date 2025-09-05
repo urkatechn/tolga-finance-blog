@@ -10,6 +10,7 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import "./editor-styles.css";
 import rehypeSanitize from "rehype-sanitize";
+import { useToast } from '@/hooks/use-toast';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -58,22 +59,13 @@ const MarkdownPreview = dynamic(
   }
 );
 
-// Define the form schema with zod
+// Define the form schema with zod - more lenient for drafts
 const formSchema = z.object({
-  title: z.string().min(5, {
-    message: "Title must be at least 5 characters.",
-  }),
-  slug: z.string().min(5, {
-    message: "Slug must be at least 5 characters.",
-  }),
-  excerpt: z.string().min(10, {
-    message: "Excerpt must be at least 10 characters.",
-  }),
-  content: z.string().min(50, {
-    message: "Content must be at least 50 characters.",
-  }),
-  category: z.string().min(1, { message: "Please select a category." }),
-  status: z.enum(["draft", "published", "archived"]),
+  title: z.string().optional(),
+  slug: z.string().optional(),
+  excerpt: z.string().optional(),
+  content: z.string().optional(),
+  category: z.string().optional(),
   coverImage: z.string().optional(),
   tags: z.string().optional(),
 });
@@ -81,18 +73,16 @@ const formSchema = z.object({
 //Inferring typescript type from zod object
 type FormValues = z.infer<typeof formSchema>;
 
-// Sample categories
-// Categories will be dynamic.
-const categories = [
-  { value: "investing", label: "Investing" },
-  { value: "saving", label: "Saving" },
-  { value: "retirement", label: "Retirement" },
-  { value: "crypto", label: "Crypto" },
-  { value: "taxes", label: "Taxes" },
-  { value: "personal-finance", label: "Personal Finance" },
-  { value: "economy", label: "Economy" },
-  { value: "education", label: "Education" },
-];
+// Category interface
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  color: string;
+  created_at: string;
+  updated_at: string;
+}
 
 interface PostEditorV2Props {
   postId?: string;
@@ -104,6 +94,30 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
   const [isSaving, setIsSaving] = useState(false);
   const [content, setContent] = useState(initialData?.content || "");
   const [activeTab, setActiveTab] = useState("metadata");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const { toast } = useToast();
+
+  // Fetch categories from API
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+      }
+      const data = await response.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load categories",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -114,11 +128,15 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
       excerpt: initialData?.excerpt || "",
       content: initialData?.content || "",
       category: initialData?.category || "",
-      status: initialData?.status || "draft",
       coverImage: initialData?.coverImage || "",
       tags: initialData?.tags || "",
     },
   });
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   // Update form content when editor changes
   useEffect(() => {
@@ -193,41 +211,60 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
     setIsSaving(true);
     
     try {
-      // In a real app, save to your backend
-      // We are going to save it to firestore
-      console.log("Saving post:", data);
+      // Generate defaults for empty fields
+      const title = data.title || "Untitled Draft";
+      const slug = data.slug || `draft-${Date.now()}`;
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Prepare post data for API - always save as draft
+      const postData = {
+        title: title,
+        slug: slug,
+        excerpt: data.excerpt || null,
+        content: data.content || null,
+        featured_image_url: data.coverImage || null,
+        category_id: data.category || null,
+        status: 'draft', // Always save as draft from editor
+        featured: false,
+        meta_title: title,
+        meta_description: data.excerpt || null,
+      };
+      
+      const url = postId ? `/api/posts/${postId}` : '/api/posts';
+      const method = postId ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save post');
+      }
       
       // Show success message
-      if (postId) {
-        alert("Post updated successfully!");
-      } else {
-        alert("Post created successfully!");
-      }
+      toast({
+        title: "Success",
+        description: postId ? "Draft updated successfully!" : "Draft saved successfully!",
+      });
       
       // Redirect to posts list
       router.push("/admin/posts");
     } catch (error) {
       console.error("Error saving post:", error);
-      alert("Failed to save post. Please try again.");
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save post",
+        variant: "destructive",
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Handle save draft
-  const handleSaveDraft = async () => {
-    form.setValue("status", "draft");
-    await form.handleSubmit(onSubmit)();
-  };
-
-  // Handle publish
-  const handlePublish = async () => {
-    form.setValue("status", "published");
-    await form.handleSubmit(onSubmit)();
-  };
 
   return (
     <div className="w-full">
@@ -254,22 +291,12 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                 Cancel
               </Button>
               <Button
-                type="button"
-                variant="secondary"
-                onClick={handleSaveDraft}
-                disabled={isSaving}
-              >
-                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Draft
-              </Button>
-              <Button
-                type="button"
-                onClick={handlePublish}
+                type="submit"
                 disabled={isSaving}
               >
                 {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 <Save className="mr-2 h-4 w-4" />
-                Publish
+                {postId ? 'Update Draft' : 'Save Draft'}
               </Button>
             </div>
           </div>
@@ -351,14 +378,31 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem 
-                              key={category.value} 
-                              value={category.value}
-                            >
-                              {category.label}
-                            </SelectItem>
-                          ))}
+                          {loadingCategories ? (
+                            <div className="flex items-center justify-center p-4">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span className="ml-2 text-sm">Loading categories...</span>
+                            </div>
+                          ) : categories.length === 0 ? (
+                            <div className="p-4 text-center text-sm text-muted-foreground">
+                              No categories available. Create some categories first.
+                            </div>
+                          ) : (
+                            categories.map((category) => (
+                              <SelectItem 
+                                key={category.id} 
+                                value={category.id}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div 
+                                    className="w-3 h-3 rounded-full" 
+                                    style={{ backgroundColor: category.color }}
+                                  />
+                                  {category.name}
+                                </div>
+                              </SelectItem>
+                            ))
+                          )}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -473,7 +517,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                       
                       <div className="flex flex-wrap items-center gap-3 text-sm">
                         <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                          {categories.find(c => c.value === form.watch("category"))?.label || "Uncategorized"}
+                          {categories.find(c => c.id === form.watch("category"))?.name || "Uncategorized"}
                         </span>
                         {form.watch("tags") && (
                           <div className="flex flex-wrap gap-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -27,11 +27,13 @@ import { Input } from "@/components/ui/input";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onRowSelectionChange?: (selectedRows: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -53,6 +55,14 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+
+  // Notify parent when row selection changes
+  useEffect(() => {
+    if (onRowSelectionChange) {
+      const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original);
+      onRowSelectionChange(selectedRows);
+    }
+  }, [rowSelection, onRowSelectionChange, table]);
 
   return (
     <div>
