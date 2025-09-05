@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Download, Trash2, Loader2, Archive } from "lucide-react";
+import { useState, useEffect, useCallback } from 'react';
+import { Plus, Search, Download, Trash2, Loader2, Archive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -54,7 +53,7 @@ export default function PostsPage() {
   const [isArchiveAction, setIsArchiveAction] = useState(true); // true for archive, false for unarchive
   const { toast } = useToast();
 
-  const fetchPosts = async (showLoader = false) => {
+  const fetchPosts = useCallback(async (showLoader = false) => {
     try {
       if (showLoader) setFetchingPosts(true);
       
@@ -83,7 +82,7 @@ export default function PostsPage() {
     } finally {
       if (showLoader) setFetchingPosts(false);
     }
-  };
+  }, [statusFilter, categoryFilter, searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchStats = async () => {
     try {
@@ -115,14 +114,14 @@ export default function PostsPage() {
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle filter changes (except search)
   useEffect(() => {
     if (!loading) {
       fetchPosts(true);
     }
-  }, [statusFilter, categoryFilter]);
+  }, [statusFilter, categoryFilter, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Debounce search
   useEffect(() => {
@@ -132,7 +131,7 @@ export default function PostsPage() {
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [searchTerm]);
+  }, [searchTerm, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePublishPost = async (postId: string) => {
     try {
@@ -519,39 +518,27 @@ export default function PostsPage() {
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <div className="rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Posts</p>
-              <p className="text-2xl font-bold">{stats.total}</p>
-            </div>
-            <Badge variant="secondary">{stats.total}</Badge>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Total Posts</p>
+            <p className="text-2xl font-bold">{stats.total}</p>
           </div>
         </div>
         <div className="rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Published</p>
-              <p className="text-2xl font-bold">{stats.published}</p>
-            </div>
-            <Badge variant="default">{stats.published}</Badge>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Published</p>
+            <p className="text-2xl font-bold">{stats.published}</p>
           </div>
         </div>
         <div className="rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Drafts</p>
-              <p className="text-2xl font-bold">{stats.draft}</p>
-            </div>
-            <Badge variant="outline">{stats.draft}</Badge>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Drafts</p>
+            <p className="text-2xl font-bold">{stats.draft}</p>
           </div>
         </div>
         <div className="rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Archived</p>
-              <p className="text-2xl font-bold">{stats.archived}</p>
-            </div>
-            <Badge variant="secondary">{stats.archived}</Badge>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Archived</p>
+            <p className="text-2xl font-bold">{stats.archived}</p>
           </div>
         </div>
       </div>
@@ -603,9 +590,7 @@ export default function PostsPage() {
         <div className="flex items-center gap-2">
           {(() => {
             const archivedCount = selectedPosts.filter(post => post.status === 'archived').length;
-            const nonArchivedCount = selectedPosts.length - archivedCount;
             const isAllArchived = selectedPosts.length > 0 && archivedCount === selectedPosts.length;
-            const hasMixed = archivedCount > 0 && nonArchivedCount > 0;
             
             return (
               <>

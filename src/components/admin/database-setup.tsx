@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useSupabase } from '@/components/supabase-provider'
 
 export default function DatabaseVerify() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [needsMigration, setNeedsMigration] = useState(false)
-  const { user } = useSupabase()
 
   const runVerify = async () => {
     setIsLoading(true)

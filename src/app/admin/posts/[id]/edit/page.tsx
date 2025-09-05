@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { PostEditorV2 } from "../../_components/post-editor-v2";
+import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: "Edit Post | Admin Dashboard",
@@ -7,23 +9,41 @@ export const metadata: Metadata = {
 };
 
 interface EditPostPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function EditPostPage({ params }: EditPostPageProps) {
-  // In a real app, fetch the post data here
-  const mockInitialData = {
-    title: `Sample Post ${params.id}`,
-    slug: `sample-post-${params.id}`,
-    excerpt: `This is a sample excerpt for post ${params.id}.`,
-    content: `# Sample Post ${params.id}\n\nThis is sample content for editing.\n\n## Features\n\n- **Bold text**\n- *Italic text*\n- [Links](https://example.com)\n\n### Code Example\n\n\`\`\`javascript\nconst greeting = "Hello, World!";\nconsole.log(greeting);\n\`\`\`\n\n> This is a blockquote\n\n![Sample Image](https://via.placeholder.com/800x400)`,
-    category: "investing",
-    status: "draft" as const,
-    coverImage: "https://via.placeholder.com/1200x600",
-    tags: "finance, investing, tips",
+export default async function EditPostPage({ params }: EditPostPageProps) {
+  const { id } = await params;
+  const supabase = await createClient();
+  
+  // Fetch the actual post data
+  const { data: post, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      category:categories(id, name, slug, color),
+      author:authors(id, name, email, avatar_url)
+    `)
+    .eq('id', id)
+    .single();
+    
+  if (error || !post) {
+    notFound();
+  }
+  
+  // Transform the data for the editor
+  const initialData = {
+    title: post.title || '',
+    slug: post.slug || '',
+    excerpt: post.excerpt || '',
+    content: post.content || '',
+    category: post.category_id || '',
+    author_id: post.author_id || '',
+    coverImage: post.featured_image_url || '',
+    tags: '',
   };
 
-  return <PostEditorV2 postId={params.id} initialData={mockInitialData} />;
+  return <PostEditorV2 postId={id} initialData={initialData} />;
 }

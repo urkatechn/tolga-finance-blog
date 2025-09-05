@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { createClient } from '@/lib/supabase/server';
+import { getUser } from '@/lib/supabase/user';
+import { nanoid } from 'nanoid';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const user = await getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
     const formData = await request.formData();
     const file = formData.get("file") as File;
     
@@ -32,32 +40,34 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Create unique filename
+    // Generate unique filename
+    const fileExtension = file.name.split('.').pop() || 'jpg';
+    const fileName = `${nanoid()}-${Date.now()}.${fileExtension}`;
+    
+    // Convert File to ArrayBuffer
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
     
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "-");
-    const filename = `${timestamp}-${originalName}`;
+    // Upload file to Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from('blog-images')
+      .upload(fileName, bytes, {
+        contentType: file.type,
+        upsert: false
+      });
     
-    // Create uploads directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (error) {
-      console.error("Error creating upload directory:", error);
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
     }
     
-    // Save file
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-    
-    // Return the public URL
-    const publicUrl = `/uploads/${filename}`;
+    // Get the public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('blog-images')
+      .getPublicUrl(fileName);
     
     return NextResponse.json({
       url: publicUrl,
-      filename: filename,
+      filename: fileName,
       originalName: file.name,
       size: file.size,
       type: file.type,

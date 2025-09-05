@@ -324,7 +324,7 @@ export const db = {
 };
 
 // Mock Storage functions
-export const uploadFile = async (_file: File, path: string): Promise<string> => {
+export const uploadFile = async (file: File, path: string): Promise<string> => {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 1000));
   
@@ -387,7 +387,7 @@ const mockUsers: Record<string, FirebaseUser> = {
 // Mock Storage object
 export const storage = {
   ref: (path: string) => ({
-    put: async (_file: File) => {
+    put: async () => {
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
       

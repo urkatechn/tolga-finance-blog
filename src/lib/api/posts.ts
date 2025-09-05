@@ -79,7 +79,7 @@ export async function createPost(data: PostFormData): Promise<{ id: string } | n
     if (data.coverImage instanceof File) {
       const file = data.coverImage;
       const storageRef = storage.ref(`posts/covers/${Date.now()}-${file.name}`);
-      const uploadTask = await storageRef.put(file);
+      const uploadTask = await storageRef.put();
       coverImageUrl = await uploadTask.ref.getDownloadURL();
     }
     
@@ -109,7 +109,7 @@ export async function updatePost(id: string, data: PostFormData): Promise<boolea
     if (data.coverImage instanceof File) {
       const file = data.coverImage;
       const storageRef = storage.ref(`posts/covers/${Date.now()}-${file.name}`);
-      const uploadTask = await storageRef.put(file);
+      const uploadTask = await storageRef.put();
       coverImageUrl = await uploadTask.ref.getDownloadURL();
     }
     

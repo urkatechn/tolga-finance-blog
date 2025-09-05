@@ -46,7 +46,7 @@ export function DeletePostDialog({
             <AlertDialogTitle>Delete Post?</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-left">
-            Are you sure you want to delete "{post.title}"? 
+            Are you sure you want to delete &quot;{post.title}&quot;?
             <br /><br />
             <strong>This action cannot be undone.</strong> The post and all its content will be permanently removed.
           </AlertDialogDescription>

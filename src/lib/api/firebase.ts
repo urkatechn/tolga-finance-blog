@@ -403,7 +403,7 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
 
 export const storage = {
   ref: (path: string) => ({
-    put: async (_file: File) => {
+    put: async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
       return {

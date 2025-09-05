@@ -11,7 +11,6 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const categoryId = searchParams.get('category_id')
     const search = searchParams.get('search')
-    const publishedStatus = searchParams.get('published_status')
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
     
@@ -100,6 +99,7 @@ export async function POST(request: NextRequest) {
       content, 
       featured_image_url, 
       category_id, 
+      author_id, 
       status, 
       featured, 
       meta_title, 
@@ -110,6 +110,34 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!title || !slug || !content) {
       return NextResponse.json({ error: 'Title, slug, and content are required' }, { status: 400 })
+    }
+    
+    // Validate or get default author_id
+    let finalAuthorId = author_id
+    if (!author_id) {
+      // Get default author if no author specified
+      const { data: defaultAuthor } = await supabase
+        .from('authors')
+        .select('id')
+        .eq('is_default', true)
+        .single()
+        
+      if (defaultAuthor) {
+        finalAuthorId = defaultAuthor.id
+      } else {
+        // If no default author, get the first author
+        const { data: firstAuthor } = await supabase
+          .from('authors')
+          .select('id')
+          .limit(1)
+          .single()
+          
+        if (firstAuthor) {
+          finalAuthorId = firstAuthor.id
+        } else {
+          return NextResponse.json({ error: 'No authors found. Please create an author first.' }, { status: 400 })
+        }
+      }
     }
     
     // Set published_at if status is published and not already set
@@ -126,7 +154,7 @@ export async function POST(request: NextRequest) {
         excerpt: excerpt || null,
         content,
         featured_image_url: featured_image_url || null,
-        author_id: user.id,
+        author_id: finalAuthorId,
         category_id: category_id || null,
         status: status || 'draft',
         featured: featured || false,

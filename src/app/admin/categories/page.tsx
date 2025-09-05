@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Plus, Edit2, Trash2, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -31,7 +31,7 @@ export default function CategoriesPage() {
   const [refreshing, setRefreshing] = useState(false)
   const { toast } = useToast()
 
-  const fetchCategories = async (showRefreshLoader = false) => {
+  const fetchCategories = useCallback(async (showRefreshLoader = false) => {
     try {
       if (showRefreshLoader) {
         setRefreshing(true)
@@ -53,11 +53,11 @@ export default function CategoriesPage() {
       setLoading(false)
       setRefreshing(false)
     }
-  }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchCategories()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreateCategory = () => {
     setEditingCategory(null)

@@ -265,7 +265,7 @@ export const createColumns = (
                 <Archive className="mr-2 h-4 w-4" />
                 <span>Unarchive</span>
               </DropdownMenuItem>
-            ) : post.status !== 'archived' && (
+            ) : (
               <DropdownMenuItem onClick={() => handleArchivePost?.(post.id)}>
                 <Archive className="mr-2 h-4 w-4" />
                 <span>Archive</span>

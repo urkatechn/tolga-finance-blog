@@ -113,7 +113,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
   const { toast } = useToast();
 
   // Fetch categories from API
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const response = await fetch('/api/categories');
       if (!response.ok) {
@@ -131,10 +131,10 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
     } finally {
       setLoadingCategories(false);
     }
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch authors from API
-  const fetchAuthors = async () => {
+  const fetchAuthors = useCallback(async () => {
     try {
       const response = await fetch('/api/authors');
       if (!response.ok) {
@@ -152,7 +152,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
     } finally {
       setLoadingAuthors(false);
     }
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch default settings
   const fetchSettings = async () => {
@@ -190,14 +190,22 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
       await Promise.all([fetchCategories(), fetchAuthors(), fetchSettings()]);
     };
     loadData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Set default author when available and no author is selected
+  // Set author: use existing author for edits, or default author for new posts
   useEffect(() => {
-    if (defaultAuthorId && !form.getValues('author') && !postId) {
-      form.setValue('author', defaultAuthorId);
+    if (postId) {
+      // For editing existing posts, use the post's current author
+      if (initialData?.author_id) {
+        form.setValue('author', initialData.author_id);
+      }
+    } else {
+      // For new posts, use default author if no author is selected
+      if (defaultAuthorId && !form.getValues('author')) {
+        form.setValue('author', defaultAuthorId);
+      }
     }
-  }, [defaultAuthorId, form, postId]);
+  }, [defaultAuthorId, form, postId, initialData?.author_id]);
 
   // Update form content when editor changes
   useEffect(() => {
@@ -218,7 +226,8 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
     form.setValue("title", title);
     
     // Only auto-generate slug if it's empty or was auto-generated before
-    if (!form.getValues("slug") || form.getValues("slug") === generateSlug(form.getValues("title"))) {
+    const currentTitle = form.getValues("title") || "";
+    if (!form.getValues("slug") || form.getValues("slug") === generateSlug(currentTitle)) {
       form.setValue("slug", generateSlug(title));
     }
   };
@@ -284,7 +293,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
         content: data.content || null,
         featured_image_url: data.coverImage || null,
         category_id: data.category || null,
-        author_id: data.author || defaultAuthorId || null,
+        author_id: data.author || defaultAuthorId,
         status: 'draft', // Always save as draft from editor
         featured: false,
         meta_title: title,

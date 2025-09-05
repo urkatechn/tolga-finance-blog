@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { BarChart, FileText, MessageSquare, Users, TrendingUp, Eye, Heart, Plus } from "lucide-react";
+import { FileText, MessageSquare, TrendingUp, Eye, Heart, Plus } from "lucide-react";
 import DatabaseVerify from '@/components/admin/database-setup';
 import { getUser } from '@/lib/supabase/user';
 import { redirect } from 'next/navigation';
@@ -228,29 +228,3 @@ const recentPosts = [
   },
 ];
 
-const recentComments = [
-  {
-    id: 1,
-    user: "Sarah Johnson",
-    userInitials: "SJ",
-    text: "This article was incredibly helpful! I've been looking for budget-friendly holiday ideas.",
-    postTitle: "Clever Ways to Celebrate Christmas on a Budget",
-    date: "Dec 22, 2024",
-  },
-  {
-    id: 2,
-    user: "Michael Chen",
-    userInitials: "MC",
-    text: "I'm definitely going to try setting intentions this year instead of resolutions.",
-    postTitle: "Setting Intentions Instead of Resolutions for 2025",
-    date: "Dec 18, 2024",
-  },
-  {
-    id: 3,
-    user: "Alex Rodriguez",
-    userInitials: "AR",
-    text: "The connection between physical activity and financial discipline is fascinating.",
-    postTitle: "Physical Development Activities for Financial Growth",
-    date: "Dec 12, 2024",
-  },
-];

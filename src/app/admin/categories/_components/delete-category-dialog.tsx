@@ -44,7 +44,7 @@ export function DeleteCategoryDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Category</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete the category "{category.name}"? 
+            Are you sure you want to delete the category &quot;{category.name}&quot;?
             This action cannot be undone. Any posts assigned to this category 
             will have their category removed.
           </AlertDialogDescription>

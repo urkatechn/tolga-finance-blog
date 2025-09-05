@@ -48,7 +48,7 @@ export function DeleteAuthorDialog({
             <AlertDialogTitle>Delete Author?</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-left">
-            Are you sure you want to delete "{author.name}"?
+            Are you sure you want to delete &quot;{author.name}&quot;?
             <br /><br />
             <strong>This action cannot be undone.</strong> The author profile will be permanently removed.
             {author.email && (

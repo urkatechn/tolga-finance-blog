@@ -8,8 +8,7 @@ import {
   Tag, 
   Settings, 
   Upload, 
-  MessageSquare,
-  User
+  MessageSquare
 } from "lucide-react";
 
 import {
@@ -25,7 +24,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserMenu } from "@/components/admin/user-menu";
 
 interface NavItem {

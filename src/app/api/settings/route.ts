@@ -30,7 +30,7 @@ export async function GET() {
       }
       acc[setting.key] = parsedValue
       return acc
-    }, {} as Record<string, any>)
+    }, {} as Record<string, unknown>)
     
     return NextResponse.json(settingsMap)
   } catch (error) {

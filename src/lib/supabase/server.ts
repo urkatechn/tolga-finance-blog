@@ -32,7 +32,7 @@ export async function createClient() {
         },
       }
     )
-  } catch (error) {
+  } catch {
     // If cookies can't be accessed, create a basic client
     return createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

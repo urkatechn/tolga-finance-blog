@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Save, Loader2, Plus, Settings, User, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +66,7 @@ export default function SettingsPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { toast } = useToast();
 
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       const response = await fetch('/api/settings');
       if (!response.ok) throw new Error('Failed to fetch settings');
@@ -88,9 +88,9 @@ export default function SettingsPage() {
         variant: "destructive",
       });
     }
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fetchAuthors = async () => {
+  const fetchAuthors = useCallback(async () => {
     try {
       const response = await fetch('/api/authors');
       if (!response.ok) throw new Error('Failed to fetch authors');
@@ -105,7 +105,7 @@ export default function SettingsPage() {
         variant: "destructive",
       });
     }
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const loadData = async () => {
@@ -114,7 +114,7 @@ export default function SettingsPage() {
       setLoading(false);
     };
     loadData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSaveSettings = async () => {
     setSaving(true);
