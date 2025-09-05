@@ -78,9 +78,11 @@ const formSchema = z.object({
   tags: z.string().optional(),
 });
 
+//Inferring typescript type from zod object
 type FormValues = z.infer<typeof formSchema>;
 
 // Sample categories
+// Categories will be dynamic.
 const categories = [
   { value: "investing", label: "Investing" },
   { value: "saving", label: "Saving" },
@@ -99,7 +101,6 @@ interface PostEditorV2Props {
 
 export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [content, setContent] = useState(initialData?.content || "");
   const [activeTab, setActiveTab] = useState("metadata");
@@ -193,6 +194,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
     
     try {
       // In a real app, save to your backend
+      // We are going to save it to firestore
       console.log("Saving post:", data);
       
       // Simulate API call

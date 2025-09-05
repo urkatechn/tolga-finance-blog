@@ -3,8 +3,17 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { BarChart, FileText, MessageSquare, Users, TrendingUp, Eye, Heart, Plus } from "lucide-react";
+import DatabaseSetup from '@/components/admin/database-setup';
+import { getUser } from '@/lib/supabase/user';
+import { redirect } from 'next/navigation';
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  // Check if user is authenticated
+  const user = await getUser();
+  
+  if (!user) {
+    redirect('/auth/login'); // Redirect to login page if not authenticated
+  }
   return (
     <div className="flex-1 space-y-4">
       {/* Header */}
@@ -143,6 +152,19 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Database Setup Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Database Management</CardTitle>
+          <CardDescription>
+            Initialize and manage your database schema
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DatabaseSetup />
+        </CardContent>
+      </Card>
     </div>
   );
 }
