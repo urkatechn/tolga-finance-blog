@@ -232,12 +232,19 @@ export const createColumns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`/blog/${post.slug}`} target="_blank">
-                <Eye className="mr-2 h-4 w-4" />
-                <span>View Post</span>
-              </Link>
-            </DropdownMenuItem>
+            {post.status === 'published' ? (
+              <DropdownMenuItem asChild>
+                <Link href={`/blog/${post.slug}`} target="_blank">
+                  <Eye className="mr-2 h-4 w-4" />
+                  <span>View Post</span>
+                </Link>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem disabled>
+                <Eye className="mr-2 h-4 w-4 opacity-50" />
+                <span>View Post (Not Published)</span>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild>
               <Link href={`/admin/posts/${post.id}/edit`}>
                 <Pencil className="mr-2 h-4 w-4" />

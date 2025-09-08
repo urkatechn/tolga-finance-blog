@@ -8,11 +8,11 @@ export default function HeroSection() {
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
       
-      <div className="relative container mx-auto px-4 py-24 lg:py-32">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="relative container mx-auto px-6 py-24 lg:py-32">
+        <div className="max-w-5xl mx-auto text-center">
           {/* Main Heading */}
           <div className="mb-8">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 leading-tight">
               <span className="block text-gray-900 dark:text-white">
                 Smart Financial
               </span>
