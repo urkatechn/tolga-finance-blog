@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, TrendingUp, DollarSign, PieChart } from "lucide-react";
+import Header from "@/components/layout/header";
+import HeroSection from "@/components/hero/hero-section";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -31,30 +33,8 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Finance Blog
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              Expert insights on personal finance, investing, and market trends. 
-              Make informed financial decisions with our comprehensive guides and analysis.
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Button asChild size="lg">
-                <Link href="/blog">
-                  Read Articles <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/admin">Admin Panel</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Header />
+      <HeroSection />
 
       {/* Features Section */}
       <section className="py-16">
