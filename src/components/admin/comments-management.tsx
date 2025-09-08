@@ -37,7 +37,6 @@ interface Comment {
   is_spam: boolean;
   moderated_by?: string;
   moderated_at?: string;
-  likes_count: number;
   created_at: string;
   updated_at: string;
   posts?: {
@@ -294,7 +293,6 @@ export default function CommentsManagement() {
                 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    <span>{comment.likes_count} likes</span>
                     {comment.parent_id && (
                       <Badge variant="outline">Reply</Badge>
                     )}

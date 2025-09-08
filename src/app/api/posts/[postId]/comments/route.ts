@@ -18,7 +18,6 @@ export async function GET(
         content,
         created_at,
         parent_id,
-        likes_count,
         is_approved
       `)
       .eq('post_id', postId)
@@ -39,7 +38,6 @@ export async function GET(
       content: string;
       created_at: string;
       parent_id: string | null;
-      likes_count: number;
       is_approved: boolean;
       replies: Array<any>;
     }> = [];
@@ -97,7 +95,6 @@ export async function POST(
         content: content.trim(),
         parent_id: parent_id || null,
         is_approved: false, // Comments need approval by default
-        likes_count: 0,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })

@@ -7,31 +7,64 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import HeroSection from "@/components/hero/hero-section";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
+import { createClient } from "@/lib/supabase/server";
 
 export const revalidate = 3600; // Revalidate every hour
 
+async function getFeaturedPosts() {
+  const supabase = await createClient();
+  
+  // First, let's try a simple query to see what columns exist
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(2);
+
+  if (error) {
+    console.error('Error fetching featured posts:', error);
+    return [];
+  }
+
+  // Return mock data for now if no posts exist
+  if (!posts || posts.length === 0) {
+    return [
+      {
+        id: "1",
+        title: "Understanding Market Volatility",
+        excerpt: "Learn how market volatility works and strategies to navigate turbulent times.",
+        category: "investing",
+        readTime: 5,
+        publishedAt: "2025-08-15",
+        slug: "understanding-market-volatility"
+      },
+      {
+        id: "2", 
+        title: "Building Your Emergency Fund",
+        excerpt: "A comprehensive guide to building and maintaining an emergency fund for financial security.",
+        category: "saving",
+        readTime: 7,
+        publishedAt: "2025-07-28",
+        slug: "building-emergency-fund"
+      }
+    ];
+  }
+
+  return posts.map(post => ({
+    id: post.id,
+    title: post.title,
+    excerpt: post.excerpt || post.content?.substring(0, 150) + '...',
+    category: 'general',
+    readTime: 5,
+    publishedAt: post.created_at,
+    slug: post.slug
+  }));
+}
+
 export default async function Home() {
-  // Mock featured posts - in real app, fetch from API
-  const featuredPosts = [
-    {
-      id: "post-1",
-      title: "Understanding Market Volatility",
-      excerpt: "Learn how market volatility works and strategies to navigate turbulent times.",
-      category: "investing",
-      readTime: 5,
-      publishedAt: "2025-08-15",
-      slug: "understanding-market-volatility"
-    },
-    {
-      id: "post-2", 
-      title: "Building Your Emergency Fund",
-      excerpt: "A comprehensive guide to building and maintaining an emergency fund for financial security.",
-      category: "saving",
-      readTime: 7,
-      publishedAt: "2025-07-28",
-      slug: "building-emergency-fund"
-    }
-  ];
+  // Fetch featured posts from database
+  const featuredPosts = await getFeaturedPosts();
 
   return (
     <div className="min-h-screen">

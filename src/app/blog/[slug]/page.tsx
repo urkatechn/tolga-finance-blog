@@ -5,7 +5,6 @@ import { getCachedPostBySlug } from "@/lib/cache";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { PostHeaderWithInteractions } from "@/components/blog/post-header";
-import PostInteractions from "@/components/blog/post-interactions";
 import CommentsSection from "@/components/blog/comments-section";
 import ReadingProgress from "@/components/blog/reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -71,13 +70,7 @@ export default async function BlogPostPage({
       <ReadingProgress />
       <Header />
       
-      <PostHeaderWithInteractions post={post}>
-        <PostInteractions 
-          postId={post.id} 
-          initialLikes={0} 
-          initialComments={0} 
-        />
-      </PostHeaderWithInteractions>
+      <PostHeaderWithInteractions post={post} />
 
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">

@@ -3,11 +3,9 @@
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { 
-  Heart, 
   MessageCircle, 
   Send, 
-  Reply,
-  Flag 
+  Reply
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +22,6 @@ interface Comment {
   content: string;
   created_at: string;
   parent_id?: string;
-  likes_count: number;
   is_approved: boolean;
   replies?: Comment[];
 }
@@ -43,16 +40,11 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [likedComments, setLikedComments] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load comments and user data
   useEffect(() => {
     const loadData = async () => {
-      // Load liked comments from localStorage
-      const liked = JSON.parse(localStorage.getItem('likedComments') || '[]');
-      setLikedComments(liked);
-      
       // Load user info from localStorage
       const userInfo = JSON.parse(localStorage.getItem('commentUserInfo') || '{}');
       if (userInfo.name) {
@@ -69,6 +61,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         if (response.ok) {
           const { comments: fetchedComments } = await response.json();
           setComments(fetchedComments);
+          
         }
       } catch (error) {
         console.error('Error loading comments:', error);
@@ -79,6 +72,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
 
     loadData();
   }, [postId]);
+
 
   // Generate Gravatar URL
   const getGravatarUrl = (email: string, size: number = 40) => {
@@ -164,55 +158,6 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
     setIsSubmitting(false);
   };
 
-  const handleLikeComment = async (commentId: string) => {
-    const isLiked = likedComments.includes(commentId);
-    
-    try {
-      const action = isLiked ? 'unlike' : 'like';
-      const response = await fetch(`/api/comments/${commentId}/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action }),
-      });
-
-      if (response.ok) {
-        const { likes_count } = await response.json();
-        
-        // Update local state
-        if (isLiked) {
-          setLikedComments(prev => prev.filter(id => id !== commentId));
-        } else {
-          setLikedComments(prev => [...prev, commentId]);
-        }
-
-        // Update comment likes count in state
-        setComments(prev => prev.map(comment => 
-          comment.id === commentId 
-            ? { ...comment, likes_count }
-            : {
-                ...comment,
-                replies: comment.replies?.map(reply => 
-                  reply.id === commentId 
-                    ? { ...reply, likes_count }
-                    : reply
-                ) || []
-              }
-        ));
-
-        // Update localStorage
-        const updatedLikes = isLiked 
-          ? likedComments.filter(id => id !== commentId)
-          : [...likedComments, commentId];
-        localStorage.setItem('likedComments', JSON.stringify(updatedLikes));
-      } else {
-        console.error('Failed to update comment like status');
-      }
-    } catch (error) {
-      console.error('Error updating comment like:', error);
-    }
-  };
 
   const CommentItem = ({ comment, isReply = false }: { comment: Comment; isReply?: boolean }) => (
     <div className={`${isReply ? 'ml-8 mt-4' : 'mb-6'}`}>
@@ -241,20 +186,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
             {comment.content}
           </p>
           
-          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-            <button
-              onClick={() => handleLikeComment(comment.id)}
-              className={`flex items-center space-x-1 hover:text-foreground transition-colors ${
-                likedComments.includes(comment.id) ? 'text-red-500' : ''
-              }`}
-            >
-              <Heart 
-                className={`h-3 w-3 ${
-                  likedComments.includes(comment.id) ? 'fill-red-500' : ''
-                }`} 
-              />
-              <span>{comment.likes_count}</span>
-            </button>
+          <div className="flex items-center space-x-4 mt-3">
             
             {!isReply && (
               <button
@@ -266,10 +198,6 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
               </button>
             )}
             
-            <button className="flex items-center space-x-1 hover:text-foreground transition-colors">
-              <Flag className="h-3 w-3" />
-              <span>Report</span>
-            </button>
           </div>
           
           {/* Reply Form */}
