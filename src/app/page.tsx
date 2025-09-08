@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, TrendingUp, DollarSign, PieChart } from "lucide-react";
 import Header from "@/components/layout/header";
 import HeroSection from "@/components/hero/hero-section";
+import NewsletterSignup from "@/components/blog/newsletter-signup";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -111,6 +112,26 @@ export default async function Home() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Subscription Section */}
+      <section id="newsletter" className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Stay Ahead of the Markets
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Join thousands of smart investors who get our weekly insights delivered straight to their inbox. 
+                No spam, just actionable financial advice.
+              </p>
+            </div>
+            <div className="max-w-2xl mx-auto">
+              <NewsletterSignup />
             </div>
           </div>
         </div>

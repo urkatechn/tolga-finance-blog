@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS posts (
   featured BOOLEAN DEFAULT FALSE,
   meta_title VARCHAR(255),
   meta_description TEXT,
+  tags TEXT, -- Comma-separated tags
   published_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
