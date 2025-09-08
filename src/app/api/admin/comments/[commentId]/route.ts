@@ -3,10 +3,10 @@ import { deleteComment } from '@/lib/api/likes-comments';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
   try {
-    const { commentId } = params;
+    const { commentId } = await params;
     
     const success = await deleteComment(commentId);
     

@@ -87,11 +87,6 @@ export async function POST(
       );
     }
 
-    // Get client IP address
-    const forwarded = request.headers.get('x-forwarded-for');
-    const realIp = request.headers.get('x-real-ip');
-    const clientIp = forwarded?.split(',')[0] || realIp || '127.0.0.1';
-
     // Insert comment with required fields
     const { data: comment, error } = await supabase
       .from('comments')
@@ -99,7 +94,6 @@ export async function POST(
         post_id: postId,
         author_name: author_name.trim(),
         author_email: author_email?.trim() || null,
-        author_ip: clientIp,
         content: content.trim(),
         parent_id: parent_id || null,
         is_approved: false, // Comments need approval by default

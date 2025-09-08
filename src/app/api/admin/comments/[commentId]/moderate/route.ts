@@ -4,10 +4,10 @@ import { CommentModerationData } from '@/lib/database/likes-comments-types';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
   try {
-    const { commentId } = params;
+    const { commentId } = await params;
     const body = await request.json();
     
     const moderationData: CommentModerationData = {

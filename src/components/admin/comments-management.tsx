@@ -7,7 +7,6 @@ import {
   Trash2, 
   MessageCircle, 
   AlertTriangle,
-  Eye,
   EyeOff
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,15 +14,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Comment {
   id: string;
@@ -31,7 +32,6 @@ interface Comment {
   parent_id?: string;
   author_name: string;
   author_email?: string;
-  author_ip: string;
   content: string;
   is_approved: boolean;
   is_spam: boolean;
@@ -50,7 +50,6 @@ export default function CommentsManagement() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'spam'>('all');
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
 
   const fetchComments = useCallback(async () => {
     try {
@@ -96,6 +95,8 @@ export default function CommentsManagement() {
           break;
       }
 
+      console.log(`Making ${method} request to ${endpoint}`, body);
+
       const response = await fetch(endpoint, {
         method,
         headers: {
@@ -104,7 +105,15 @@ export default function CommentsManagement() {
         body: method === 'DELETE' ? undefined : JSON.stringify(body),
       });
 
+      console.log('Response status:', response.status);
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
+
       if (response.ok) {
+        // Show success message
+        const { toast } = await import('sonner');
+        toast.success(`Comment ${action === 'approve' ? 'approved' : action === 'spam' ? 'marked as spam' : 'deleted'} successfully!`);
+
         if (action === 'delete') {
           setComments(prev => prev.filter(c => c.id !== commentId));
         } else {
@@ -115,10 +124,14 @@ export default function CommentsManagement() {
           ));
         }
       } else {
-        console.error('Failed to moderate comment');
+        console.error('Failed to moderate comment:', responseData);
+        const { toast } = await import('sonner');
+        toast.error(`Failed to ${action} comment: ${responseData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error moderating comment:', error);
+      const { toast } = await import('sonner');
+      toast.error(`Error ${action}ing comment. Please try again.`);
     }
   };
 
@@ -259,9 +272,8 @@ export default function CommentsManagement() {
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {comment.author_email && (
-                          <span className="mr-3">{comment.author_email}</span>
+                          <span>{comment.author_email}</span>
                         )}
-                        <span>IP: {comment.author_ip}</span>
                       </div>
                     </div>
                   </div>
@@ -336,74 +348,36 @@ export default function CommentsManagement() {
                       </Button>
                     )}
                     
-                    <Dialog>
-                      <DialogTrigger asChild>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setSelectedComment(comment)}
+                          className="text-red-600 hover:text-red-700"
                         >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Details
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Delete
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Comment Details</DialogTitle>
-                          <DialogDescription>
-                            Full information about this comment
-                          </DialogDescription>
-                        </DialogHeader>
-                        {selectedComment && (
-                          <div className="space-y-4">
-                            <div>
-                              <label className="text-sm font-medium">Author</label>
-                              <p className="text-sm text-muted-foreground">
-                                {selectedComment.author_name} ({selectedComment.author_email})
-                              </p>
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium">IP Address</label>
-                              <p className="text-sm text-muted-foreground">{selectedComment.author_ip}</p>
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium">Content</label>
-                              <Textarea 
-                                value={selectedComment.content} 
-                                readOnly 
-                                className="mt-1"
-                                rows={4}
-                              />
-                            </div>
-                            <div>
-                              <label className="text-sm font-medium">Status</label>
-                              <div className="mt-1">
-                                {getStatusBadge(selectedComment)}
-                              </div>
-                            </div>
-                            {selectedComment.moderated_at && (
-                              <div>
-                                <label className="text-sm font-medium">Moderated</label>
-                                <p className="text-sm text-muted-foreground">
-                                  {formatDistanceToNow(new Date(selectedComment.moderated_at))} ago
-                                  {selectedComment.moderated_by && ` by ${selectedComment.moderated_by}`}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </DialogContent>
-                    </Dialog>
-                    
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => moderateComment(comment.id, 'delete')}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4 mr-1" />
-                      Delete
-                    </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Comment</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this comment? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => moderateComment(comment.id, 'delete')}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </CardContent>

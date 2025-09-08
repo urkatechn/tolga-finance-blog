@@ -14,7 +14,6 @@ export interface Comment {
   parent_id?: string;
   author_name: string;
   author_email?: string;
-  author_ip: string;
   user_agent?: string;
   content: string;
   is_approved: boolean;
@@ -41,7 +40,6 @@ export interface CreateCommentData {
   author_name: string;
   author_email?: string;
   content: string;
-  author_ip: string;
   user_agent?: string;
 }
 
