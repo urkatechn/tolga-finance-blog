@@ -56,7 +56,6 @@ const navItems: NavItem[] = [
     title: "Comments",
     href: "/admin/comments",
     icon: MessageSquare,
-    badge: "BETA",
   },
   {
     title: "Media",

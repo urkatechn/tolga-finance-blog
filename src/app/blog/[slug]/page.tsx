@@ -9,6 +9,8 @@ import TableOfContents from "@/components/blog/table-of-contents";
 import ReadingProgress from "@/components/blog/reading-progress";
 import RelatedPosts from "@/components/blog/related-posts";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
+import PostInteractions from "@/components/blog/post-interactions";
+import CommentsSection from "@/components/blog/comments-section";
 import { getPostBySlug, getPosts } from "@/lib/api/supabase-posts";
 
 export const revalidate = 3600; // Revalidate every hour
@@ -58,9 +60,15 @@ export default async function BlogPostPage({
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-4 gap-12">
-            {/* Table of Contents - Desktop Sidebar */}
-            <div className="lg:col-span-1 order-2 lg:order-1">
+            
+            {/* Sidebar with TOC and Interactions */}
+            <div className="lg:col-span-1 order-2 lg:order-1 space-y-8">
               <TableOfContents content={post.content} />
+              <PostInteractions 
+                postId={post.id} 
+                initialLikes={42} // Mock data - will be from database
+                initialComments={8} // Mock data - will be from database
+              />
             </div>
 
             {/* Main Content */}
@@ -76,6 +84,18 @@ export default async function BlogPostPage({
                   </p>
                 </div>
               )}
+
+              {/* Post Interactions */}
+              <PostInteractions 
+                postId={post.id} 
+                initialLikes={0} 
+                initialComments={0} 
+              />
+
+              {/* Comments Section */}
+              <CommentsSection 
+                postId={post.id}
+              />
 
               {/* Newsletter Signup */}
               <div className="mt-16">
