@@ -1,10 +1,9 @@
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import BlogHeader from "@/components/blog/blog-header";
+import { getCachedPosts, getCachedCategories, getCachedRecentPosts } from "@/lib/cache";
 import PostCard from "@/components/blog/post-card";
-import SearchFilters from "@/components/blog/search-filters";
+import BlogSidebar from "@/components/blog/blog-sidebar";
 import { Button } from "@/components/ui/button";
-import { getPosts, getCategories } from "@/lib/api/supabase-posts";
 import Link from "next/link";
 
 export const revalidate = 1800; // Revalidate every 30 minutes
@@ -18,14 +17,15 @@ interface BlogPageProps {
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  // Fetch real data from Supabase
-  const [posts, categories] = await Promise.all([
-    getPosts({
+  // Fetch real data from Supabase with caching
+  const [posts, categories, recentPosts] = await Promise.all([
+    getCachedPosts({
       category: searchParams.category,
       search: searchParams.search,
       limit: 12, // Show 12 posts per page
     }),
-    getCategories(),
+    getCachedCategories(),
+    getCachedRecentPosts(5), // Get 5 recent posts for sidebar
   ]);
 
   const featuredPosts = posts.filter(post => post.featured);
@@ -34,13 +34,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   return (
     <div className="min-h-screen">
       <Header />
-      <BlogHeader totalPosts={posts.length} totalCategories={categories.length} />
-      <SearchFilters categories={categories} />
 
       {/* Main Content */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
+            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+              {/* Main Content Area */}
+              <div className="lg:col-span-8">
             {posts.length === 0 ? (
               <div className="text-center py-16">
                 <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">No articles found</h3>
@@ -63,7 +64,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                       <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Featured Articles</h2>
                       <div className="h-px bg-gradient-to-r from-blue-600 to-transparent flex-1" />
                     </div>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="space-y-0">
                       {featuredPosts.slice(0, 3).map((post) => (
                         <PostCard key={post.id} post={post} featured={true} />
                       ))}
@@ -89,7 +90,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     </div>
                   </div>
                   
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="space-y-0">
                     {(featuredPosts.length > 0 && !searchParams.search && !searchParams.category 
                       ? regularPosts 
                       : posts
@@ -100,6 +101,21 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                 </div>
               </>
             )}
+              </div>
+              
+              {/* Sidebar */}
+              <div className="lg:col-span-4 mt-12 lg:mt-0">
+                <div className="sticky top-8">
+                  <BlogSidebar 
+                    recentPosts={recentPosts} 
+                    categories={categories.map(cat => ({
+                      ...cat,
+                      post_count: posts.filter(p => p.category?.id === cat.id).length
+                    }))}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

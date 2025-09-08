@@ -3,10 +3,10 @@ import { likeComment, unlikeComment } from '@/lib/api/likes-comments';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { commentId: string } }
+  { params }: { params: Promise<{ commentId: string }> }
 ) {
   try {
-    const { commentId } = params;
+    const { commentId } = await params;
     const { action } = await request.json();
 
     if (action === 'like') {
@@ -21,10 +21,10 @@ export async function POST(
         { status: 400 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in comment like API:', error);
     
-    if (error.message === 'Already liked') {
+    if (error instanceof Error && error.message === 'Already liked') {
       return NextResponse.json(
         { error: 'Comment already liked' },
         { status: 409 }

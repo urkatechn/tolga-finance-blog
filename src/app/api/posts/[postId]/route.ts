@@ -4,11 +4,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const { id } = await params
+    const { postId: id } = await params
     
     const { data: post, error } = await supabase
       .from('posts')
@@ -37,7 +37,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -47,7 +47,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    const { id } = await params
+    const { postId: id } = await params
     const body = await request.json()
     
     const { 
@@ -161,7 +161,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -171,7 +171,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    const { id } = await params
+    const { postId: id } = await params
     
     // Get the post to check ownership
     const { error: fetchError } = await supabase

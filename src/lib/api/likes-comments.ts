@@ -1,9 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { Comment, CreateCommentData, CommentModerationData, PostWithEngagement } from '@/lib/database/likes-comments-types';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Create supabase client function
+async function getSupabaseClient() {
+  return await createClient();
+}
 
 // Helper function to get user identifier (IP-based for anonymous users)
 function getUserIdentifier(): string {
@@ -24,6 +25,7 @@ function getUserIdentifier(): string {
 // POST LIKES API
 export async function likePost(postId: string): Promise<{ success: boolean; likes_count: number }> {
   try {
+    const supabase = await getSupabaseClient();
     const userIdentifier = getUserIdentifier();
     
     const { error } = await supabase
@@ -58,6 +60,7 @@ export async function likePost(postId: string): Promise<{ success: boolean; like
 
 export async function unlikePost(postId: string): Promise<{ success: boolean; likes_count: number }> {
   try {
+    const supabase = await getSupabaseClient();
     const userIdentifier = getUserIdentifier();
     
     const { error } = await supabase
@@ -84,6 +87,7 @@ export async function unlikePost(postId: string): Promise<{ success: boolean; li
 
 export async function checkPostLiked(postId: string): Promise<boolean> {
   try {
+    const supabase = await getSupabaseClient();
     const userIdentifier = getUserIdentifier();
     
     const { data, error } = await supabase
@@ -105,6 +109,7 @@ export async function checkPostLiked(postId: string): Promise<boolean> {
 // COMMENTS API
 export async function getComments(postId: string): Promise<Comment[]> {
   try {
+    const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from('comments')
       .select('*')
@@ -143,6 +148,7 @@ export async function getComments(postId: string): Promise<Comment[]> {
 
 export async function createComment(commentData: CreateCommentData): Promise<Comment> {
   try {
+    const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from('comments')
       .insert({
@@ -166,6 +172,7 @@ export async function createComment(commentData: CreateCommentData): Promise<Com
 // COMMENT LIKES API
 export async function likeComment(commentId: string): Promise<{ success: boolean; likes_count: number }> {
   try {
+    const supabase = await getSupabaseClient();
     const userIdentifier = getUserIdentifier();
     
     const { error } = await supabase
@@ -199,6 +206,7 @@ export async function likeComment(commentId: string): Promise<{ success: boolean
 
 export async function unlikeComment(commentId: string): Promise<{ success: boolean; likes_count: number }> {
   try {
+    const supabase = await getSupabaseClient();
     const userIdentifier = getUserIdentifier();
     
     const { error } = await supabase
@@ -226,6 +234,9 @@ export async function unlikeComment(commentId: string): Promise<{ success: boole
 // ADMIN FUNCTIONS (for comment moderation)
 export async function getAllComments(includeUnapproved = false): Promise<Comment[]> {
   try {
+    const { createServiceClient } = await import('@/lib/supabase/server');
+    const supabase = await createServiceClient(); // Use service client to bypass RLS
+    
     let query = supabase
       .from('comments')
       .select(`
@@ -251,6 +262,9 @@ export async function getAllComments(includeUnapproved = false): Promise<Comment
 
 export async function moderateComment(commentId: string, moderationData: CommentModerationData): Promise<Comment> {
   try {
+    const { createServiceClient } = await import('@/lib/supabase/server');
+    const supabase = await createServiceClient(); // Use service client to bypass RLS
+    
     const { data, error } = await supabase
       .from('comments')
       .update({
@@ -272,6 +286,9 @@ export async function moderateComment(commentId: string, moderationData: Comment
 
 export async function deleteComment(commentId: string): Promise<boolean> {
   try {
+    const { createServiceClient } = await import('@/lib/supabase/server');
+    const supabase = await createServiceClient(); // Use service client to bypass RLS
+    
     const { error } = await supabase
       .from('comments')
       .delete()
@@ -289,6 +306,7 @@ export async function deleteComment(commentId: string): Promise<boolean> {
 // Get post with engagement data
 export async function getPostWithEngagement(slug: string): Promise<PostWithEngagement | null> {
   try {
+    const supabase = await getSupabaseClient();
     const { data, error } = await supabase
       .from('posts')
       .select(`

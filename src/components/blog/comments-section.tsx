@@ -125,10 +125,11 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
       });
 
       if (response.ok) {
-        const { message } = await response.json();
-        
-        // Show success message (comment pending approval)
-        alert(message || 'Comment submitted successfully!');
+        // Show success message using toast
+        const { toast } = await import('sonner');
+        toast.success('Comment submitted!', {
+          description: 'Your comment has been submitted and is pending approval.',
+        });
         
         // Reset form
         setNewComment(prev => ({
@@ -147,11 +148,17 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         }
       } else {
         const { error } = await response.json();
-        alert(error || 'Failed to submit comment');
+        const { toast } = await import('sonner');
+        toast.error('Failed to submit comment', {
+          description: error || 'Please try again later.',
+        });
       }
     } catch (error) {
       console.error('Error submitting comment:', error);
-      alert('Failed to submit comment. Please try again.');
+      const { toast } = await import('sonner');
+      toast.error('Failed to submit comment', {
+        description: 'Please try again later.',
+      });
     }
 
     setIsSubmitting(false);
