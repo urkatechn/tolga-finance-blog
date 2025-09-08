@@ -46,7 +46,7 @@ export interface CreateCommentData {
 export interface CommentModerationData {
   is_approved: boolean;
   is_spam?: boolean;
-  moderated_by: string;
+  moderated_by: string | null;
 }
 
 // Extended Post interface with engagement data

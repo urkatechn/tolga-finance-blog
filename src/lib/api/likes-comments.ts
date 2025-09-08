@@ -262,8 +262,12 @@ export async function getAllComments(includeUnapproved = false): Promise<Comment
 
 export async function moderateComment(commentId: string, moderationData: CommentModerationData): Promise<Comment> {
   try {
+    console.log('moderateComment called with:', { commentId, moderationData });
+    
     const { createServiceClient } = await import('@/lib/supabase/server');
     const supabase = await createServiceClient(); // Use service client to bypass RLS
+    
+    console.log('Service client created, attempting to update comment...');
     
     const { data, error } = await supabase
       .from('comments')
@@ -275,7 +279,16 @@ export async function moderateComment(commentId: string, moderationData: Comment
       .select()
       .single();
 
-    if (error) throw error;
+    console.log('Supabase update result:', { data, error });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(`Database error: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error('No comment found with the given ID');
+    }
 
     return data;
   } catch (error) {
