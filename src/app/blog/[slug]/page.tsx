@@ -3,6 +3,7 @@ import { compile, run } from "@mdx-js/mdx";
 import remarkGfm from "remark-gfm";
 import * as runtime from "react/jsx-runtime";
 import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import PostHeader from "@/components/blog/post-header";
 import TableOfContents from "@/components/blog/table-of-contents";
 import ReadingProgress from "@/components/blog/reading-progress";
@@ -85,8 +86,9 @@ export default async function BlogPostPage({
         </div>
       </div>
 
-      {/* Related Posts */}
       <RelatedPosts posts={relatedPosts} currentPostId={post.id} />
+      
+      <Footer />
     </div>
   );
 }

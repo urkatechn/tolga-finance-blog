@@ -1,7 +1,8 @@
 import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import BlogHeader from "@/components/blog/blog-header";
-import SearchFilters from "@/components/blog/search-filters";
 import PostCard from "@/components/blog/post-card";
+import SearchFilters from "@/components/blog/search-filters";
 import { Button } from "@/components/ui/button";
 import { getPosts, getCategories } from "@/lib/api/supabase-posts";
 import Link from "next/link";
@@ -102,6 +103,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </div>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 }

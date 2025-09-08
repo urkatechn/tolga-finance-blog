@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, TrendingUp, DollarSign, PieChart } from "lucide-react";
 import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
 import HeroSection from "@/components/hero/hero-section";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
 
@@ -37,36 +38,44 @@ export default async function Home() {
       <Header />
       <HeroSection />
 
-      {/* Features Section */}
+      {/* What You'll Find Here */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">What You&apos;ll Learn</h2>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">What You&apos;ll Find Here</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Real financial advice from someone who&apos;s made the mistakes so you don&apos;t have to
+              </p>
+            </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <TrendingUp className="h-8 w-8 text-blue-600 mb-2" />
-                  <CardTitle>Investment Strategies</CardTitle>
-                  <CardDescription>
-                    Learn proven investment strategies and market analysis techniques
+                  <TrendingUp className="h-8 w-8 text-blue-600 mb-4" />
+                  <CardTitle className="text-xl mb-2">Honest Investing</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    No get-rich-quick schemes. Just real strategies for building wealth over time, 
+                    including the mistakes I made along the way.
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <DollarSign className="h-8 w-8 text-green-600 mb-2" />
-                  <CardTitle>Personal Finance</CardTitle>
-                  <CardDescription>
-                    Master budgeting, saving, and debt management for financial freedom
+                  <DollarSign className="h-8 w-8 text-green-600 mb-4" />
+                  <CardTitle className="text-xl mb-2">Money That Works</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    Practical budgeting, saving, and debt strategies that actually fit into real life. 
+                    No perfect spreadsheets required.
                   </CardDescription>
                 </CardHeader>
               </Card>
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <PieChart className="h-8 w-8 text-purple-600 mb-2" />
-                  <CardTitle>Portfolio Management</CardTitle>
-                  <CardDescription>
-                    Build and manage diversified portfolios for long-term growth
+                  <PieChart className="h-8 w-8 text-purple-600 mb-4" />
+                  <CardTitle className="text-xl mb-2">Simple Portfolios</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    Build diversified portfolios without the complexity. Learn what works 
+                    and what doesn&apos;t from 12+ years of trial and error.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -123,11 +132,11 @@ export default async function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Stay Ahead of the Markets
+                Join the Journey
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Join thousands of smart investors who get our weekly insights delivered straight to their inbox. 
-                No spam, just actionable financial advice.
+                Get my latest thoughts on investing, money, and life delivered weekly. 
+                No spam, no sales pitches - just honest insights from someone still figuring it out.
               </p>
             </div>
             <div className="max-w-2xl mx-auto">
@@ -136,6 +145,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 }
