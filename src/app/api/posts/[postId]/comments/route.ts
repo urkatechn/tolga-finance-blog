@@ -39,16 +39,35 @@ export async function GET(
       created_at: string;
       parent_id: string | null;
       is_approved: boolean;
-      replies: Array<any>;
+      replies: Array<{
+        id: string;
+        author_name: string;
+        author_email: string | null;
+        content: string;
+        created_at: string;
+        parent_id: string | null;
+        is_approved: boolean;
+      }>;
     }> = [];
 
+    // Define comment interface
+    interface Comment {
+      id: string;
+      author_name: string;
+      author_email: string | null;
+      content: string;
+      created_at: string;
+      parent_id: string | null;
+      is_approved: boolean;
+    }
+
     // First pass: create all comments
-    comments?.forEach(comment => {
+    comments?.forEach((comment: Comment) => {
       commentsMap.set(comment.id, { ...comment, replies: [] });
     });
 
     // Second pass: organize into tree structure
-    comments?.forEach(comment => {
+    comments?.forEach((comment: Comment) => {
       if (comment.parent_id) {
         const parent = commentsMap.get(comment.parent_id);
         if (parent) {

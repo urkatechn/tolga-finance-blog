@@ -17,9 +17,9 @@ export async function GET() {
     
     // Calculate statistics
     const total = statusCounts.length
-    const published = statusCounts.filter(p => p.status === 'published').length
-    const draft = statusCounts.filter(p => p.status === 'draft').length
-    const archived = statusCounts.filter(p => p.status === 'archived').length
+    const published = statusCounts.filter((p: { status: string }) => p.status === 'published').length
+    const draft = statusCounts.filter((p: { status: string }) => p.status === 'draft').length
+    const archived = statusCounts.filter((p: { status: string }) => p.status === 'archived').length
     
     return NextResponse.json({
       total,

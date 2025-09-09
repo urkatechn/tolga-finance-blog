@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deleteComment } from '@/lib/api/likes-comments';
 
 export async function DELETE(
   request: NextRequest,
@@ -8,16 +7,13 @@ export async function DELETE(
   try {
     const { commentId } = await params;
     
-    const success = await deleteComment(commentId);
+    console.log('Deleting comment:', commentId);
     
-    if (success) {
-      return NextResponse.json({ success: true });
-    } else {
-      return NextResponse.json(
-        { error: 'Failed to delete comment' },
-        { status: 500 }
-      );
-    }
+    // TODO: Implement comment deletion logic
+    return NextResponse.json(
+      { error: 'Comment deletion not implemented' },
+      { status: 501 }
+    );
   } catch (error) {
     console.error('Error deleting comment:', error);
     return NextResponse.json(

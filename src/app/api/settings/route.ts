@@ -17,7 +17,7 @@ export async function GET() {
     }
     
     // Convert to key-value object for easier consumption
-    const settingsMap = settings.reduce((acc, setting) => {
+    const settingsMap = settings.reduce((acc: Record<string, unknown>, setting: { key: string; value: unknown }) => {
       // Parse JSON value if it's a string, otherwise use as-is
       let parsedValue = setting.value
       if (typeof setting.value === 'string') {

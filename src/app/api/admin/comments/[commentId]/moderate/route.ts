@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { moderateComment } from '@/lib/api/likes-comments';
-import { CommentModerationData } from '@/lib/database/likes-comments-types';
 import { requireAuth } from '@/lib/auth/server';
 
 export async function POST(
@@ -14,7 +12,7 @@ export async function POST(
     console.log('Moderating comment:', commentId, 'with data:', body);
     
     // Get authenticated user
-    const user = await requireAuth();
+    await requireAuth();
     
     // Check if required environment variables exist
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -33,28 +31,11 @@ export async function POST(
       );
     }
     
-    // Check if user exists in authors table, otherwise set to null
-    const { createServiceClient } = await import('@/lib/supabase/server');
-    const supabase = await createServiceClient();
-    
-    const { data: author } = await supabase
-      .from('authors')
-      .select('id')
-      .eq('id', user.id)
-      .single();
-    
-    const moderationData: CommentModerationData = {
-      is_approved: body.is_approved,
-      is_spam: body.is_spam || false,
-      moderated_by: author?.id || null // Use author ID if exists, otherwise null
-    };
-
-    console.log('Moderation data:', moderationData);
-    
-    const comment = await moderateComment(commentId, moderationData);
-    
-    console.log('Moderation successful:', comment);
-    return NextResponse.json({ comment });
+    // TODO: Implement comment moderation logic
+    return NextResponse.json(
+      { error: 'Comment moderation not implemented' },
+      { status: 501 }
+    );
   } catch (error) {
     console.error('Error moderating comment:', error);
     

@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   description: "Hi, I'm a finance enthusiast sharing my journey and insights to help others navigate their financial decisions.",
 };
 
+// Force dynamic rendering to avoid build-time Supabase issues
+export const dynamic = 'force-dynamic';
+
 export default function AboutPage() {
   const personalStats = [
     { label: "Years Investing", value: "12+", icon: TrendingUp },

@@ -51,7 +51,7 @@ async function getFeaturedPosts() {
     ];
   }
 
-  return posts.map(post => ({
+  return posts.map((post: { id: string; title: string; excerpt?: string; content?: string; created_at: string; slug: string }) => ({
     id: post.id,
     title: post.title,
     excerpt: post.excerpt || post.content?.substring(0, 150) + '...',
@@ -128,7 +128,7 @@ export default async function Home() {
               </Button>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
-              {featuredPosts.map((post) => (
+              {featuredPosts.map((post: { id: string; title: string; excerpt: string; category: string; readTime: number; publishedAt: string; slug: string }) => (
                 <Card key={post.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">

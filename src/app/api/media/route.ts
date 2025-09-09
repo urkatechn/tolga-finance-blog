@@ -27,7 +27,7 @@ export async function GET() {
     
     // Get public URLs for the files and format the response
     const filesWithUrls = await Promise.all(
-      (files || []).map(async (file) => {
+      (files || []).map(async (file: { name: string; id: string; created_at: string; metadata?: Record<string, unknown> }) => {
         // Try public URL first, fallback to signed URL if needed
         let fileUrl: string;
         
