@@ -9,19 +9,20 @@ import Link from "next/link";
 export const revalidate = 1800; // Revalidate every 30 minutes
 
 interface BlogPageProps {
-  searchParams: { 
+  searchParams: Promise<{ 
     category?: string; 
     search?: string; 
     page?: string;
-  };
+  }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const sp = await searchParams;
   // Fetch real data from Supabase with caching
   const [posts, categories, recentPosts] = await Promise.all([
     getCachedPosts({
-      category: searchParams.category,
-      search: searchParams.search,
+      category: sp.category,
+      search: sp.search,
       limit: 12, // Show 12 posts per page
     }),
     getCachedCategories(),
@@ -46,7 +47,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               <div className="text-center py-16">
                 <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">No articles found</h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                  {searchParams.search || searchParams.category 
+{sp.search || sp.category 
                     ? "Try adjusting your search or filter criteria to find more articles."
                     : "No articles have been published yet. Check back soon for new content!"
                   }
@@ -58,7 +59,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             ) : (
               <>
                 {/* Featured Posts Section */}
-                {featuredPosts.length > 0 && !searchParams.search && !searchParams.category && (
+{featuredPosts.length > 0 && !sp.search && !sp.category && (
                   <div className="mb-16">
                     <div className="flex items-center gap-3 mb-8">
                       <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Featured Articles</h2>
@@ -77,10 +78,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
                       <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {searchParams.category && searchParams.category !== "all" 
-                          ? `${categories.find(c => c.slug === searchParams.category)?.name || searchParams.category} Articles`
-                          : searchParams.search 
-                            ? `Search Results for "${searchParams.search}"`
+{sp.category && sp.category !== "all" 
+                          ? `${categories.find(c => c.slug === sp.category)?.name || sp.category} Articles`
+                          : sp.search 
+                            ? `Search Results for \"${sp.search}\"`
                             : "Latest Articles"
                         }
                       </h2>
@@ -91,7 +92,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   </div>
                   
                   <div className="space-y-0">
-                    {(featuredPosts.length > 0 && !searchParams.search && !searchParams.category 
+{(featuredPosts.length > 0 && !sp.search && !sp.category 
                       ? regularPosts 
                       : posts
                     ).map((post) => (

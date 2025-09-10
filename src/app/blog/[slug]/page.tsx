@@ -15,9 +15,10 @@ export const revalidate = 3600; // Revalidate every hour
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const post = await getCachedPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = await getCachedPostBySlug(slug);
   
   if (!post) {
     return {
@@ -55,9 +56,10 @@ function renderContent(content: string) {
 export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const post = await getCachedPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = await getCachedPostBySlug(slug);
 
   if (!post) {
     notFound();
