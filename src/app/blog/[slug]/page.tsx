@@ -8,6 +8,7 @@ import { PostHeaderWithInteractions } from "@/components/blog/post-header";
 import CommentsSection from "@/components/blog/comments-section";
 import ReadingProgress from "@/components/blog/reading-progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import MarkdownContent from "@/components/blog/markdown-content";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -44,14 +45,7 @@ export async function generateMetadata({
   };
 }
 
-// Simple content renderer - replace with proper MDX later
-function renderContent(content: string) {
-  return (
-    <div className="prose prose-lg prose-slate dark:prose-invert mx-auto prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-strong:text-gray-900 dark:prose-strong:text-gray-100">
-      <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br />') }} />
-    </div>
-  );
-}
+// Render Markdown content consistently with the editor preview
 
 export default async function BlogPostPage({
   params,
@@ -65,7 +59,7 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const ContentComponent = renderContent(post.content);
+const content = post.content || "";
 
   return (
     <div className="min-h-screen">
@@ -79,7 +73,7 @@ export default async function BlogPostPage({
           {/* Main Content */}
           <div className="space-y-8">
             {/* Article Content */}
-            {ContentComponent}
+<MarkdownContent source={content} />
 
             {/* Comments Section - Wrapped in Suspense for better performance */}
             <div className="max-w-3xl mx-auto">
