@@ -38,7 +38,6 @@ export default function PostsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [stats, setStats] = useState<PostStats>({ total: 0, published: 0, draft: 0, archived: 0 });
   const [loading, setLoading] = useState(true);
-  const [fetchingPosts, setFetchingPosts] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -53,10 +52,8 @@ export default function PostsPage() {
   const [isArchiveAction, setIsArchiveAction] = useState(true); // true for archive, false for unarchive
   const { toast } = useToast();
 
-  const fetchPosts = useCallback(async (showLoader = false) => {
+  const fetchPosts = useCallback(async () => {
     try {
-      if (showLoader) setFetchingPosts(true);
-      
       const params = new URLSearchParams();
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (categoryFilter !== 'all') params.append('category_id', categoryFilter);
@@ -67,11 +64,6 @@ export default function PostsPage() {
       
       const data = await response.json();
       setPosts(data.posts || []);
-      
-      // Clear selection when posts are refreshed
-      if (showLoader) {
-        setSelectedPosts([]);
-      }
     } catch (error) {
       console.error('Error fetching posts:', error);
       toast({
@@ -79,8 +71,6 @@ export default function PostsPage() {
         description: "Failed to load posts",
         variant: "destructive",
       });
-    } finally {
-      if (showLoader) setFetchingPosts(false);
     }
   }, [statusFilter, categoryFilter, searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -119,7 +109,7 @@ export default function PostsPage() {
   // Handle filter changes (except search)
   useEffect(() => {
     if (!loading) {
-      fetchPosts(true);
+      fetchPosts();
     }
   }, [statusFilter, categoryFilter, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -127,7 +117,7 @@ export default function PostsPage() {
   useEffect(() => {
     if (!loading) {
       const timer = setTimeout(() => {
-        fetchPosts(true);
+        fetchPosts();
       }, 300);
       return () => clearTimeout(timer);
     }
@@ -484,15 +474,6 @@ export default function PostsPage() {
 
   return (
     <div className="relative space-y-6">
-      {/* Loading Overlay for Updates */}
-      {fetchingPosts && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center">
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <span className="text-sm font-medium">Updating...</span>
-          </div>
-        </div>
-      )}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -502,11 +483,11 @@ export default function PostsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled={loading || fetchingPosts}>
+          <Button variant="outline" size="sm" disabled={loading}>
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Button asChild disabled={loading || fetchingPosts}>
+          <Button asChild disabled={loading}>
             <Link href="/admin/posts/new">
               <Plus className="mr-2 h-4 w-4" />
               New Post
@@ -553,10 +534,10 @@ export default function PostsPage() {
               className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              disabled={loading || fetchingPosts}
+              disabled={loading}
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading || fetchingPosts}>
+          <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
@@ -567,7 +548,7 @@ export default function PostsPage() {
               <SelectItem value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter} disabled={loading || fetchingPosts}>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter} disabled={loading}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All categories" />
             </SelectTrigger>
@@ -597,7 +578,7 @@ export default function PostsPage() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  disabled={selectedPosts.length === 0 || loading || fetchingPosts || isBulkArchiving}
+                  disabled={selectedPosts.length === 0 || loading || isBulkArchiving}
                   onClick={handleBulkArchiveClick}
                 >
                   {isBulkArchiving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -610,7 +591,7 @@ export default function PostsPage() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  disabled={selectedPosts.length === 0 || loading || fetchingPosts || isBulkDeleting}
+                  disabled={selectedPosts.length === 0 || loading || isBulkDeleting}
                   onClick={handleBulkDeleteClick}
                 >
                   {isBulkDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

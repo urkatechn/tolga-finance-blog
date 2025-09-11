@@ -16,13 +16,27 @@ export default function NewsletterSignup() {
     if (!email) return;
 
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitted(true);
-    setIsLoading(false);
-    setEmail("");
+
+    try {
+      const res = await fetch('/api/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Subscription failed');
+      }
+
+      setIsSubmitted(true);
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      // Optionally, you can show an inline error message here
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {

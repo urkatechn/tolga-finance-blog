@@ -1,9 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { FileText, MessageSquare, TrendingUp, Eye, Heart, Plus } from "lucide-react";
-import DatabaseVerify from '@/components/admin/database-setup';
+import { FileText, MessageSquare, TrendingUp, Eye, BarChart3 } from "lucide-react";
 import { getUser } from '@/lib/supabase/user';
 import { redirect } from 'next/navigation';
 
@@ -21,12 +19,6 @@ export default async function AdminDashboard() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Welcome Back! 👋</h1>
           <p className="text-muted-foreground">Good evening!</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add New
-          </Button>
         </div>
       </div>
 
@@ -54,11 +46,6 @@ export default async function AdminDashboard() {
                 </div>
               </div>
             </div>
-            <div className="text-right">
-              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                1K Likes
-              </Badge>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -84,13 +71,6 @@ export default async function AdminDashboard() {
           value="34,267" 
           icon={<MessageSquare className="h-8 w-8" />} 
           iconBg="bg-green-500"
-          iconColor="text-white"
-        />
-        <StatCard 
-          title="Total Likes" 
-          value="65.26K" 
-          icon={<Heart className="h-8 w-8" />} 
-          iconBg="bg-pink-500"
           iconColor="text-white"
         />
       </div>
@@ -124,9 +104,6 @@ export default async function AdminDashboard() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Recent Blogs</CardTitle>
-              <Button variant="outline" size="sm">
-                Add New
-              </Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -153,16 +130,59 @@ export default async function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Database Verification Section */}
+
+      {/* Content Performance (mock, non-DB) */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Database Management</CardTitle>
-          <CardDescription>
-            Verify your database setup and initialize default data
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg">Content Performance</CardTitle>
+            <BarChart3 className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <CardDescription>Top performing content (last 30 days)</CardDescription>
         </CardHeader>
         <CardContent>
-          <DatabaseVerify />
+          <div className="space-y-3">
+            {topContent.map((item) => (
+              <div key={item.slug} className="flex items-center justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-8 w-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                    <Eye className="h-4 w-4" />
+                  </div>
+                  <div className="truncate">
+                    <p className="text-sm font-medium truncate">{item.title}</p>
+                    <p className="text-xs text-muted-foreground truncate">/{item.slug}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold">{item.views} views</p>
+                  <p className="text-xs text-muted-foreground">{item.growth > 0 ? `+${item.growth}%` : `${item.growth}%`} vs last month</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Drafts to finish (mock, non-DB) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Drafts to finish</CardTitle>
+          <CardDescription>Pick up where you left off</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {drafts.map((d) => (
+              <div key={d.slug} className="flex items-center justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{d.title}</p>
+                  <p className="text-xs text-muted-foreground">Last edited {d.updated}</p>
+                </div>
+                <Button size="sm" variant="outline" asChild>
+                  <a href={`/admin/posts/${d.id}/edit`}>Continue</a>
+                </Button>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -226,5 +246,18 @@ const recentPosts = [
     comments: 8,
     views: "653",
   },
+];
+
+// Mock content performance (non-DB)
+const topContent = [
+  { title: "Beginner's Guide to Index Funds", slug: "beginners-guide-index-funds", views: 3200, growth: 12 },
+  { title: "How to Build an Emergency Fund", slug: "build-emergency-fund", views: 2480, growth: 8 },
+  { title: "5 Budgeting Mistakes to Avoid", slug: "budgeting-mistakes-avoid", views: 1805, growth: -3 },
+];
+
+// Mock drafts list (non-DB)
+const drafts = [
+  { id: "d1", title: "Understanding ETFs vs Mutual Funds", slug: "etf-vs-mutual-fund", updated: "2 days ago" },
+  { id: "d2", title: "Side Hustles That Actually Work", slug: "side-hustles-that-work", updated: "5 days ago" },
 ];
 

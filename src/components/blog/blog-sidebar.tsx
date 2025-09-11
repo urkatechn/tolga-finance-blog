@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TrendingUp, Users, Mail, Tag, Clock, ArrowRight } from "lucide-react";
+import { TrendingUp, Users, Mail, Tag, Clock, ArrowRight, CheckCircle } from "lucide-react";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
 
 interface BlogSidebarProps {
@@ -15,6 +16,35 @@ interface BlogSidebarProps {
 }
 
 export default function BlogSidebar({ recentPosts = [], categories = [] }: BlogSidebarProps) {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/subscribers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Subscription failed');
+      }
+      setSubmitted(true);
+      setEmail("");
+    } catch (err: any) {
+      setError(err.message || 'Subscription failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Newsletter Signup */}
@@ -26,22 +56,42 @@ export default function BlogSidebar({ recentPosts = [], categories = [] }: BlogS
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Get the latest financial insights delivered to your inbox weekly.
-          </p>
-          <div className="space-y-2">
-            <Input 
-              placeholder="Enter your email" 
-              type="email"
-              className="bg-white dark:bg-gray-800"
-            />
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">
-              Subscribe
-            </Button>
-          </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            No spam. Unsubscribe anytime.
-          </p>
+          {submitted ? (
+            <div className="text-center">
+              <div className="flex justify-center mb-3">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Subscribed! Check your inbox soon.</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Get the latest financial insights delivered to your inbox weekly.
+              </p>
+              <form onSubmit={handleSubscribe} className="space-y-2">
+                <Input 
+                  placeholder="Enter your email" 
+                  type="email"
+                  className="bg-white dark:bg-gray-800"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+                <Button className="w-full bg-blue-600 hover:bg-blue-700" type="submit" disabled={loading || !email}>
+                  {loading ? 'Subscribing...' : 'Subscribe'}
+                </Button>
+                {error && (
+                  <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
+                )}
+              </form>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                No spam. Unsubscribe anytime.
+              </p>
+            </>
+          )}
         </CardContent>
       </Card>
 

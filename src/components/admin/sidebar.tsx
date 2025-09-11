@@ -63,16 +63,9 @@ const navItems: NavItem[] = [
     icon: Upload,
   },
   {
-    title: "Users",
-    href: "/admin/users",
+    title: "Subscribers",
+    href: "/admin/subscribers",
     icon: Users,
-    badge: "SOON",
-  },
-  {
-    title: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-    badge: "SOON",
   },
   {
     title: "Settings",

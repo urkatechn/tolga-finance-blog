@@ -203,3 +203,12 @@ CREATE POLICY "Authors are updatable by authenticated users" ON authors
 
 CREATE POLICY "Authors are deletable by authenticated users" ON authors
   FOR DELETE USING (auth.role() = 'authenticated');
+
+-- Create subscribers table
+CREATE TABLE IF NOT EXISTS subscribers (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  is_subscribed BOOLEAN,
+  subscription_date_time TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  update_date_time TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
