@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Image, Upload, Search, Plus, Check } from 'lucide-react';
+import { Image as ImageIcon, Upload, Search, Plus, Check } from 'lucide-react';
+import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -165,7 +166,7 @@ export function MediaPicker({
       <DialogContent className="max-w-4xl max-h-[80vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Image className="h-5 w-5" />
+            <ImageIcon className="h-5 w-5" />
             {title}
           </DialogTitle>
           <DialogDescription>
@@ -203,7 +204,7 @@ export function MediaPicker({
                 </div>
               ) : filteredFiles.length === 0 ? (
                 <div className="text-center py-12">
-                  <Image className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No images found</h3>
                   <p className="text-muted-foreground">
                     {searchTerm ? 'No images match your search.' : 'Upload your first image to get started.'}
@@ -222,10 +223,12 @@ export function MediaPicker({
                       onClick={() => handleSelectFile(file)}
                     >
                       <div className="relative w-full h-full">
-                        <img
+                        <NextImage
                           src={file.url}
                           alt={file.name}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 640px) 33vw, 200px"
+                          className="object-cover"
                         />
                         {selectedFile?.id === file.id && (
                           <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">

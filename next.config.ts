@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'www.gravatar.com',
       },
+      {
+        protocol: 'https',
+        // Allow all Supabase project subdomains
+        hostname: '**.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
   },
   experimental: {

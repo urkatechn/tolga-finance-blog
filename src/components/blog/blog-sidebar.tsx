@@ -38,8 +38,9 @@ export default function BlogSidebar({ recentPosts = [], categories = [] }: BlogS
       }
       setSubmitted(true);
       setEmail("");
-    } catch (err: any) {
-      setError(err.message || 'Subscription failed');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Subscription failed';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -190,7 +191,7 @@ export default function BlogSidebar({ recentPosts = [], categories = [] }: BlogS
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
-              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Finance Blog Team" />
+              <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Finance Blog Team" alt="Finance Blog Team avatar" />
               <AvatarFallback>FB</AvatarFallback>
             </Avatar>
             <div>

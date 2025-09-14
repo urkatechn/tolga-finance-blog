@@ -10,7 +10,6 @@ import {
   Upload, 
   MessageSquare,
   Users,
-  BarChart3
 } from "lucide-react";
 
 import {

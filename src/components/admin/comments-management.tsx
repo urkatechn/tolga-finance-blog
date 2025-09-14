@@ -10,7 +10,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -258,7 +258,8 @@ export default function CommentsManagement() {
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage 
-                        src={comment.author_email ? getGravatarUrl(comment.author_email) : undefined} 
+                        src={comment.author_email ? getGravatarUrl(comment.author_email) : undefined}
+                        alt={`${comment.author_name} avatar`}
                       />
                       <AvatarFallback className="text-xs">
                         {comment.author_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}

@@ -11,7 +11,7 @@ export async function POST(
     const body = await request.json();
 
     // Authenticate the admin user
-    const user = await requireAuth();
+    await requireAuth();
 
     // Validate input – allow partial updates but require at least one flag
     const { is_approved, is_spam } = body as { is_approved?: boolean; is_spam?: boolean };

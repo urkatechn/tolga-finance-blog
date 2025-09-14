@@ -35,8 +35,9 @@ export default function SubscribersPage() {
           .order("subscription_date_time", { ascending: false });
         if (error) throw error;
         setSubscribers(data || []);
-      } catch (e: any) {
-        setError(e.message || "Failed to load subscribers");
+      } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : "Failed to load subscribers";
+        setError(message);
       } finally {
         setLoading(false);
       }

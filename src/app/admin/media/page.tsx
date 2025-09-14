@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import React from 'react';
-import { Upload, Image, Trash2, Copy, Download, Search, Grid, List, Plus } from 'lucide-react';
+import { Upload, Image as ImageIcon, Trash2, Copy, Download, Search, Grid, List, Plus } from 'lucide-react';
+import NextImage from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -291,7 +292,7 @@ export default function MediaPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Image className="h-8 w-8 text-blue-500" />
+              <ImageIcon className="h-8 w-8 text-blue-500" />
               <div>
                 <p className="text-2xl font-bold">{files.length}</p>
                 <p className="text-sm text-muted-foreground">Total Images</p>
@@ -316,7 +317,7 @@ export default function MediaPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
-                <Image className="h-4 w-4 text-white" />
+                <ImageIcon className="h-4 w-4 text-white" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{filteredFiles.length}</p>
@@ -331,7 +332,7 @@ export default function MediaPage() {
       {filteredFiles.length === 0 ? (
         <Card className="p-12">
           <div className="text-center">
-            <Image className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No images found</h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm ? 'No images match your search.' : 'Upload your first image to get started.'}
@@ -362,10 +363,12 @@ export default function MediaPage() {
             <Card key={file.id} className="overflow-hidden">
               <CardContent className="p-0">
                 <div className="aspect-square relative">
-                  <img
+                  <NextImage
                     src={file.url}
                     alt={file.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 200px"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 hover:opacity-100">
                     <div className="flex gap-2">
@@ -410,11 +413,15 @@ export default function MediaPage() {
             <div className="divide-y">
               {filteredFiles.map((file) => (
                 <div key={file.id} className="p-4 flex items-center gap-4">
-                  <img
-                    src={file.url}
-                    alt={file.name}
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                  <div className="relative w-16 h-16">
+                    <NextImage
+                      src={file.url}
+                      alt={file.name}
+                      fill
+                      sizes="64px"
+                      className="object-cover rounded"
+                    />
+                  </div>
                   <div className="flex-1">
                     <p className="font-medium">{file.name}</p>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">

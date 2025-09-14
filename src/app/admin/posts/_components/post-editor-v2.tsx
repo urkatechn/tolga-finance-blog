@@ -33,6 +33,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Save, X, ImageIcon } from "lucide-react";
+import NextImage from 'next/image';
 import { MediaPicker } from '@/components/admin/media-picker';
 
 // Dynamically import the editor to avoid SSR issues
@@ -599,11 +600,13 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                           </Button>
                         </div>
                         {field.value && (
-                          <div className="relative">
-                            <img
-                              src={field.value}
+                          <div className="relative h-32">
+                            <NextImage
+                              src={field.value as string}
                               alt="Cover preview"
-                              className="w-full h-32 object-cover rounded-md border"
+                              fill
+                              sizes="100vw"
+                              className="object-cover rounded-md border"
                             />
                             <Button
                               type="button"
@@ -693,11 +696,13 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                 <CardContent className="p-6 md:p-12">
                   <article className="mx-auto max-w-4xl">
                     {form.watch("coverImage") && (
-                      <div className="mb-8 -mx-6 md:-mx-12 -mt-6 md:-mt-12">
-                        <img 
-                          src={form.watch("coverImage")} 
-                          alt={form.watch("title")}
-                          className="w-full h-64 md:h-96 object-cover"
+                      <div className="relative mb-8 -mx-6 md:-mx-12 -mt-6 md:-mt-12 h-64 md:h-96">
+                        <NextImage 
+                          src={form.watch("coverImage") as string} 
+                          alt={form.watch("title") || 'Cover image'}
+                          fill
+                          sizes="100vw"
+                          className="object-cover"
                         />
                       </div>
                     )}

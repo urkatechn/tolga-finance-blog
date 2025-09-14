@@ -164,7 +164,8 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
       <div className="flex space-x-3">
         <Avatar className="h-8 w-8">
           <AvatarImage 
-            src={comment.author_email ? getGravatarUrl(comment.author_email) : undefined} 
+            src={comment.author_email ? getGravatarUrl(comment.author_email) : undefined}
+            alt={`${comment.author_name} avatar`}
           />
           <AvatarFallback className="text-xs">
             {getInitials(comment.author_name)}
