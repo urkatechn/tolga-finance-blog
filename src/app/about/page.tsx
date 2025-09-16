@@ -7,7 +7,6 @@ import {
   BookOpen, 
   TrendingUp, 
   Heart,
-  Mail,
   Linkedin
 } from "lucide-react";
 import Header from "@/components/layout/header";

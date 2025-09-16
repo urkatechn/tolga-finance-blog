@@ -15,8 +15,7 @@ export async function POST(req: NextRequest) {
       buttonText, 
       buttonUrl, 
       footerText, 
-      brandName,
-      to 
+      brandName
     } = body;
 
     // Validate required fields
@@ -26,15 +25,6 @@ export async function POST(req: NextRequest) {
 
     if (!content || typeof content !== "string") {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
-    }
-
-    // If 'to' is provided, validate it, otherwise use default
-    let recipient = "ttanagardigil@urkatech.com";
-    if (to) {
-      if (typeof to !== "string" || !isValidEmail(to)) {
-        return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
-      }
-      recipient = to;
     }
 
     // Send the email
