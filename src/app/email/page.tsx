@@ -32,19 +32,19 @@ export default function EmailPage() {
               <div>
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">Simple Notification:</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Subject: "New Blog Post Published" • Content: "Check out our latest article on market analysis."
+                  Subject: &quot;New Blog Post Published&quot; • Content: &quot;Check out our latest article on market analysis.&quot;
                 </p>
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">With Action Button:</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Subject: "Weekly Newsletter" • Content: "Market updates..." • Button: "Read Full Newsletter"
+                  Subject: &quot;Weekly Newsletter&quot; • Content: &quot;Market updates...&quot; • Button: &quot;Read Full Newsletter&quot;
                 </p>
               </div>
               <div>
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">Personal Message:</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Recipient Name: "Tolga" • Subject: "Monthly Review" • Content: "Here's your monthly performance summary..."
+                  Recipient Name: &quot;Tolga&quot; • Subject: &quot;Monthly Review&quot; • Content: &quot;Here&#39;s your monthly performance summary...&quot;
                 </p>
               </div>
             </div>

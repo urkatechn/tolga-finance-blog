@@ -1,9 +1,6 @@
 import { Resend } from "resend";
 import { genericEmailHtml, genericEmailText, EmailTemplateData } from "./templates";
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export interface SendEmailOptions {
   to: string | string[];
   subject: string;
@@ -45,6 +42,11 @@ export async function sendGenericEmail(options: SendEmailOptions) {
   const text = genericEmailText(templateData);
 
   try {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      throw new Error("RESEND_API_KEY is not configured");
+    }
+    const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
       from: fromAddress,
       to: Array.isArray(to) ? to : [to],
