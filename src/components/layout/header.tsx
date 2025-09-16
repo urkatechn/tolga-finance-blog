@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Linkedin } from "lucide-react";
+import { LINKEDIN_URL } from "@/lib/site-config";
 import { useState } from "react";
 
 export default function Header() {
@@ -16,7 +17,7 @@ export default function Header() {
   ];
 
   const socialLinks = [
-    { name: "LinkedIn", href: "https://linkedin.com/company/financeblog", icon: Linkedin },
+    { name: "LinkedIn", href: LINKEDIN_URL, icon: Linkedin },
   ];
 
   return (
