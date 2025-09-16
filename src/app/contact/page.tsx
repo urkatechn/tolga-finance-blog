@@ -12,6 +12,7 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import ContactForm from "@/components/contact/contact-form";
 import Link from "next/link";
+import { LINKEDIN_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Contact Me | Finance Blog",
@@ -50,29 +51,8 @@ export default function ContactPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="grid md:grid-cols-2 gap-8 mb-16">
               
-              {/* Email */}
-              <Card className="text-center hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mx-auto mb-4">
-                    <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <CardTitle className="text-xl">Email Me</CardTitle>
-                  <CardDescription className="text-base">
-                    The best way to reach me for detailed questions or if you want a thoughtful response.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild className="w-full">
-                    <Link href="mailto:contact@financeblog.com">
-                      <Mail className="mr-2 h-4 w-4" />
-                      Send Email
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-
               {/* LinkedIn */}
               <Card className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
@@ -86,7 +66,7 @@ export default function ContactPage() {
                 </CardHeader>
                 <CardContent>
                   <Button variant="outline" asChild className="w-full">
-                    <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                    <Link href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
                       <Linkedin className="mr-2 h-4 w-4" />
                       Connect
                     </Link>
@@ -117,7 +97,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section id="contact-form" className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">

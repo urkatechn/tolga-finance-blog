@@ -7,6 +7,7 @@ import {
   Github,
   Heart
 } from "lucide-react";
+import { GITHUB_URL, LINKEDIN_URL, TWITTER_URL } from "@/lib/site-config";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -34,17 +35,17 @@ export default function Footer() {
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800" asChild>
-                <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <Link href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                   <Linkedin className="h-5 w-5" />
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800" asChild>
-                <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                <Link href={TWITTER_URL} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
                   <Twitter className="h-5 w-5" />
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white hover:bg-gray-800" asChild>
-                <Link href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <Link href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                   <Github className="h-5 w-5" />
                 </Link>
               </Button>

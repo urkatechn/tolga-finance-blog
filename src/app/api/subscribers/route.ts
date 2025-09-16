@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { Resend } from "resend";
+import { buildUnsubscribeUrl } from "@/lib/newsletter";
+import { subscriptionWelcomeEmailHtml, subscriptionWelcomeEmailText } from "@/lib/email/templates";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -14,6 +17,9 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = await createServiceClient();
+    const origin = req.nextUrl.origin;
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromAddress = process.env.NEWSLETTER_FROM || "info@notifications.tolgatanagardigil.com";
 
     // Try to find existing subscriber by email
     const { data: existing, error: findError } = await supabase
@@ -30,6 +36,10 @@ export async function POST(req: NextRequest) {
     const now = new Date().toISOString();
 
     if (existing) {
+      if (existing.is_subscribed) {
+        // Idempotent: already subscribed, do nothing
+        return NextResponse.json({ success: true, status: "already_subscribed" });
+      }
       // Update existing subscriber to subscribed
       const { error: updateError } = await supabase
         .from("subscribers")
@@ -45,20 +55,57 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: updateError.message }, { status: 500 });
       }
 
+      // Send welcome email only if previously unsubscribed
+      if (!existing.is_subscribed) {
+        try {
+          const unsubscribeUrl = buildUnsubscribeUrl(origin, email, existing.id.toString());
+          const html = subscriptionWelcomeEmailHtml({ unsubscribeUrl });
+          const text = subscriptionWelcomeEmailText({ unsubscribeUrl });
+          await resend.emails.send({
+            from: fromAddress,
+            to: [email],
+            subject: "Thanks for subscribing",
+            html,
+            text,
+          });
+        } catch {
+          // Ignore email delivery failures to not block subscription
+        }
+      }
+
       return NextResponse.json({ success: true, status: "updated" });
     } else {
       // Insert new subscriber
-      const { error: insertError } = await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from("subscribers")
         .insert({
           email,
           is_subscribed: true,
           subscription_date_time: now,
           update_date_time: now,
-        });
+        })
+        .select("id")
+        .single();
 
       if (insertError) {
         return NextResponse.json({ error: insertError.message }, { status: 500 });
+      }
+      // Send welcome email for new subscriber
+      if (inserted?.id) {
+        try {
+          const unsubscribeUrl = buildUnsubscribeUrl(origin, email, inserted.id.toString());
+          const html = subscriptionWelcomeEmailHtml({ unsubscribeUrl });
+          const text = subscriptionWelcomeEmailText({ unsubscribeUrl });
+          await resend.emails.send({
+            from: fromAddress,
+            to: [email],
+            subject: "Thanks for subscribing",
+            html,
+            text,
+          });
+        } catch {
+          // Ignore email delivery failures to not block subscription
+        }
       }
 
       return NextResponse.json({ success: true, status: "created" });

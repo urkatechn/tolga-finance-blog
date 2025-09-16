@@ -7,13 +7,14 @@ import {
   BookOpen, 
   TrendingUp, 
   Heart,
-  Mail,
   Linkedin
 } from "lucide-react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
 import Link from "next/link";
+import { LINKEDIN_URL } from "@/lib/site-config";
+import ContactButton from "@/components/ui/contact-button";
 
 export const metadata: Metadata = {
   title: "About Me | Finance Blog",
@@ -219,12 +220,9 @@ export default function AboutPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button size="lg" className="text-lg px-8 py-6 h-auto">
-                <Mail className="mr-2 h-5 w-5" />
-                Drop me a line
-              </Button>
+              <ContactButton />
               <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto" asChild>
-                <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                <Link href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
                   <Linkedin className="mr-2 h-5 w-5" />
                   Connect on LinkedIn
                 </Link>
