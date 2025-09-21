@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/supabase/user'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -33,6 +34,17 @@ export async function DELETE(request: NextRequest) {
     
     const deletedCount = data?.length || 0
     
+    // Invalidate caches and revalidate relevant paths
+    try {
+      revalidateTag('posts')
+      revalidateTag('recent-posts')
+      revalidateTag('featured-posts')
+      revalidatePath('/')
+      revalidatePath('/blog')
+    } catch (e) {
+      console.error('Cache revalidation error (DELETE /posts/bulk-delete):', e)
+    }
+
     return NextResponse.json({ 
       success: true, 
       deletedCount,

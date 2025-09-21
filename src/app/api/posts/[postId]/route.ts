@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/supabase/user'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export async function GET(
   request: NextRequest,
@@ -152,6 +153,20 @@ export async function PUT(
       return NextResponse.json({ error: 'Failed to update post' }, { status: 500 })
     }
     
+    // Invalidate caches and revalidate relevant paths
+    try {
+      revalidateTag('posts')
+      revalidateTag('recent-posts')
+      revalidateTag('featured-posts')
+      revalidatePath('/')
+      revalidatePath('/blog')
+      if (post?.slug) {
+        revalidatePath(`/blog/${post.slug}`)
+      }
+    } catch (e) {
+      console.error('Cache revalidation error (PUT /posts/[id]):', e)
+    }
+
     return NextResponse.json(post)
   } catch (error) {
     console.error('Unexpected error:', error)
@@ -190,6 +205,13 @@ export async function DELETE(
     // Note: Removed ownership check since author_id from database doesn't match user.id from auth
     // In a production app, you would implement proper role-based access control here
     
+    // Get slug before delete to revalidate detail path
+    const { data: toDelete } = await supabase
+      .from('posts')
+      .select('slug')
+      .eq('id', id)
+      .single()
+
     const { error } = await supabase
       .from('posts')
       .delete()
@@ -200,6 +222,20 @@ export async function DELETE(
       return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 })
     }
     
+    // Invalidate caches and revalidate relevant paths
+    try {
+      revalidateTag('posts')
+      revalidateTag('recent-posts')
+      revalidateTag('featured-posts')
+      revalidatePath('/')
+      revalidatePath('/blog')
+      if (toDelete?.slug) {
+        revalidatePath(`/blog/${toDelete.slug}`)
+      }
+    } catch (e) {
+      console.error('Cache revalidation error (DELETE /posts/[id]):', e)
+    }
+
     return NextResponse.json({ message: 'Post deleted successfully' })
   } catch (error) {
     console.error('Unexpected error:', error)

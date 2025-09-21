@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/supabase/user'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export async function GET(request: NextRequest) {
   try {
@@ -177,6 +178,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
     }
     
+    // Invalidate caches and revalidate relevant paths
+    try {
+      revalidateTag('posts')
+      revalidateTag('recent-posts')
+      revalidateTag('featured-posts')
+      revalidatePath('/')
+      revalidatePath('/blog')
+      if (post?.slug) {
+        revalidatePath(`/blog/${post.slug}`)
+      }
+    } catch (e) {
+      console.error('Cache revalidation error (POST /posts):', e)
+    }
+
     return NextResponse.json(post, { status: 201 })
   } catch (error) {
     console.error('Unexpected error:', error)
