@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Download, Trash2, Loader2, Archive } from "lucide-react";
+import { Plus, Search, Download, Trash2, Loader2, Archive, Star, StarOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,6 +24,7 @@ interface PostStats {
   published: number;
   draft: number;
   archived: number;
+  featured?: number;
 }
 
 interface Category {
@@ -41,6 +42,7 @@ export default function PostsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [featuredFilter, setFeaturedFilter] = useState<boolean>(false);
   const [selectedPosts, setSelectedPosts] = useState<Post[]>([]);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
@@ -50,6 +52,7 @@ export default function PostsPage() {
   const [isBulkArchiving, setIsBulkArchiving] = useState(false);
   const [showBulkArchiveDialog, setShowBulkArchiveDialog] = useState(false);
   const [isArchiveAction, setIsArchiveAction] = useState(true); // true for archive, false for unarchive
+  const [isBulkFeaturing, setIsBulkFeaturing] = useState(false);
   const { toast } = useToast();
 
   const fetchPosts = useCallback(async () => {
@@ -57,6 +60,7 @@ export default function PostsPage() {
       const params = new URLSearchParams();
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (categoryFilter !== 'all') params.append('category_id', categoryFilter);
+      if (featuredFilter) params.append('featured', 'true');
       if (searchTerm.trim()) params.append('search', searchTerm.trim());
       
       const response = await fetch(`/api/posts?${params.toString()}`);
@@ -111,7 +115,7 @@ export default function PostsPage() {
     if (!loading) {
       fetchPosts();
     }
-  }, [statusFilter, categoryFilter, loading]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [statusFilter, categoryFilter, featuredFilter, loading]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Debounce search
   useEffect(() => {
@@ -400,6 +404,31 @@ export default function PostsPage() {
     }
   };
 
+  const handleBulkFeature = async (makeFeatured: boolean) => {
+    if (selectedPosts.length === 0) return;
+    setIsBulkFeaturing(true);
+    try {
+      const postIds = selectedPosts.map(p => p.id);
+      const res = await fetch('/api/posts/bulk-feature', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postIds, featured: makeFeatured })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to update featured flag');
+      }
+      const result = await res.json();
+      toast({ title: 'Success', description: result.message });
+      setSelectedPosts([]);
+      await fetchPosts();
+    } catch (e) {
+      toast({ title: 'Error', description: e instanceof Error ? e.message : 'Failed to update featured', variant: 'destructive' });
+    } finally {
+      setIsBulkFeaturing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -567,6 +596,16 @@ export default function PostsPage() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            type="button"
+            variant={featuredFilter ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFeaturedFilter((v) => !v)}
+            disabled={loading}
+          >
+            <Star className="mr-2 h-4 w-4" />
+            Featured {typeof stats.featured === 'number' ? `(${stats.featured})` : ''}
+          </Button>
         </div>
         <div className="flex items-center gap-2">
           {(() => {
@@ -575,6 +614,26 @@ export default function PostsPage() {
             
             return (
               <>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  disabled={selectedPosts.length === 0 || loading || isBulkFeaturing}
+                  onClick={() => handleBulkFeature(true)}
+                >
+                  {isBulkFeaturing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Star className="mr-2 h-4 w-4" />
+                  Feature {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  disabled={selectedPosts.length === 0 || loading || isBulkFeaturing}
+                  onClick={() => handleBulkFeature(false)}
+                >
+                  {isBulkFeaturing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <StarOff className="mr-2 h-4 w-4" />
+                  Unfeature {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
+                </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 

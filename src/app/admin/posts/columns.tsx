@@ -219,6 +219,30 @@ export const createColumns = (
     },
   },
   {
+    accessorKey: "featured",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Featured
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const featured = row.getValue("featured") as boolean;
+      return featured ? (
+        <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 border-yellow-300">Yes</Badge>
+      ) : (
+        <Badge variant="outline">No</Badge>
+      );
+    },
+    filterFn: (row, id, value) => {
+      // value expected boolean
+      return (row.getValue(id) as boolean) === value;
+    },
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const post = row.original;

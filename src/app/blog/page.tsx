@@ -1,5 +1,5 @@
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
+import { ServerHeader, ServerFooter } from "@/components/server-layout";
+import { getServerSettings } from "@/lib/server-settings";
 import { getCachedPosts, getCachedCategories, getCachedRecentPosts } from "@/lib/cache";
 import PostCard from "@/components/blog/post-card";
 import BlogSidebar from "@/components/blog/blog-sidebar";
@@ -19,6 +19,7 @@ interface BlogPageProps {
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const sp = await searchParams;
   // Fetch real data from Supabase with caching
+  const settings = await getServerSettings();
   const [posts, categories, recentPosts] = await Promise.all([
     getCachedPosts({
       category: sp.category,
@@ -34,7 +35,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <ServerHeader settings={settings} />
 
       {/* Main Content */}
       <section className="py-12">
@@ -121,7 +122,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </div>
       </section>
       
-      <Footer />
+      <ServerFooter settings={settings} />
     </div>
   );
 }

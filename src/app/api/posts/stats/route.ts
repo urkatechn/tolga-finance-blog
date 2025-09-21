@@ -6,9 +6,9 @@ export async function GET() {
     const supabase = await createClient()
     
     // Get counts for each status
-    const { data: statusCounts, error } = await supabase
+    const { data: rows, error } = await supabase
       .from('posts')
-      .select('status')
+      .select('status, featured')
     
     if (error) {
       console.error('Error fetching post stats:', error)
@@ -16,16 +16,18 @@ export async function GET() {
     }
     
     // Calculate statistics
-    const total = statusCounts.length
-    const published = statusCounts.filter((p: { status: string }) => p.status === 'published').length
-    const draft = statusCounts.filter((p: { status: string }) => p.status === 'draft').length
-    const archived = statusCounts.filter((p: { status: string }) => p.status === 'archived').length
+    const total = rows.length
+    const published = rows.filter((p: { status: string }) => p.status === 'published').length
+    const draft = rows.filter((p: { status: string }) => p.status === 'draft').length
+    const archived = rows.filter((p: { status: string }) => p.status === 'archived').length
+    const featured = rows.filter((p: { featured: boolean }) => p.featured === true).length
     
     return NextResponse.json({
       total,
       published,
       draft,
-      archived
+      archived,
+      featured
     })
   } catch (error) {
     console.error('Unexpected error:', error)

@@ -5,19 +5,21 @@ import {
   FileText, 
   Eye, 
   MessageSquare, 
-  Clock, 
-  ArrowRight
+  Users,
+  ArrowRight,
+  TrendingUp,
+  Calendar,
+  Tag
 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getDashboardStats, getPostViewsData } from "@/lib/api/dashboard";
-import { DashboardChart } from "./_components/dashboard-chart";
+import { getDashboardStats } from "@/lib/api/dashboard";
 import { DashboardActivity } from "@/app/admin/dashboard/_components/dashboard-activity";
 
 export const metadata: Metadata = {
-  title: "Dashboard | Finance Blog Admin",
-  description: "Admin dashboard for Finance Blog",
+  title: "Dashboard",
+  description: "Admin dashboard with real-time stats and quick actions",
 };
 
 export default async function DashboardPage() {
@@ -37,9 +39,13 @@ export default async function DashboardPage() {
         <StatsCards />
       </Suspense>
       
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <Suspense fallback={<ChartSkeleton />}>
-          <ViewsChart />
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        <Suspense fallback={<CategoriesOverviewSkeleton />}>
+          <CategoriesOverview />
+        </Suspense>
+        
+        <Suspense fallback={<QuickActionsSkeleton />}>
+          <QuickActions />
         </Suspense>
         
         <Suspense fallback={<ActivitySkeleton />}>
@@ -70,13 +76,13 @@ async function StatsCards() {
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-          <Eye className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">Subscribers</CardTitle>
+          <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{stats.totalViews.toLocaleString()}</div>
+          <div className="text-2xl font-bold">{stats.totalSubscribers.toLocaleString()}</div>
           <p className="text-xs text-muted-foreground">
-            +2.5% from last month
+            {stats.recentSubscribers > 0 ? `+${stats.recentSubscribers} this month` : 'No new subscribers this month'}
           </p>
         </CardContent>
       </Card>
@@ -89,20 +95,20 @@ async function StatsCards() {
         <CardContent>
           <div className="text-2xl font-bold">{stats.totalComments}</div>
           <p className="text-xs text-muted-foreground">
-            +12% from last month
+            Across all posts
           </p>
         </CardContent>
       </Card>
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium">Avg. Read Time</CardTitle>
-          <Clock className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium">Categories</CardTitle>
+          <Tag className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">8.2 min</div>
+          <div className="text-2xl font-bold">{stats.totalCategories}</div>
           <p className="text-xs text-muted-foreground">
-            -0.3 min from last month
+            {stats.topCategories.length > 0 ? `"${stats.topCategories[0].name}" is most active` : 'Active categories'}
           </p>
         </CardContent>
       </Card>
@@ -110,19 +116,111 @@ async function StatsCards() {
   );
 }
 
-async function ViewsChart() {
-  const viewsData = await getPostViewsData();
+async function CategoriesOverview() {
+  const stats = await getDashboardStats();
   
   return (
     <Card className="col-span-1">
       <CardHeader>
-        <CardTitle>Post Views</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Tag className="h-4 w-4" />
+          Top Categories
+        </CardTitle>
         <CardDescription>
-          Daily post views for the last 30 days
+          Categories by post count
         </CardDescription>
       </CardHeader>
-      <CardContent className="pl-2">
-        <DashboardChart data={viewsData} />
+      <CardContent className="space-y-3">
+        {stats.topCategories.length > 0 ? (
+          stats.topCategories.map((category, index) => (
+            <div key={category.name} className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: category.color }}
+                />
+                <span className="text-sm font-medium">{category.name}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{category.postCount}</span>
+                <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full transition-all" 
+                    style={{ 
+                      backgroundColor: category.color,
+                      width: `${Math.max(10, (category.postCount / Math.max(...stats.topCategories.map(c => c.postCount))) * 100)}%`
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No categories found
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+async function QuickActions() {
+  const stats = await getDashboardStats();
+  
+  return (
+    <Card className="col-span-1">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Quick Actions
+        </CardTitle>
+        <CardDescription>
+          Common tasks and shortcuts
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <Button asChild className="w-full justify-start" variant="outline">
+          <Link href="/admin/posts/new">
+            <FileText className="mr-2 h-4 w-4" />
+            Write New Post
+          </Link>
+        </Button>
+        
+        <Button asChild className="w-full justify-start" variant="outline">
+          <Link href="/admin/categories">
+            <Tag className="mr-2 h-4 w-4" />
+            Manage Categories
+          </Link>
+        </Button>
+        
+        <Button asChild className="w-full justify-start" variant="outline">
+          <Link href="/admin/comments">
+            <MessageSquare className="mr-2 h-4 w-4" />
+            Review Comments ({stats.totalComments})
+          </Link>
+        </Button>
+        
+        <Button asChild className="w-full justify-start" variant="outline">
+          <Link href="/admin/subscribers">
+            <Users className="mr-2 h-4 w-4" />
+            View Subscribers ({stats.totalSubscribers})
+          </Link>
+        </Button>
+        
+        <div className="pt-2 mt-4 border-t">
+          <div className="text-xs text-muted-foreground mb-2">Blog Status</div>
+          <div className="space-y-1">
+            <div className="flex justify-between text-sm">
+              <span>Published Posts:</span>
+              <span className="font-medium">{stats.publishedPosts}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Draft Posts:</span>
+              <span className="font-medium text-yellow-600">{stats.draftPosts}</span>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
@@ -139,11 +237,31 @@ async function RecentActivity() {
           Latest actions on your blog
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <DashboardActivity items={recentPostActivity} />
+      <CardContent className="space-y-3">
+        {recentPostActivity.length > 0 ? (
+          recentPostActivity.slice(0, 4).map((activity) => (
+            <div key={activity.id} className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                {activity.action === 'published' && <FileText className="w-4 h-4" />}
+                {activity.action === 'updated' && <Calendar className="w-4 h-4" />}
+                {activity.action === 'commented' && <MessageSquare className="w-4 h-4" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{activity.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  {activity.action.charAt(0).toUpperCase() + activity.action.slice(1)} • {new Date(activity.date).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No recent activity
+          </p>
+        )}
       </CardContent>
       <CardFooter>
-        <Button variant="outline" className="w-full" asChild>
+        <Button variant="outline" className="w-full" size="sm" asChild>
           <Link href="/admin/posts">
             View all posts
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -173,15 +291,47 @@ function StatsCardsSkeleton() {
   );
 }
 
-function ChartSkeleton() {
+function CategoriesOverviewSkeleton() {
   return (
     <Card className="col-span-1">
       <CardHeader>
         <div className="h-6 w-32 bg-muted rounded animate-pulse" />
-        <div className="h-4 w-64 bg-muted rounded animate-pulse" />
+        <div className="h-4 w-48 bg-muted rounded animate-pulse" />
       </CardHeader>
-      <CardContent>
-        <div className="h-[200px] w-full bg-muted rounded animate-pulse" />
+      <CardContent className="space-y-3">
+        {Array(4).fill(0).map((_, i) => (
+          <div key={i} className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-muted animate-pulse" />
+              <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-6 bg-muted rounded animate-pulse" />
+              <div className="w-16 h-2 bg-muted rounded animate-pulse" />
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+function QuickActionsSkeleton() {
+  return (
+    <Card className="col-span-1">
+      <CardHeader>
+        <div className="h-6 w-32 bg-muted rounded animate-pulse" />
+        <div className="h-4 w-48 bg-muted rounded animate-pulse" />
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {Array(4).fill(0).map((_, i) => (
+          <div key={i} className="h-10 w-full bg-muted rounded animate-pulse" />
+        ))}
+        <div className="pt-2 mt-4 border-t space-y-2">
+          <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+          <div className="h-4 w-full bg-muted rounded animate-pulse" />
+          <div className="h-4 w-full bg-muted rounded animate-pulse" />
+        </div>
       </CardContent>
     </Card>
   );

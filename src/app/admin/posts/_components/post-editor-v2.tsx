@@ -71,6 +71,7 @@ const formSchema = z.object({
   author: z.string().optional(),
   coverImage: z.string().optional(),
   tags: z.string().optional(),
+  featured: z.boolean().optional(),
 });
 
 //Inferring typescript type from zod object
@@ -185,6 +186,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
       author: initialData?.author_id || "",
       coverImage: initialData?.coverImage || "",
       tags: initialData?.tags || "",
+      featured: (initialData as any)?.featured || false,
     },
   });
 
@@ -320,7 +322,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
         category_id: data.category || null,
         author_id: data.author || defaultAuthorId,
         status: 'draft', // Always save as draft from editor
-        featured: false,
+        featured: !!data.featured,
         meta_title: title,
         meta_description: data.excerpt || null,
       };
@@ -570,6 +572,31 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                         placeholder="tag1, tag2, tag3 (comma separated)" 
                         {...field} 
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="featured"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Featured Post</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center justify-between rounded-md border p-3">
+                        <div className="space-y-1">
+                          <div className="font-medium">Show on Home as Featured</div>
+                          <p className="text-sm text-muted-foreground">Toggle to include this post in the Featured Articles section on the homepage.</p>
+                        </div>
+                        <input
+                          type="checkbox"
+                          checked={!!field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          className="h-5 w-5"
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

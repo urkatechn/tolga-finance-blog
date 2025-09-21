@@ -1,8 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, Clock, User, Share2, Bookmark } from "lucide-react";
+import { Calendar, Clock, User } from "lucide-react";
+import PostActions from "@/components/blog/post-actions";
 import { formatDate, estimateReadTime } from "@/lib/api/supabase-posts";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
 
@@ -15,57 +14,8 @@ export default function PostHeader({ post }: PostHeaderProps) {
 
   return (
     <div className="relative">
-      {/* Featured Image */}
-      {post.featured_image_url && (
-        <div className="relative h-[50vh] md:h-[60vh] overflow-hidden">
-          <Image
-            src={post.featured_image_url}
-            alt={post.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          
-          {/* Back Button Overlay */}
-          <div className="absolute top-6 left-6">
-            <Button variant="secondary" asChild size="sm" className="bg-white/90 backdrop-blur-sm hover:bg-white">
-              <Link href="/blog">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Blog
-              </Link>
-            </Button>
-          </div>
-
-          {/* Action Buttons Overlay */}
-          <div className="absolute top-6 right-6 flex gap-2">
-            <Button variant="secondary" size="sm" className="bg-white/90 backdrop-blur-sm hover:bg-white">
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button variant="secondary" size="sm" className="bg-white/90 backdrop-blur-sm hover:bg-white">
-              <Bookmark className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Header Content */}
       <section className={`${post.featured_image_url ? 'py-12' : 'py-16'} relative`}>
-        {!post.featured_image_url && (
-          <div className="absolute top-6 left-0 right-0">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
-                <Button variant="ghost" asChild className="mb-6">
-                  <Link href="/blog">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Blog
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="space-y-6">
@@ -142,11 +92,32 @@ export default function PostHeader({ post }: PostHeaderProps) {
                     Updated {formatDate(post.updated_at)}
                   </div>
                 )}
+                {/* Actions merged into meta row */}
+                <div className="ml-auto">
+                  <PostActions postId={post.id} title={post.title} />
+                </div>
               </div>
+
             </div>
           </div>
         </div>
       </section>
+
+      {/* Featured Image (now after meta info) */}
+      {post.featured_image_url && (
+        <div className="container mx-auto px-4 mt-6">
+          <div className="relative h-[40vh] md:h-[50vh] overflow-hidden max-w-4xl mx-auto rounded-xl">
+            <Image
+              src={post.featured_image_url}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -161,57 +132,8 @@ export function PostHeaderWithInteractions({ post, children }: PostHeaderWithInt
 
   return (
     <div className="relative">
-      {/* Featured Image */}
-      {post.featured_image_url && (
-        <div className="relative h-[50vh] md:h-[60vh] overflow-hidden">
-          <Image
-            src={post.featured_image_url}
-            alt={post.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          
-          {/* Back Button Overlay */}
-          <div className="absolute top-6 left-6">
-            <Button variant="secondary" asChild size="sm" className="bg-white/90 backdrop-blur-sm hover:bg-white">
-              <Link href="/blog">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Blog
-              </Link>
-            </Button>
-          </div>
-
-          {/* Action Buttons Overlay */}
-          <div className="absolute top-6 right-6 flex gap-2">
-            <Button variant="secondary" size="sm" className="bg-white/90 backdrop-blur-sm hover:bg-white">
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button variant="secondary" size="sm" className="bg-white/90 backdrop-blur-sm hover:bg-white">
-              <Bookmark className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Header Content */}
       <section className={`${post.featured_image_url ? 'py-12' : 'py-16'} relative`}>
-        {!post.featured_image_url && (
-          <div className="absolute top-6 left-0 right-0">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
-                <Button variant="ghost" asChild className="mb-6">
-                  <Link href="/blog">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Blog
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="space-y-6">
@@ -288,6 +210,10 @@ export function PostHeaderWithInteractions({ post, children }: PostHeaderWithInt
                     Updated {formatDate(post.updated_at)}
                   </div>
                 )}
+                {/* Actions merged into meta row */}
+                <div className="ml-auto">
+                  <PostActions postId={post.id} title={post.title} />
+                </div>
               </div>
 
               {/* Post Interactions */}
@@ -296,10 +222,27 @@ export function PostHeaderWithInteractions({ post, children }: PostHeaderWithInt
                   {children}
                 </div>
               )}
+
             </div>
           </div>
         </div>
       </section>
+
+      {/* Featured Image (now after meta info) */}
+      {post.featured_image_url && (
+        <div className="container mx-auto px-4 mt-6">
+          <div className="relative h-[40vh] md:h-[50vh] overflow-hidden max-w-4xl mx-auto rounded-xl">
+            <Image
+              src={post.featured_image_url}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

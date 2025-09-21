@@ -66,7 +66,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-3">
         <Input
           placeholder="Filter posts..."
           value={(table.getColumn("title")?.getFilterValue() as string) || ""}
@@ -75,6 +75,16 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <div className="flex items-center gap-2 ml-2 text-sm">
+          <input
+            id="filter-featured"
+            type="checkbox"
+            className="h-4 w-4"
+            checked={(table.getColumn("featured")?.getFilterValue() as boolean) === true}
+            onChange={(e) => table.getColumn("featured")?.setFilterValue(e.target.checked ? true : undefined)}
+          />
+          <label htmlFor="filter-featured">Featured only</label>
+        </div>
         <div className="ml-auto flex items-center gap-2">
           <Button
             variant="outline"

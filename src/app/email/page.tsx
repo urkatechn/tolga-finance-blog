@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
+import { ServerHeader, ServerFooter } from "@/components/server-layout";
+import { getServerSettings } from "@/lib/server-settings";
 import EmailTemplateForm from "@/components/email/email-template-form";
 
 export const metadata: Metadata = {
@@ -8,10 +8,11 @@ export const metadata: Metadata = {
   description: "Send emails using the template system",
 };
 
-export default function EmailPage() {
+export default async function EmailPage() {
+  const settings = await getServerSettings();
   return (
     <div className="min-h-screen">
-      <Header />
+      <ServerHeader settings={settings} />
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
@@ -52,7 +53,7 @@ export default function EmailPage() {
         </div>
       </div>
       
-      <Footer />
+      <ServerFooter settings={settings} />
     </div>
   );
 }

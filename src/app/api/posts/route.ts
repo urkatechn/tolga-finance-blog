@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
+    const featuredParam = searchParams.get('featured')
     
     let query = supabase
       .from('posts')
@@ -32,7 +33,11 @@ export async function GET(request: NextRequest) {
     if (categoryId && categoryId !== 'all') {
       query = query.eq('category_id', categoryId)
     }
-    
+
+    if (featuredParam === 'true') {
+      query = query.eq('featured', true)
+    }
+
     if (search) {
       query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%,excerpt.ilike.%${search}%`)
     }
@@ -59,7 +64,11 @@ export async function GET(request: NextRequest) {
     if (categoryId && categoryId !== 'all') {
       countQuery = countQuery.eq('category_id', categoryId)
     }
-    
+
+    if (featuredParam === 'true') {
+      countQuery = countQuery.eq('featured', true)
+    }
+
     if (search) {
       countQuery = countQuery.or(`title.ilike.%${search}%,content.ilike.%${search}%,excerpt.ilike.%${search}%`)
     }

@@ -43,6 +43,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
     author_id: post.author_id || '',
     coverImage: post.featured_image_url || '',
     tags: '',
+    featured: post.featured || false,
   };
 
   return <PostEditorV2 postId={id} initialData={initialData} />;

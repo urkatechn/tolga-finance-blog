@@ -10,7 +10,13 @@ import {
   Upload, 
   MessageSquare,
   Users,
+  Globe,
+  Palette,
+  User,
+  ChevronDown,
+  UserCircle,
 } from "lucide-react";
+import React, { useState } from "react";
 
 import {
   Sidebar,
@@ -23,16 +29,27 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { UserMenu } from "@/components/admin/user-menu";
+import { useSettings } from '@/contexts/settings-context';
 
-interface NavItem {
+interface SubNavItem {
   title: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+}
+
+interface NavItem {
+  title: string;
+  href?: string;
+  icon: React.ComponentType<{ className?: string }>;
   badge?: string;
+  subItems?: SubNavItem[];
 }
 
 const navItems: NavItem[] = [
@@ -68,13 +85,65 @@ const navItems: NavItem[] = [
   },
   {
     title: "Settings",
-    href: "/admin/settings",
     icon: Settings,
+    subItems: [
+      {
+        title: "General",
+        href: "/admin/settings",
+        icon: Settings,
+      },
+      {
+        title: "Branding",
+        href: "/admin/settings/branding",
+        icon: Palette,
+      },
+      {
+        title: "Social",
+        href: "/admin/settings/social",
+        icon: Globe,
+      },
+      {
+        title: "Authors",
+        href: "/admin/settings/authors",
+        icon: User,
+      },
+      {
+        title: "About Me",
+        href: "/admin/settings/aboutme",
+        icon: UserCircle,
+      },
+      {
+        title: "Contact",
+        href: "/admin/settings/contact",
+        icon: MessageSquare,
+      },
+    ],
   },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { settings } = useSettings();
+  const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
+
+  const toggleSubMenu = (title: string) => {
+    setOpenSubMenus(prev => ({
+      ...prev,
+      [title]: !prev[title]
+    }));
+  };
+
+  // Auto-open submenu if current path matches a sub-item
+  React.useEffect(() => {
+    navItems.forEach(item => {
+      if (item.subItems) {
+        const hasActiveSubItem = item.subItems.some(subItem => pathname === subItem.href);
+        if (hasActiveSubItem) {
+          setOpenSubMenus(prev => ({ ...prev, [item.title]: true }));
+        }
+      }
+    });
+  }, [pathname]);
 
   return (
     <Sidebar collapsible="icon">
@@ -84,11 +153,23 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/admin" className="flex items-center gap-2">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <LayoutDashboard className="size-4" />
+                  {settings?.site_logo_url ? (
+                    <img 
+                      src={settings.site_logo_url} 
+                      alt="Logo" 
+                      className="size-6 object-contain"
+                    />
+                  ) : settings?.site_brand_initials ? (
+                    <span className="text-xs font-bold">
+                      {settings.site_brand_initials}
+                    </span>
+                  ) : (
+                    <LayoutDashboard className="size-4" />
+                  )}
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    Finance Blog
+                    {settings?.site_brand_name || 'Finance Blog'}
                   </span>
                   <span className="truncate text-xs">Admin Panel</span>
                 </div>
@@ -104,29 +185,82 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      tooltip={item.title}
-                    >
-                      <Link href={item.href}>
+                if (item.subItems) {
+                  // Handle items with sub-items
+                  const isOpen = openSubMenus[item.title];
+                  const hasActiveSubItem = item.subItems.some(subItem => pathname === subItem.href);
+                  
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        onClick={() => toggleSubMenu(item.title)}
+                        isActive={hasActiveSubItem}
+                        tooltip={item.title}
+                      >
                         <item.icon className="size-4" />
                         <span>{item.title}</span>
+                        <ChevronDown 
+                          className={`ml-auto size-4 transition-transform ${
+                            isOpen ? 'rotate-180' : ''
+                          }`} 
+                        />
                         {item.badge && (
                           <Badge 
                             variant={item.badge === 'BETA' ? 'secondary' : 'outline'} 
-                            className="ml-auto text-xs px-1.5 py-0.5"
+                            className="text-xs px-1.5 py-0.5"
                           >
                             {item.badge}
                           </Badge>
                         )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
+                      </SidebarMenuButton>
+                      {isOpen && (
+                        <SidebarMenuSub>
+                          {item.subItems.map((subItem) => {
+                            const isSubActive = pathname === subItem.href;
+                            return (
+                              <SidebarMenuSubItem key={subItem.href}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={isSubActive}
+                                >
+                                  <Link href={subItem.href}>
+                                    <subItem.icon className="size-4" />
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
+                        </SidebarMenuSub>
+                      )}
+                    </SidebarMenuItem>
+                  );
+                } else {
+                  // Handle regular items without sub-items
+                  const isActive = pathname === item.href;
+                  return (
+                    <SidebarMenuItem key={item.href!}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                      >
+                        <Link href={item.href!}>
+                          <item.icon className="size-4" />
+                          <span>{item.title}</span>
+                          {item.badge && (
+                            <Badge 
+                              variant={item.badge === 'BETA' ? 'secondary' : 'outline'} 
+                              className="ml-auto text-xs px-1.5 py-0.5"
+                            >
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                }
               })}
             </SidebarMenu>
           </SidebarGroupContent>

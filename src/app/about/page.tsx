@@ -9,8 +9,8 @@ import {
   Heart,
   Linkedin
 } from "lucide-react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
+import { ServerHeader, ServerFooter } from "@/components/server-layout";
+import { getServerSettings } from "@/lib/server-settings";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
 import Link from "next/link";
 import { LINKEDIN_URL } from "@/lib/site-config";
@@ -24,39 +24,37 @@ export const metadata: Metadata = {
 // Force dynamic rendering to avoid build-time Supabase issues
 export const dynamic = 'force-dynamic';
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const settings = await getServerSettings();
   const personalStats = [
-    { label: "Years Investing", value: "12+", icon: TrendingUp },
-    { label: "Articles Written", value: "150+", icon: BookOpen },
-    { label: "Coffee Consumed", value: "∞", icon: Coffee },
+    { label: settings.aboutme_stats_years_label, value: settings.aboutme_stats_years_value, icon: TrendingUp },
+    { label: settings.aboutme_stats_articles_label, value: settings.aboutme_stats_articles_value, icon: BookOpen },
+    { label: settings.aboutme_stats_coffee_label, value: settings.aboutme_stats_coffee_value, icon: Coffee },
   ];
 
-  const journey = [
-    {
-      year: "2012",
-      title: "First Investment",
-      description: "Made my first stock purchase with $500 from my summer job. Lost 30% in the first month - learned my first lesson about research!"
-    },
-    {
-      year: "2015",
-      title: "The Learning Phase",
-      description: "Spent countless hours reading financial books, following market news, and making plenty of mistakes along the way."
-    },
-    {
-      year: "2018",
-      title: "Finding My Strategy",
-      description: "Developed a disciplined approach to investing focused on long-term value and diversification."
-    },
-    {
-      year: "2021",
-      title: "Started Writing",
-      description: "Began sharing my experiences and insights to help others avoid the mistakes I made early on."
+  const journeyItems = Array.isArray((settings as any).aboutme_journey_items)
+    ? ((settings as any).aboutme_journey_items as Array<{ year: string; title: string; description: string }>)
+    : [];
+
+  const parseTags = (v: unknown): string[] => {
+    if (Array.isArray(v)) return v as string[];
+    if (typeof v === 'string') {
+      try {
+        const arr = JSON.parse(v);
+        return Array.isArray(arr) ? (arr as string[]) : [];
+      } catch {
+        return [];
+      }
     }
-  ];
+    return [];
+  };
+
+  const investingTags = parseTags((settings as any).aboutme_topic_investing_tags);
+  const moneyTags = parseTags((settings as any).aboutme_topic_money_tags);
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <ServerHeader settings={settings} />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-24">
@@ -65,17 +63,13 @@ export default function AboutPage() {
         <div className="relative container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-              <span className="block text-gray-900 dark:text-white mb-2">
-                Hey, I&apos;m
-              </span>
+              <span className="block text-gray-900 dark:text-white mb-2">{settings.aboutme_hero_greeting}</span>
               <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
-                Your Finance Friend
+                {settings.aboutme_hero_title}
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Just someone who made a lot of financial mistakes so you don&apos;t have to. Here&apos;s my story.
-            </p>
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">{settings.aboutme_hero_subtitle}</p>
           </div>
         </div>
       </section>
@@ -111,31 +105,19 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                My Financial Journey
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-                Like most people, I learned about money the hard way. Here&apos;s how I went from financial disasters to (hopefully) helpful insights.
-              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">{settings.aboutme_story_title}</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">{settings.aboutme_story_subtitle}</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
               <div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  The Reality Check
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                  I started investing in 2012 with zero knowledge and maximum confidence. Spoiler alert: it didn&apos;t go well. 
-                  That first 30% loss taught me more than any textbook ever could.
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-                  After years of mistakes, research, and slowly figuring things out, I realized that most financial advice 
-                  is either too complex or too generic. So I started writing about what actually works in real life.
-                </p>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{settings.aboutme_story_reality_title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">{settings.aboutme_story_reality_content1}</p>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{settings.aboutme_story_reality_content2}</p>
               </div>
               
               <div className="space-y-6">
-                {journey.map((item, index) => (
+                {journeyItems.map((item, index) => (
                   <div key={index} className="flex items-start space-x-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
                       <span className="text-blue-600 dark:text-blue-400 font-bold text-sm">{item.year}</span>
@@ -157,12 +139,8 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                What I Actually Write About
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
-                No fluff, no get-rich-quick schemes. Just practical stuff that actually matters.
-              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{settings.aboutme_topics_title}</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400">{settings.aboutme_topics_subtitle}</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
@@ -170,17 +148,15 @@ export default function AboutPage() {
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-3">
                     <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                    <CardTitle className="text-xl">Investing Reality</CardTitle>
+                    <CardTitle className="text-xl">{settings.aboutme_topic_investing_title}</CardTitle>
                   </div>
-                  <CardDescription className="text-base leading-relaxed">
-                    Real talk about building wealth through investing. No day trading nonsense, just long-term strategies that work.
-                  </CardDescription>
+                  <CardDescription className="text-base leading-relaxed">{settings.aboutme_topic_investing_description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">Portfolio Building</Badge>
-                    <Badge variant="secondary">Risk Management</Badge>
-                    <Badge variant="secondary">Market Psychology</Badge>
+                    {investingTags.map((t, i) => (
+                      <Badge key={i} variant="secondary">{t}</Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -189,17 +165,15 @@ export default function AboutPage() {
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-3">
                     <Heart className="h-6 w-6 text-red-500" />
-                    <CardTitle className="text-xl">Money & Life</CardTitle>
+                    <CardTitle className="text-xl">{settings.aboutme_topic_money_title}</CardTitle>
                   </div>
-                  <CardDescription className="text-base leading-relaxed">
-                    How to handle money without it taking over your life. Budgeting, saving, and financial planning that actually sticks.
-                  </CardDescription>
+                  <CardDescription className="text-base leading-relaxed">{settings.aboutme_topic_money_description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">Emergency Funds</Badge>
-                    <Badge variant="secondary">Debt Freedom</Badge>
-                    <Badge variant="secondary">Financial Goals</Badge>
+                    {moneyTags.map((t, i) => (
+                      <Badge key={i} variant="secondary">{t}</Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -212,12 +186,8 @@ export default function AboutPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Let&apos;s Connect
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
-              Got questions? Want to share your own financial wins or disasters? I&apos;d love to hear from you.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">{settings.aboutme_connect_title}</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">{settings.aboutme_connect_subtitle}</p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <ContactButton />
@@ -230,10 +200,7 @@ export default function AboutPage() {
             </div>
 
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 max-w-2xl mx-auto">
-              <p className="text-gray-700 dark:text-gray-300 italic">
-                &quot;The best investment advice I ever got was from someone who admitted their mistakes. 
-                That&apos;s what I try to do here - share what works, what doesn&apos;t, and what I learned along the way.&quot;
-              </p>
+              <p className="text-gray-700 dark:text-gray-300 italic">&quot;{settings.aboutme_connect_quote}&quot;</p>
             </div>
           </div>
         </div>
@@ -244,12 +211,8 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                Join the Journey
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Get my latest thoughts on investing, money, and life delivered weekly. No spam, just honest insights.
-              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{settings.aboutme_newsletter_title}</h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{settings.aboutme_newsletter_description}</p>
             </div>
             <div className="max-w-2xl mx-auto">
               <NewsletterSignup />
@@ -258,7 +221,7 @@ export default function AboutPage() {
         </div>
       </section>
       
-      <Footer />
+      <ServerFooter settings={settings} />
     </div>
   );
 }

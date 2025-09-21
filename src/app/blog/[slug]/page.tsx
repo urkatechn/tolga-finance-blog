@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import { getCachedPostBySlug } from "@/lib/cache";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
+import { ServerHeader, ServerFooter } from "@/components/server-layout";
+import { getServerSettings } from "@/lib/server-settings";
 import { PostHeaderWithInteractions } from "@/components/blog/post-header";
 import CommentsSection from "@/components/blog/comments-section";
 import ReadingProgress from "@/components/blog/reading-progress";
@@ -54,6 +54,7 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const post = await getCachedPostBySlug(slug);
+  const settings = await getServerSettings();
 
   if (!post) {
     notFound();
@@ -64,45 +65,42 @@ const content = post.content || "";
   return (
     <div className="min-h-screen">
       <ReadingProgress />
-      <Header />
-      
+      <ServerHeader settings={settings} />
+
+      {/* Post header (hero + meta) */}
       <PostHeaderWithInteractions post={post} />
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Main Content */}
-          <div className="space-y-8">
-            {/* Article Content */}
-<MarkdownContent source={content} />
+      {/* Main content area with consistent max width */}
+      <main className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto space-y-12">
+          {/* Article content */}
+          <MarkdownContent source={content} />
 
-            {/* Comments Section - Wrapped in Suspense for better performance */}
-            <div className="max-w-3xl mx-auto">
-              <Suspense fallback={
-                <div className="space-y-4 mt-12">
-                  <Skeleton className="h-8 w-48" />
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="flex space-x-3">
-                        <Skeleton className="h-10 w-10 rounded-full" />
-                        <div className="space-y-2 flex-1">
-                          <Skeleton className="h-4 w-32" />
-                          <Skeleton className="h-16 w-full" />
-                        </div>
+          {/* Comments Section - aligned to the same width as content */}
+          <Suspense
+            fallback={
+              <div className="space-y-4 mt-12">
+                <Skeleton className="h-8 w-48" />
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex space-x-3">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="space-y-2 flex-1">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-16 w-full" />
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              }>
-                <CommentsSection postId={post.id} />
-              </Suspense>
-            </div>
-
-          </div>
+              </div>
+            }
+          >
+            <CommentsSection postId={post.id} />
+          </Suspense>
         </div>
-      </div>
-      
-      <Footer />
+      </main>
+
+      <ServerFooter settings={settings} />
     </div>
   );
 }
-

@@ -4,6 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import SupabaseProvider from "@/components/supabase-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { SettingsProvider } from "@/contexts/settings-context";
+import { getServerSettings } from "@/lib/server-settings";
+import { DynamicFavicon } from "@/components/dynamic-favicon";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,33 +18,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Finance Blog",
-    template: "%s | Finance Blog",
-  },
-  description: "A modern finance blog with expert insights and analysis",
-  keywords: ["finance", "investing", "money", "retirement", "blog"],
-  authors: [{ name: "Finance Blog Team" }],
-  creator: "Finance Blog Team",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://finance-blog.example.com",
-    title: "Finance Blog",
-    description: "A modern finance blog with expert insights and analysis",
-    siteName: "Finance Blog",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Finance Blog",
-    description: "A modern finance blog with expert insights and analysis",
-    creator: "@financeblog",
-  },
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getServerSettings();
+  
+  return {
+    title: {
+      default: settings.site_brand_name,
+      template: `%s | ${settings.site_brand_name}`,
+    },
+    description: settings.site_description,
+    keywords: settings.site_keywords,
+    authors: [{ name: settings.meta_author }],
+    creator: settings.meta_creator,
+    openGraph: {
+      type: settings.meta_og_type as "website",
+      locale: settings.meta_og_locale,
+      url: settings.site_url,
+      title: settings.site_brand_name,
+      description: settings.site_description,
+      siteName: settings.site_brand_name,
+    },
+    twitter: {
+      card: settings.meta_twitter_card as "summary_large_image",
+      title: settings.site_brand_name,
+      description: settings.site_description,
+      creator: settings.meta_twitter_creator,
+    },
+    icons: {
+      icon: settings.site_favicon_url || "/favicon.ico",
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -53,8 +60,11 @@ export default function RootLayout({
       <body className={`font-sans ${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SupabaseProvider>
-            {children}
-            <Toaster />
+            <SettingsProvider>
+              <DynamicFavicon />
+              {children}
+              <Toaster />
+            </SettingsProvider>
           </SupabaseProvider>
         </ThemeProvider>
       </body>

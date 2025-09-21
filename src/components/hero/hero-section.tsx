@@ -1,8 +1,30 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Users, BookOpen } from "lucide-react";
+import { useSettings } from "@/contexts/settings-context";
 
 export default function HeroSection() {
+  const { settings } = useSettings();
+  
+  // Use settings with fallbacks
+  const heroTitle = settings?.hero_title || "Smart Financial Insights & Analysis";
+  const heroSubtitlePrimary = settings?.hero_subtitle_primary || "No need to endlessly search the internet anymore";
+  const heroSubtitleSecondary = settings?.hero_subtitle_secondary || "Let us identify and explain the important financial issues for you. Get expert insights on investing, personal finance, and market trends.";
+  const ctaPrimaryText = settings?.hero_cta_primary_text || "Read Latest Articles";
+  const ctaPrimaryLink = settings?.hero_cta_primary_link || "/blog";
+  const ctaSecondaryText = settings?.hero_cta_secondary_text || "Get Weekly Insights";
+  const ctaSecondaryLink = settings?.hero_cta_secondary_link || "#newsletter";
+  
+  // Hero stats
+  const articlesCount = settings?.hero_stats_articles_count || "150+";
+  const articlesLabel = settings?.hero_stats_articles_label || "Expert Articles";
+  const subscribersCount = settings?.hero_stats_subscribers_count || "25K+";
+  const subscribersLabel = settings?.hero_stats_subscribers_label || "Subscribers";
+  const successCount = settings?.hero_stats_success_count || "98%";
+  const successLabel = settings?.hero_stats_success_label || "Success Rate";
+  
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Background Pattern */}
@@ -13,35 +35,31 @@ export default function HeroSection() {
           {/* Main Heading */}
           <div className="mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 leading-tight">
-              <span className="block text-gray-900 dark:text-white">
-                Smart Financial
-              </span>
               <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
-                Insights & Analysis
+                {heroTitle}
               </span>
             </h1>
           </div>
 
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
-            No need to endlessly search the internet anymore
+            {heroSubtitlePrimary}
           </p>
           
           <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
-            Let us identify and explain the important financial issues for you. 
-            Get expert insights on investing, personal finance, and market trends.
+            {heroSubtitleSecondary}
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button asChild size="lg" className="text-lg px-8 py-6 h-auto">
-              <Link href="/blog">
-                Read Latest Articles <ArrowRight className="ml-2 h-5 w-5" />
+              <Link href={ctaPrimaryLink}>
+                {ctaPrimaryText} <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto" asChild>
-              <Link href="#newsletter">
-                Get Weekly Insights
+              <Link href={ctaSecondaryLink}>
+                {ctaSecondaryText}
               </Link>
             </Button>
           </div>
@@ -52,24 +70,24 @@ export default function HeroSection() {
               <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-3">
                 <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">150+</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Expert Articles</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{articlesCount}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{articlesLabel}</div>
             </div>
             
             <div className="flex flex-col items-center p-6 rounded-2xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
               <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/30 mb-3">
                 <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">25K+</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Subscribers</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{subscribersCount}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{subscribersLabel}</div>
             </div>
             
             <div className="flex flex-col items-center p-6 rounded-2xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
               <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 mb-3">
                 <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">98%</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Success Rate</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{successCount}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{successLabel}</div>
             </div>
           </div>
         </div>
