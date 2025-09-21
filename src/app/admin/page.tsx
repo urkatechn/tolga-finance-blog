@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { FileText, MessageSquare, TrendingUp, Eye, BarChart3, Users, Tag, Calendar, Plus } from "lucide-react";
+import { FileText, MessageSquare, TrendingUp, BarChart3, Users, Tag, Calendar, Plus } from "lucide-react";
 import { getUser } from '@/lib/supabase/user';
 import { redirect } from 'next/navigation';
 import { getDashboardStats } from '@/lib/api/dashboard';
@@ -114,7 +114,7 @@ export default async function AdminDashboard() {
           <CardContent>
             <div className="space-y-3">
               {stats.topCategories.length > 0 ? (
-                stats.topCategories.slice(0, 5).map((category, index) => (
+                stats.topCategories.slice(0, 5).map((category) => (
                   <div key={category.name} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div 

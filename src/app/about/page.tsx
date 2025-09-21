@@ -32,8 +32,9 @@ export default async function AboutPage() {
     { label: settings.aboutme_stats_coffee_label, value: settings.aboutme_stats_coffee_value, icon: Coffee },
   ];
 
-  const journeyItems = Array.isArray((settings as any).aboutme_journey_items)
-    ? ((settings as any).aboutme_journey_items as Array<{ year: string; title: string; description: string }>)
+  const settingsWithJourney = settings as typeof settings & { aboutme_journey_items?: Array<{ year: string; title: string; description: string }> };
+  const journeyItems = Array.isArray(settingsWithJourney.aboutme_journey_items)
+    ? settingsWithJourney.aboutme_journey_items
     : [];
 
   const parseTags = (v: unknown): string[] => {
@@ -49,8 +50,12 @@ export default async function AboutPage() {
     return [];
   };
 
-  const investingTags = parseTags((settings as any).aboutme_topic_investing_tags);
-  const moneyTags = parseTags((settings as any).aboutme_topic_money_tags);
+  const settingsWithTags = settings as typeof settings & { 
+    aboutme_topic_investing_tags?: unknown;
+    aboutme_topic_money_tags?: unknown;
+  };
+  const investingTags = parseTags(settingsWithTags.aboutme_topic_investing_tags);
+  const moneyTags = parseTags(settingsWithTags.aboutme_topic_money_tags);
 
   return (
     <div className="min-h-screen">

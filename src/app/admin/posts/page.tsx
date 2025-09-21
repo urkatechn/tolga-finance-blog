@@ -76,7 +76,7 @@ export default function PostsPage() {
         variant: "destructive",
       });
     }
-  }, [statusFilter, categoryFilter, searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [statusFilter, categoryFilter, featuredFilter, searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchStats = async () => {
     try {

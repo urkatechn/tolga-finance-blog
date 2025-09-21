@@ -186,7 +186,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
       author: initialData?.author_id || "",
       coverImage: initialData?.coverImage || "",
       tags: initialData?.tags || "",
-      featured: (initialData as any)?.featured || false,
+      featured: (initialData as typeof initialData & { featured?: boolean })?.featured || false,
     },
   });
 

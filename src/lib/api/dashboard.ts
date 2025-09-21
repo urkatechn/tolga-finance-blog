@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server';
-import { Post } from './posts';
 
 export interface DashboardStats {
   totalPosts: number;
@@ -119,30 +118,29 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     
     // Calculate stats
     const totalPosts = posts?.length || 0;
-    const publishedPosts = posts?.filter(post => post.status === 'published').length || 0;
-    const draftPosts = posts?.filter(post => post.status === 'draft').length || 0;
+    const publishedPosts = posts?.filter((post: any) => post.status === 'published').length || 0;
+    const draftPosts = posts?.filter((post: any) => post.status === 'draft').length || 0;
     const totalCategories = categoriesData?.length || 0;
     
     // Process top categories
     const topCategories: CategoryStat[] = (categoriesData || [])
-      .map(category => ({
+      .map((category: any) => ({
         name: category.name,
         postCount: category.posts?.length || 0,
         color: category.color || '#3B82F6'
       }))
-      .sort((a, b) => b.postCount - a.postCount)
+      .sort((a: CategoryStat, b: CategoryStat) => b.postCount - a.postCount)
       .slice(0, 5);
     
     // Process recent activity
     const recentPostActivity: PostActivity[] = (recentActivity || [])
-      .map(post => {
+      .map((post: any) => {
         let action: 'published' | 'updated' | 'commented' = 'updated';
         let actionDate = post.updated_at;
         
         // Determine action type based on dates
         if (post.status === 'published' && post.published_at) {
           const publishedTime = new Date(post.published_at).getTime();
-          const updatedTime = new Date(post.updated_at).getTime();
           const createdTime = new Date(post.created_at).getTime();
           
           // If published within last 7 days and close to created date

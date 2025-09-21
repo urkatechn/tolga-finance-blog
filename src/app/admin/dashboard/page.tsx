@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { 
   FileText, 
-  Eye, 
   MessageSquare, 
   Users,
   ArrowRight,
@@ -15,7 +14,6 @@ import {
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getDashboardStats } from "@/lib/api/dashboard";
-import { DashboardActivity } from "@/app/admin/dashboard/_components/dashboard-activity";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -132,7 +130,7 @@ async function CategoriesOverview() {
       </CardHeader>
       <CardContent className="space-y-3">
         {stats.topCategories.length > 0 ? (
-          stats.topCategories.map((category, index) => (
+                stats.topCategories.slice(0, 5).map((category) => (
             <div key={category.name} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div 
