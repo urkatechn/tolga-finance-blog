@@ -68,7 +68,11 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         const response = await fetch(`/api/posts/${postId}/comments`);
         if (response.ok) {
           const { comments: fetchedComments } = await response.json();
-          setComments(fetchedComments);
+          // Sort comments by created_at date in descending order (newest first)
+          const sortedComments = fetchedComments.sort((a: Comment, b: Comment) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          setComments(sortedComments);
           
         }
       } catch (error) {
@@ -179,7 +183,11 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         const commentsResponse = await fetch(`/api/posts/${postId}/comments`);
         if (commentsResponse.ok) {
           const { comments: updatedComments } = await commentsResponse.json();
-          setComments(updatedComments);
+          // Sort comments by created_at date in descending order (newest first)
+          const sortedComments = updatedComments.sort((a: Comment, b: Comment) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          setComments(sortedComments);
         }
       } else {
         const { error } = await response.json();
@@ -213,9 +221,16 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
             </div>
             Discussion
           </h2>
-          <Badge variant="secondary" className="text-sm font-medium px-3 py-1">
-            {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="text-sm font-medium px-3 py-1">
+              {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+            </Badge>
+            {comments.length > 0 && (
+              <Badge variant="outline" className="text-xs px-2 py-1 text-muted-foreground">
+                Latest first
+              </Badge>
+            )}
+          </div>
         </div>
         
         <div className="h-px bg-gradient-to-r from-border via-border/50 to-transparent" />
@@ -569,7 +584,9 @@ function CommentItemRow({
                   </span>
                   <div className="h-px bg-border flex-1" />
                 </div>
-                {comment.replies!.map((reply, index) => (
+                {comment.replies!
+                  .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                  .map((reply, index) => (
                   <CommentItemRow
                     key={reply.id}
                     comment={reply}
