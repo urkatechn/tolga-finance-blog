@@ -67,10 +67,10 @@ export async function sendGenericEmail(options: SendEmailOptions) {
   }
 }
 
-// Convenience function for sending to the default email (ttanagardigil@urkatech.com)
+// Convenience function for sending to the default email (info@tolgatanagardigil.com)
 export async function sendEmailToDefault(options: Omit<SendEmailOptions, 'to'>) {
   return sendGenericEmail({
     ...options,
-    to: "ttanagardigil@urkatech.com"
+    to: "info@tolgatanagardigil.com"
   });
 }

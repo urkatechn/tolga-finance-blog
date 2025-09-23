@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Plus, Save, User, Pencil, Trash2, Star } from "lucide-react";
 import { DeleteAuthorDialog } from "@/app/admin/settings/_components/delete-author-dialog";
 import { useSettings } from "@/contexts/settings-context";
+import { PageSkeleton } from "@/components/admin/sidebar-skeleton";
 
 interface Author {
   id: string;
@@ -204,11 +205,7 @@ export default function AuthorsSettingsPage() {
   const currentDefault = useMemo(() => authors.find((a) => a.is_default), [authors]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <PageSkeleton showHeader showStats={false} showCards cardCount={2} showTable={false} />;
   }
 
   return (

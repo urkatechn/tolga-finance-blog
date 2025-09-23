@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Loader2, Save, Linkedin, Clock, MessageCircle, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useSettings } from "@/contexts/settings-context";
+import { PageSkeleton } from "@/components/admin/sidebar-skeleton";
 import { useToast } from "@/hooks/use-toast";
 
 type FaqItem = { id: string; question: string; answer: string };
@@ -144,11 +145,7 @@ export default function ContactSettingsPage() {
   };
 
   if (loading || !settings) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <PageSkeleton showHeader showStats={false} showCards cardCount={2} showTable={false} />;
   }
 
   return (

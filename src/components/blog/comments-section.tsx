@@ -253,7 +253,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         </CardHeader>
         <CardContent>
           <form onSubmit={(e) => handleSubmitComment(e)} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="author_name" className="text-sm font-medium flex items-center gap-2">
                   <span className="w-2 h-2 bg-primary rounded-full" />
@@ -509,7 +509,7 @@ function CommentItemRow({
                   </div>
                   
                   <form onSubmit={(e) => handleSubmitComment(e, comment.id)} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
                       <Input
                         placeholder="Your name"
                         value={newComment.author_name}
@@ -546,16 +546,17 @@ function CommentItemRow({
                       <p className="text-xs text-muted-foreground">
                         Your reply will be reviewed before being published.
                       </p>
-                      <div className="flex space-x-2">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:space-x-2 sm:gap-0">
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => setReplyingTo(null)}
+                          className="order-2 sm:order-1"
                         >
                           Cancel
                         </Button>
-                        <Button type="submit" size="sm" disabled={isSubmitting}>
+                        <Button type="submit" size="sm" disabled={isSubmitting} className="order-1 sm:order-2">
                           {isSubmitting ? (
                             <>
                               <div className="animate-spin rounded-full h-3 w-3 border-2 border-current border-t-transparent mr-1" />

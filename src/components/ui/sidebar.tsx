@@ -596,37 +596,50 @@ function SidebarMenuBadge({
 
 function SidebarMenuSkeleton({
   className,
-  showIcon = false,
+  showIcon = true,
+  width,
+  randomizeWidth = false,
   ...props
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean
+  width?: number | string
+  randomizeWidth?: boolean
 }) {
-  // Random width between 50 to 90%.
-  const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  }, [])
+  const computedWidth = React.useMemo(() => {
+    if (randomizeWidth) {
+      return `${Math.floor(Math.random() * 40) + 50}%`
+    }
+    if (typeof width === "number") return `${width}px`
+    if (typeof width === "string") return width
+    return "70%"
+  }, [width, randomizeWidth])
 
   return (
     <div
       data-slot="sidebar-menu-skeleton"
       data-sidebar="menu-skeleton"
-      className={cn("flex h-8 items-center gap-2 rounded-md px-2", className)}
+      className={cn(
+        "flex h-8 items-center gap-2 rounded-md px-2",
+        // Match button size/spacing in icon-collapsed state
+        "group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-2",
+        className
+      )}
       {...props}
     >
       {showIcon && (
         <div
-          className="size-4 rounded-md bg-muted animate-pulse"
+          className="size-4 shrink-0 rounded-md bg-muted animate-pulse"
           data-sidebar="menu-skeleton-icon"
         />
       )}
       <div
-        className="h-4 max-w-full flex-1 bg-muted rounded animate-pulse"
+        className={cn(
+          "h-4 max-w-full flex-1 bg-muted rounded animate-pulse",
+          // Hide text bar when the sidebar is collapsed to icons
+          "group-data-[collapsible=icon]:hidden"
+        )}
         data-sidebar="menu-skeleton-text"
-        style={
-          {
-            "--skeleton-width": width,
-          } as React.CSSProperties
-        }
+        style={{ width: computedWidth }}
       />
     </div>
   )

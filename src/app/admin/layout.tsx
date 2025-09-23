@@ -30,10 +30,12 @@ export default function AdminLayout({
             {children}
           </ErrorBoundary>
         </div>
-        {/* Global new post button */}
-        <Button className="fixed bottom-6 right-6 z-50 shadow-lg" size="lg" asChild>
+        {/* Global new post button - responsive */}
+        <Button className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 shadow-lg" size="lg" asChild>
           <a href="/admin/posts/new" aria-label="Create new post">
-            <Pencil className="mr-2 h-4 w-4" /> New Post
+            <Pencil className="mr-2 h-4 w-4" /> 
+            <span className="hidden sm:inline">New Post</span>
+            <span className="sm:hidden">New</span>
           </a>
         </Button>
       </SidebarInset>

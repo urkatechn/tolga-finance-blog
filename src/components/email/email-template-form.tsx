@@ -28,7 +28,7 @@ interface EmailTemplateFormProps {
 
 export default function EmailTemplateForm({ 
   onSuccess,
-  defaultRecipient = "ttanagardigil@urkatech.com",
+  defaultRecipient = "info@tolgatanagardigil.com",
   className = ""
 }: EmailTemplateFormProps) {
   const [formData, setFormData] = useState<EmailFormData>({

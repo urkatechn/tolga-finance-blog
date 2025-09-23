@@ -5,6 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SidebarSkeletonProps {
   count?: number;
@@ -16,9 +17,9 @@ export function SidebarSkeleton({ count = 6 }: SidebarSkeletonProps) {
       {[...Array(count)].map((_, i) => (
         <SidebarMenuItem key={i}>
           <SidebarMenuButton>
-            <div className="flex items-center gap-2 w-full animate-pulse">
-              <div className="size-4 bg-gray-200 rounded flex-shrink-0"></div>
-              <div className="h-4 bg-gray-200 rounded flex-1 max-w-20"></div>
+            <div className="flex items-center gap-2 w-full">
+              <Skeleton className="size-4 rounded flex-shrink-0" />
+              <Skeleton className="h-4 flex-1 max-w-20" />
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -32,11 +33,11 @@ export function SidebarHeaderSkeleton() {
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton size="lg">
-          <div className="flex items-center gap-2 w-full animate-pulse">
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gray-200"></div>
+          <div className="flex items-center gap-2 w-full">
+            <Skeleton className="aspect-square size-8 rounded-lg" />
             <div className="grid flex-1 gap-1">
-              <div className="h-4 bg-gray-200 rounded w-24"></div>
-              <div className="h-3 bg-gray-200 rounded w-16"></div>
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-16" />
             </div>
           </div>
         </SidebarMenuButton>
@@ -61,15 +62,15 @@ export function PageSkeleton({
   cardCount = 3 
 }: PageSkeletonProps) {
   return (
-    <div className="container mx-auto p-6 space-y-8 animate-pulse">
+    <div className="container mx-auto p-6 space-y-8">
       {/* Header Skeleton */}
       {showHeader && (
         <div className="flex items-center justify-between">
           <div>
-            <div className="h-8 bg-gray-200 rounded w-48 mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded w-64"></div>
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-64" />
           </div>
-          <div className="h-10 bg-gray-200 rounded w-32"></div>
+          <Skeleton className="h-10 w-32" />
         </div>
       )}
 
@@ -79,10 +80,10 @@ export function PageSkeleton({
           {[...Array(4)].map((_, i) => (
             <div key={i} className="p-6 bg-white border rounded-lg shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded"></div>
+                <Skeleton className="w-10 h-10 rounded" />
                 <div className="flex-1">
-                  <div className="h-6 bg-gray-200 rounded w-16 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-24"></div>
+                  <Skeleton className="h-6 w-16 mb-2" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
               </div>
             </div>
@@ -95,11 +96,11 @@ export function PageSkeleton({
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(cardCount)].map((_, i) => (
             <div key={i} className="p-6 bg-white border rounded-lg shadow-sm">
-              <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+              <Skeleton className="h-6 w-32 mb-4" />
               <div className="space-y-3">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
               </div>
             </div>
           ))}
@@ -112,8 +113,8 @@ export function PageSkeleton({
           {/* Table Header */}
           <div className="p-4 border-b">
             <div className="flex items-center justify-between">
-              <div className="h-6 bg-gray-200 rounded w-32"></div>
-              <div className="h-8 bg-gray-200 rounded w-24"></div>
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-8 w-24" />
             </div>
           </div>
           
@@ -122,15 +123,15 @@ export function PageSkeleton({
             {[...Array(5)].map((_, i) => (
               <div key={i} className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gray-200 rounded"></div>
+                  <Skeleton className="w-8 h-8 rounded" />
                   <div>
-                    <div className="h-4 bg-gray-200 rounded w-32 mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-24"></div>
+                    <Skeleton className="h-4 w-32 mb-2" />
+                    <Skeleton className="h-3 w-24" />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-6 bg-gray-200 rounded w-16"></div>
-                  <div className="h-8 bg-gray-200 rounded w-8"></div>
+                  <Skeleton className="h-6 w-16" />
+                  <Skeleton className="h-8 w-8" />
                 </div>
               </div>
             ))}

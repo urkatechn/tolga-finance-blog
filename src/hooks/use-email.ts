@@ -77,7 +77,7 @@ export function useEmailToDefault() {
   const emailHook = useEmail();
 
   const sendEmailToDefault = async (data: Omit<EmailData, 'to'>) => {
-    return emailHook.sendEmail({ ...data, to: 'ttanagardigil@urkatech.com' });
+    return emailHook.sendEmail({ ...data, to: 'info@tolgatanagardigil.com' });
   };
 
   return {

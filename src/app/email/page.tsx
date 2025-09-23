@@ -20,7 +20,7 @@ export default async function EmailPage() {
             <h1 className="text-3xl font-bold mb-4">Email Template System</h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
               Create and send professional emails using our template system. 
-              All emails will be sent to <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm">ttanagardigil@urkatech.com</code>.
+              All emails will be sent to <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm">info@tolgatanagardigil.com</code>.
             </p>
           </div>
 

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/contexts/settings-context";
+import { PageSkeleton } from "@/components/admin/sidebar-skeleton";
 
 export default function SocialSettingsPage() {
   const { settings, loading, refreshSettings } = useSettings();
@@ -61,11 +62,7 @@ export default function SocialSettingsPage() {
   };
 
   if (loading || !settings) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <PageSkeleton showHeader showStats={false} showCards cardCount={1} showTable={false} />;
   }
 
   return (
@@ -148,4 +145,3 @@ export default function SocialSettingsPage() {
     </div>
   );
 }
-

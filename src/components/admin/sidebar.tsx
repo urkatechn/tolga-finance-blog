@@ -33,10 +33,13 @@ import {
   SidebarMenuSubItem,
   SidebarMenuSubButton,
   SidebarRail,
+  SidebarMenuSkeleton,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { UserMenu } from "@/components/admin/user-menu";
 import { useSettings } from '@/contexts/settings-context';
+import { SidebarHeaderSkeleton } from "@/components/admin/sidebar-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SubNavItem {
   title: string;
@@ -123,7 +126,7 @@ const navItems: NavItem[] = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { settings } = useSettings();
+  const { settings, loading } = useSettings();
   const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({});
 
   const toggleSubMenu = (title: string) => {
@@ -148,35 +151,39 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/admin" className="flex items-center gap-2">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  {settings?.site_logo_url ? (
-                    <img 
-                      src={settings.site_logo_url} 
-                      alt="Logo" 
-                      className="size-6 object-contain"
-                    />
-                  ) : settings?.site_brand_initials ? (
-                    <span className="text-xs font-bold">
-                      {settings.site_brand_initials}
+        {loading ? (
+          <SidebarHeaderSkeleton />
+        ) : (
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg" asChild>
+                <Link href="/admin" className="flex items-center gap-2">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    {settings?.site_logo_url ? (
+                      <img 
+                        src={settings.site_logo_url} 
+                        alt="Logo" 
+                        className="size-6 object-contain"
+                      />
+                    ) : settings?.site_brand_initials ? (
+                      <span className="text-xs font-bold">
+                        {settings.site_brand_initials}
+                      </span>
+                    ) : (
+                      <LayoutDashboard className="size-4" />
+                    )}
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {settings?.site_brand_name || 'Finance Blog'}
                     </span>
-                  ) : (
-                    <LayoutDashboard className="size-4" />
-                  )}
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    {settings?.site_brand_name || 'Finance Blog'}
-                  </span>
-                  <span className="truncate text-xs">Admin Panel</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+                    <span className="truncate text-xs">Admin Panel</span>
+                  </div>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        )}
       </SidebarHeader>
       
       <SidebarContent>
@@ -190,6 +197,25 @@ export function AppSidebar() {
                   const isOpen = openSubMenus[item.title];
                   const hasActiveSubItem = item.subItems.some(subItem => pathname === subItem.href);
                   
+                  // While settings are loading, show skeletons for the Settings menu and its sub-items
+                  if (item.title === 'Settings' && loading) {
+                    return (
+                      <SidebarMenuItem key="settings-skeleton">
+                        <SidebarMenuSkeleton />
+                        <SidebarMenuSub>
+                          {Array.from({ length: 5 }).map((_, idx) => (
+                            <SidebarMenuSubItem key={idx}>
+                              <div className="flex items-center gap-2 px-2 py-1.5">
+                                <Skeleton className="h-4 w-4 rounded" />
+                                <Skeleton className="h-3 w-28" />
+                              </div>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </SidebarMenuItem>
+                    );
+                  }
+
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton

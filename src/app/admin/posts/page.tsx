@@ -553,10 +553,11 @@ export default function PostsPage() {
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4 flex-1">
-          <div className="relative max-w-sm">
+      {/* Filters and Search - Mobile responsive */}
+      <div className="space-y-4">
+        {/* Search and primary filters */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search posts..."
@@ -566,102 +567,128 @@ export default function PostsPage() {
               disabled={loading}
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All statuses" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter} disabled={loading}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="All categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: category.color }}
-                    />
-                    {category.name}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            type="button"
-            variant={featuredFilter ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFeaturedFilter((v) => !v)}
-            disabled={loading}
-          >
-            <Star className="mr-2 h-4 w-4" />
-            Featured {typeof stats.featured === 'number' ? `(${stats.featured})` : ''}
-          </Button>
-        </div>
-        <div className="flex items-center gap-2">
-          {(() => {
-            const archivedCount = selectedPosts.filter(post => post.status === 'archived').length;
-            const isAllArchived = selectedPosts.length > 0 && archivedCount === selectedPosts.length;
+          
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+            <Select value={statusFilter} onValueChange={setStatusFilter} disabled={loading}>
+              <SelectTrigger className="w-full sm:w-[150px]">
+                <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
             
-            return (
-              <>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  disabled={selectedPosts.length === 0 || loading || isBulkFeaturing}
-                  onClick={() => handleBulkFeature(true)}
-                >
-                  {isBulkFeaturing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  <Star className="mr-2 h-4 w-4" />
-                  Feature {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  disabled={selectedPosts.length === 0 || loading || isBulkFeaturing}
-                  onClick={() => handleBulkFeature(false)}
-                >
-                  {isBulkFeaturing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  <StarOff className="mr-2 h-4 w-4" />
-                  Unfeature {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  disabled={selectedPosts.length === 0 || loading || isBulkArchiving}
-                  onClick={handleBulkArchiveClick}
-                >
-                  {isBulkArchiving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  <Archive className="mr-2 h-4 w-4" />
-                  {isAllArchived 
-                    ? `Unarchive ${selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}` 
-                    : `Archive ${selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}`
-                  }
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  disabled={selectedPosts.length === 0 || loading || isBulkDeleting}
-                  onClick={handleBulkDeleteClick}
-                >
-                  {isBulkDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Bulk Delete {selectedPosts.length > 0 ? `(${selectedPosts.length})` : ''}
-                </Button>
-              </>
-            )
-          })()
-          }
+            <Select value={categoryFilter} onValueChange={setCategoryFilter} disabled={loading}>
+              <SelectTrigger className="w-full sm:w-[150px]">
+                <SelectValue placeholder="All categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: category.color }}
+                      />
+                      {category.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Button
+              type="button"
+              variant={featuredFilter ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFeaturedFilter((v) => !v)}
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              <Star className="mr-2 h-4 w-4" />
+              <span className="hidden sm:inline">Featured {typeof stats.featured === 'number' ? `(${stats.featured})` : ''}</span>
+              <span className="sm:hidden">Featured</span>
+            </Button>
+          </div>
         </div>
+        
+        {/* Bulk actions - Collapsible on mobile */}
+        {selectedPosts.length > 0 && (
+          <div className="border-t pt-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-muted-foreground mr-2">
+                {selectedPosts.length} selected:
+              </span>
+              
+              {(() => {
+                const archivedCount = selectedPosts.filter(post => post.status === 'archived').length;
+                const isAllArchived = selectedPosts.length > 0 && archivedCount === selectedPosts.length;
+                
+                return (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      disabled={selectedPosts.length === 0 || loading || isBulkFeaturing}
+                      onClick={() => handleBulkFeature(true)}
+                      className="flex-1 sm:flex-none"
+                    >
+                      {isBulkFeaturing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                      <Star className="mr-1 h-3 w-3" />
+                      <span className="hidden sm:inline">Feature ({selectedPosts.length})</span>
+                      <span className="sm:hidden">Feature</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      disabled={selectedPosts.length === 0 || loading || isBulkFeaturing}
+                      onClick={() => handleBulkFeature(false)}
+                      className="flex-1 sm:flex-none"
+                    >
+                      {isBulkFeaturing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                      <StarOff className="mr-1 h-3 w-3" />
+                      <span className="hidden sm:inline">Unfeature ({selectedPosts.length})</span>
+                      <span className="sm:hidden">Unfeature</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      disabled={selectedPosts.length === 0 || loading || isBulkArchiving}
+                      onClick={handleBulkArchiveClick}
+                      className="flex-1 sm:flex-none"
+                    >
+                      {isBulkArchiving && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                      <Archive className="mr-1 h-3 w-3" />
+                      <span className="hidden sm:inline">
+                        {isAllArchived ? `Unarchive (${selectedPosts.length})` : `Archive (${selectedPosts.length})`}
+                      </span>
+                      <span className="sm:hidden">
+                        {isAllArchived ? 'Unarchive' : 'Archive'}
+                      </span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      disabled={selectedPosts.length === 0 || loading || isBulkDeleting}
+                      onClick={handleBulkDeleteClick}
+                      className="flex-1 sm:flex-none"
+                    >
+                      {isBulkDeleting && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
+                      <Trash2 className="mr-1 h-3 w-3" />
+                      <span className="hidden sm:inline">Delete ({selectedPosts.length})</span>
+                      <span className="sm:hidden">Delete</span>
+                    </Button>
+                  </>
+                )
+              })()
+              }
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Data Table */}

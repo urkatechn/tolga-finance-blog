@@ -337,38 +337,47 @@ export default function CommentsManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <h2 className="text-2xl font-bold">Comments Management</h2>
-        <div className="flex space-x-2">
-          {(['all', 'pending', 'approved', 'spam'] as const).map((filterOption) => (
-            <Button
-              key={filterOption}
-              variant={filter === filterOption ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => { setFilter(filterOption); setPage(1); }}
-              className="capitalize"
-            >
-              {filterOption}
-              {filterOption === 'pending' && (
-                <Badge variant="secondary" className="ml-2">
-                  {comments.filter(c => !c.is_approved && !c.is_spam).length}
-                </Badge>
-              )}
-            </Button>
-          ))}
-          <div className="hidden md:flex items-center gap-2 ml-2">
-            <Button size="sm" variant="outline" onClick={() => setAllExpanded(true)}>Expand All</Button>
-            <Button size="sm" variant="outline" onClick={() => setAllExpanded(false)}>Collapse All</Button>
+        
+        {/* Mobile-first responsive controls */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          {/* Filter buttons */}
+          <div className="flex flex-wrap gap-2">
+            {(['all', 'pending', 'approved', 'spam'] as const).map((filterOption) => (
+              <Button
+                key={filterOption}
+                variant={filter === filterOption ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => { setFilter(filterOption); setPage(1); }}
+                className="capitalize flex-1 sm:flex-none"
+              >
+                {filterOption}
+                {filterOption === 'pending' && (
+                  <Badge variant="secondary" className="ml-1 sm:ml-2">
+                    {comments.filter(c => !c.is_approved && !c.is_spam).length}
+                  </Badge>
+                )}
+              </Button>
+            ))}
           </div>
-          <div className="flex items-center gap-2 ml-4">
-            <span className="text-sm text-muted-foreground">Per page</span>
-            <select
-              className="h-9 border rounded-md px-2 text-sm bg-background"
-              value={pageSize}
-              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-            >
-              {[10, 20, 50, 100].map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
+          
+          {/* Additional controls */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="hidden lg:flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={() => setAllExpanded(true)}>Expand All</Button>
+              <Button size="sm" variant="outline" onClick={() => setAllExpanded(false)}>Collapse All</Button>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground hidden sm:inline">Per page</span>
+              <select
+                className="h-9 border rounded-md px-2 text-sm bg-background min-w-[80px]"
+                value={pageSize}
+                onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+              >
+                {[10, 20, 50, 100].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -385,7 +394,7 @@ export default function CommentsManagement() {
       ) : (
         <div className="space-y-4">
           {threadedComments.map((comment) => {
-            const isAdminReply = !!comment.parent_id && comment.author_name === 'Admin';
+            const isAdminReply = !!comment.parent_id && (comment.author_name === 'Admin' || comment.author_name === 'Tolga Tanagardigil');
             const isReply = !!comment.parent_id;
             const isExpanded = expanded[comment.id] ?? true;
             return (
@@ -438,14 +447,16 @@ export default function CommentsManagement() {
                 
                 {/* Comment Actions - More visible and clearly associated */}
                 <div className="mt-4 pt-3 border-t border-border/50">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                  {/* Mobile-first action layout */}
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {/* Primary actions */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                       {comment.replies && comment.replies.length > 0 && (
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => toggleReplies(comment.id)}
-                          className="inline-flex items-center gap-1"
+                          className="inline-flex items-center gap-1 justify-center sm:justify-start"
                         >
                           {expanded[comment.id] ?? true ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                           {(expanded[comment.id] ?? true) ? 'Hide' : 'Show'} Replies ({comment.replies.length})
@@ -456,32 +467,37 @@ export default function CommentsManagement() {
                         variant="outline"
                         size="sm"
                         onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                        className="inline-flex items-center gap-1"
+                        className="inline-flex items-center gap-1 justify-center sm:justify-start"
                       >
                         <MessageCircle className="h-4 w-4" />
-                        {replyingTo === comment.id ? 'Cancel Reply' : 'Reply as Admin'}
+                        <span className="hidden sm:inline">{replyingTo === comment.id ? 'Cancel Reply' : 'Reply as Admin'}</span>
+                        <span className="sm:hidden">Reply</span>
                       </Button>
                     </div>
                     
-                    <div className="flex items-center gap-2">
+                    {/* Moderation actions */}
+                    <div className="flex flex-wrap items-center gap-2">
                       {/* Quick moderation actions */}
                       {!comment.is_approved && !comment.is_spam && (
                         <>
                           <Button
                             size="sm"
                             onClick={() => moderateComment(comment.id, 'approve')}
-                            className="bg-green-600 hover:bg-green-700 text-white"
+                            className="bg-green-600 hover:bg-green-700 text-white flex-1 sm:flex-none"
                           >
                             <Check className="h-4 w-4 mr-1" />
-                            Approve
+                            <span className="hidden sm:inline">Approve</span>
+                            <span className="sm:hidden">✓</span>
                           </Button>
                           <Button
                             size="sm"
                             variant="destructive"
                             onClick={() => moderateComment(comment.id, 'spam')}
+                            className="flex-1 sm:flex-none"
                           >
                             <AlertTriangle className="h-4 w-4 mr-1" />
-                            Spam
+                            <span className="hidden sm:inline">Spam</span>
+                            <span className="sm:hidden">!</span>
                           </Button>
                         </>
                       )}
@@ -493,7 +509,8 @@ export default function CommentsManagement() {
                           className="bg-green-600 hover:bg-green-700 text-white"
                         >
                           <Check className="h-4 w-4 mr-1" />
-                          Not Spam
+                          <span className="hidden sm:inline">Not Spam</span>
+                          <span className="sm:hidden">OK</span>
                         </Button>
                       )}
                       
@@ -504,7 +521,8 @@ export default function CommentsManagement() {
                           onClick={() => moderateComment(comment.id, 'spam')}
                         >
                           <EyeOff className="h-4 w-4 mr-1" />
-                          Hide
+                          <span className="hidden sm:inline">Hide</span>
+                          <span className="sm:hidden">Hide</span>
                         </Button>
                       )}
                       
@@ -592,7 +610,7 @@ export default function CommentsManagement() {
                       Replies to this comment:
                     </div>
                     {comment.replies.map(reply => {
-                      const replyIsAdmin = reply.author_name === 'Admin';
+                      const replyIsAdmin = reply.author_name === 'Admin' || reply.author_name === 'Tolga Tanagardigil';
                       return (
                         <div key={reply.id} className={`ml-6 p-4 rounded-lg border-l-4 ${replyIsAdmin ? 'border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20' : 'border-l-gray-300 bg-gray-50/50 dark:bg-gray-800/30'}`}>
                           <div className="flex items-start justify-between mb-2">

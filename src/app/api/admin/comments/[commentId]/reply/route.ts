@@ -40,7 +40,7 @@ export async function POST(
       .insert({
         post_id: parent.post_id,
         parent_id: commentId,
-        author_name: 'Admin',
+        author_name: 'Tolga Tanagardigil',
         author_email: null,
         content: text,
         is_approved: true,
@@ -64,4 +64,3 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to add reply' }, { status: 500 });
   }
 }
-

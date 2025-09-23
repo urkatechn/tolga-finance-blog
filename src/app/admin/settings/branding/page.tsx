@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from '@/contexts/settings-context';
+import { PageSkeleton } from "@/components/admin/sidebar-skeleton";
 import { MediaPicker } from '@/components/admin/media-picker';
 
 export default function BrandingSettingsPage() {
@@ -192,11 +193,7 @@ export default function BrandingSettingsPage() {
   };
 
   if (loading || !settings) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+    return <PageSkeleton showHeader showStats={false} showCards cardCount={3} showTable={false} />;
   }
 
   return (

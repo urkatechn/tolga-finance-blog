@@ -10,7 +10,7 @@ export async function GET() {
         const resend = new Resend(apiKey);
         const { data, error } = await resend.emails.send({
             from: "info@notifications.tolgatanagardigil.com",
-            to: ["gorkem.tanagardigil@urkatech.com"],
+            to: ["info@tolgatanagardigil.com"],
             subject: "Hello from Resend",
             html: "<h1>Hello from Resend</h1>",
         });

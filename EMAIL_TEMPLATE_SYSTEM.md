@@ -129,7 +129,7 @@ NEWSLETTER_FROM=info@notifications.tolgatanagardigil.com
 
 ### Default Recipient
 
-All emails are currently sent to: `ttanagardigil@urkatech.com`
+All emails are currently sent to: `info@tolgatanagardigil.com`
 
 This can be customized by modifying the `sendEmailToDefault` function or using `sendGenericEmail` directly with a different recipient.
 
