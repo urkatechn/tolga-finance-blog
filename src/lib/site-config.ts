@@ -7,7 +7,7 @@ export const DEFAULT_SITE_CONFIG = {
     linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://www.linkedin.com/in/ttolgatan/",
     twitter: process.env.NEXT_PUBLIC_TWITTER_URL || "https://twitter.com",
     github: process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com",
-    email: "contact@financeblog.com",
+    email: "info@tolgatanagardigil.com",
   },
   
   // Site Branding
@@ -15,7 +15,7 @@ export const DEFAULT_SITE_CONFIG = {
     title: "Finance Blog",
     description: "Your guide to financial freedom and wealth building",
     tagline: "Your guide to financial freedom and wealth building",
-    url: "https://finance-blog.example.com",
+    url: "https://www.tolgatanagardigil.com",
     brandName: "Finance Blog",
     brandInitials: "FB",
     logoUrl: "",

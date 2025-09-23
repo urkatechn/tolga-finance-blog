@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmailToDefault } from "@/lib/email/service";
 
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();

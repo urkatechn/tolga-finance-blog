@@ -237,6 +237,7 @@ ON CONFLICT DO NOTHING;
 -- Insert comprehensive settings with all dynamic configuration options
 INSERT INTO settings (key, value, category, description) VALUES
   -- Branding Settings (Header & Visual)
+  ('site_title', '"Finance Blog"', 'branding', 'The main title of the website'),
   ('site_description', '"Your guide to financial freedom and wealth building"', 'branding', 'The description/tagline of the blog'),
   ('site_tagline', '"Your guide to financial freedom and wealth building"', 'branding', 'Subtitle/tagline displayed on the landing page'),
   ('site_keywords', '["finance", "investing", "money", "retirement", "blog"]', 'branding', 'SEO keywords for the site'),
