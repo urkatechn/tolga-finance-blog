@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +11,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import "./editor-styles.css";
 import rehypeSanitize from "rehype-sanitize";
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +33,12 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Save, X, ImageIcon } from "lucide-react";
+import { Loader2, Save, X, ImageIcon, Palette } from "lucide-react";
 import NextImage from 'next/image';
 import { MediaPicker } from '@/components/admin/media-picker';
+import type { ICommand, TextAreaTextApi, TextState } from "@uiw/react-md-editor";
+import { commands as mdCommands } from "@uiw/react-md-editor";
+import { markdownSanitizeOptions, COLOR_STYLE_REGEX } from "@/lib/markdown-sanitize";
 
 // Dynamically import the editor to avoid SSR issues
 const MDEditor = dynamic(
@@ -60,6 +64,113 @@ const MarkdownPreview = dynamic(
     )
   }
 );
+
+const TEXT_COLOR_PRESETS: Array<{ label: string; color: string }> = [
+  { label: "Default", color: "inherit" },
+  { label: "Primary", color: "#2563eb" },
+  { label: "Emerald", color: "#16a34a" },
+  { label: "Rose", color: "#e11d48" },
+  { label: "Amber", color: "#f97316" },
+  { label: "Slate", color: "#475569" },
+];
+
+const isValidColorValue = (value: string) => COLOR_STYLE_REGEX.test(`color: ${value}`);
+
+const applyTextColor = (
+  state: TextState,
+  api: TextAreaTextApi,
+  color: string,
+) => {
+  const trimmedColor = color.trim();
+  const selection = state.selectedText || "";
+  const cleanedSelection = selection
+    .replace(/<span[^>]*style="[^">]*color:[^">]*"[^>]*>/gi, "")
+    .replace(/<\/span>/gi, "");
+
+  if (trimmedColor === "inherit") {
+    api.replaceSelection(cleanedSelection);
+    const baseStart = state.selection.start;
+    api.setSelectionRange({
+      start: baseStart,
+      end: baseStart + cleanedSelection.length,
+    });
+    return;
+  }
+
+  const openToken = `<span style="color: ${trimmedColor};">`;
+  const closeToken = "</span>";
+
+  api.replaceSelection(`${openToken}${cleanedSelection}${closeToken}`);
+
+  const selectionStart = state.selection.start + openToken.length;
+  const selectionEnd = selectionStart + cleanedSelection.length;
+
+  api.setSelectionRange({
+    start: selectionStart,
+    end: selectionEnd,
+  });
+};
+
+const createTextColorCommand = (): ICommand =>
+  mdCommands.group(
+    [
+      ...TEXT_COLOR_PRESETS.map((preset) => ({
+        name: `text-color-${preset.label.toLowerCase()}`,
+        keyCommand: `text-color-${preset.label.toLowerCase()}`,
+        buttonProps: {
+          "aria-label": `Apply ${preset.label.toLowerCase()} text color`,
+        },
+        icon: (
+          <span className="inline-flex items-center gap-2 text-xs">
+            <span
+              className="h-3 w-3 rounded-full border border-border"
+              style={{
+                backgroundColor: preset.color === "inherit" ? "transparent" : preset.color,
+              }}
+            />
+            <span className="font-medium">{preset.label}</span>
+          </span>
+        ),
+        execute: (state: TextState, api: TextAreaTextApi) => {
+          applyTextColor(state, api, preset.color);
+        },
+      })),
+      {
+        name: "text-color-custom",
+        keyCommand: "text-color-custom",
+        buttonProps: {
+          "aria-label": "Apply custom text color",
+        },
+        icon: <span className="text-xs font-medium">Custom</span>,
+        execute: (state: TextState, api: TextAreaTextApi) => {
+          if (typeof window === "undefined") {
+            return;
+          }
+          const userColor = window.prompt(
+            "Enter a CSS color (e.g. #2563eb, rgb(37,99,235), or var(--your-color))",
+          );
+          if (!userColor) {
+            return;
+          }
+          const trimmed = userColor.trim();
+          if (!isValidColorValue(trimmed)) {
+            window.alert("Invalid color value. Please enter a valid CSS color.");
+            return;
+          }
+          applyTextColor(state, api, trimmed);
+        },
+      },
+    ],
+    {
+      name: "text-color",
+      groupName: "text-color",
+      icon: <Palette className="h-4 w-4" />, 
+      buttonProps: {
+        "aria-label": "Text color tools",
+        title: "Text color",
+      },
+    },
+  );
 
 // Define the form schema with zod - more lenient for drafts
 const formSchema = z.object({
@@ -116,6 +227,25 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
   const [showMediaPicker, setShowMediaPicker] = useState(false);
   const [mediaPickerTarget, setMediaPickerTarget] = useState<'cover' | 'content'>('cover');
   const { toast } = useToast();
+  const { resolvedTheme } = useTheme();
+
+  const editorColorMode = resolvedTheme === "dark" ? "dark" : "light";
+
+  const textColorCommand = useMemo(() => createTextColorCommand(), []);
+
+  const editorCommands = useMemo(() => {
+    const baseCommands = mdCommands.getCommands();
+    const result = [...baseCommands];
+    const helpIndex = result.findIndex((command) => command.name === "help");
+
+    if (helpIndex >= 0) {
+      result.splice(helpIndex, 0, mdCommands.divider, textColorCommand);
+    } else {
+      result.push(mdCommands.divider, textColorCommand);
+    }
+
+    return result;
+  }, [textColorCommand]);
 
   // Fetch categories from API
   const fetchCategories = useCallback(async () => {
@@ -671,36 +801,37 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                 </div>
                 <Card className="overflow-hidden">
                   <CardContent className="p-0">
-                    <div data-color-mode="light" className="min-h-[700px]">
-                    <MDEditor
-                      value={content}
-                      onChange={(val) => setContent(val || "")}
-                      preview="live"
-                      height={700}
-                      previewOptions={{
-                        rehypePlugins: [[rehypeSanitize]],
-                      }}
-                      textareaProps={{
-                        placeholder: "# Start writing your post here...\n\nYou can use **Markdown** and _MDX_ syntax.\n\n## Features\n- Live preview\n- Syntax highlighting\n- Image support\n- Tables\n- Code blocks",
-                      }}
-                      onPaste={async (event) => {
-                        const clipboardEvent = event as unknown as ClipboardEvent;
-                        const result = await handleImagePaste(clipboardEvent.clipboardData);
-                        if (result) {
-                          const textarea = event.target as HTMLTextAreaElement;
-                          const start = textarea.selectionStart;
-                          const end = textarea.selectionEnd;
-                          const text = textarea.value;
-                          const before = text.substring(0, start);
-                          const after = text.substring(end);
-                          const imageMarkdown = `![Image](${result})`;
-                          setContent(before + imageMarkdown + after);
-                          event.preventDefault();
-                        }
-                      }}
-                    />
-                  </div>
-                </CardContent>
+                    <div data-color-mode={editorColorMode} className="min-h-[700px]">
+                      <MDEditor
+                        commands={editorCommands}
+                        value={content}
+                        onChange={(val) => setContent(val || "")}
+                        preview="live"
+                        height={700}
+                        previewOptions={{
+                          rehypePlugins: [[rehypeSanitize, markdownSanitizeOptions]],
+                        }}
+                        textareaProps={{
+                          placeholder: "# Start writing your post here...\n\nYou can use **Markdown** and _MDX_ syntax.\n\n## Features\n- Live preview\n- Syntax highlighting\n- Image support\n- Tables\n- Code blocks",
+                        }}
+                        onPaste={async (event) => {
+                          const clipboardEvent = event as unknown as ClipboardEvent;
+                          const result = await handleImagePaste(clipboardEvent.clipboardData);
+                          if (result) {
+                            const textarea = event.target as HTMLTextAreaElement;
+                            const start = textarea.selectionStart;
+                            const end = textarea.selectionEnd;
+                            const text = textarea.value;
+                            const before = text.substring(0, start);
+                            const after = text.substring(end);
+                            const imageMarkdown = `![Image](${result})`;
+                            setContent(before + imageMarkdown + after);
+                            event.preventDefault();
+                          }
+                        }}
+                      />
+                    </div>
+                  </CardContent>
                 </Card>
                 <FormField
                   control={form.control}
@@ -762,7 +893,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                     </div>
                     
                     <div 
-                      data-color-mode="light"
+                      data-color-mode={editorColorMode}
                       className="prose prose-lg md:prose-xl dark:prose-invert max-w-none
                         prose-headings:font-bold prose-headings:tracking-tight
                         prose-h1:text-3xl md:prose-h1:text-4xl
@@ -779,7 +910,7 @@ export function PostEditorV2({ postId, initialData }: PostEditorV2Props) {
                     >
                       <MarkdownPreview 
                         source={content || "*No content yet. Start writing in the Content Editor tab.*"}
-                        rehypePlugins={[[rehypeSanitize]]}
+                        rehypePlugins={[[rehypeSanitize, markdownSanitizeOptions]]}
                       />
                     </div>
                   </article>

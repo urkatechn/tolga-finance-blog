@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import rehypeSanitize from "rehype-sanitize";
 import { useTheme } from "next-themes";
 import { useMemo, type CSSProperties } from "react";
+import { markdownSanitizeOptions } from "@/lib/markdown-sanitize";
 
 interface MarkdownContentProps {
   source: string;
@@ -51,7 +52,7 @@ export default function MarkdownContent({ source }: MarkdownContentProps) {
     >
       <MarkdownPreview
         source={source || ""}
-        rehypePlugins={[[rehypeSanitize]]}
+        rehypePlugins={[[rehypeSanitize, markdownSanitizeOptions]]}
         className="markdown-preview"
         style={markdownStyles}
       />
