@@ -148,7 +148,7 @@ export async function sendNewPostNotifications(
       } catch (batchError) {
         console.error("Batch processing error:", batchError);
         // Add all subscribers in failed batch to failures
-        batch.forEach(subscriber => {
+        batch.forEach((subscriber: { id: number; email: string }) => {
           result.failures.push({
             email: subscriber.email,
             error: batchError instanceof Error ? batchError.message : "Batch processing failed"
