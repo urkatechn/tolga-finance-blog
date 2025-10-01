@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, ArrowUpDown, Eye, Pencil, Trash, Copy, Archive, FileText } from "lucide-react";
+import { MoreHorizontal, ArrowUpDown, Eye, Pencil, Trash, Copy, Archive, FileText, Mail, MailCheck } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,6 +31,8 @@ export type Post = {
   meta_title: string | null;
   meta_description: string | null;
   published_at: string | null;
+  email_notification_sent: boolean;
+  email_notification_sent_at: string | null;
   created_at: string;
   updated_at: string;
   category?: {
@@ -52,7 +54,8 @@ export const createColumns = (
   handleUnpublishPost?: (id: string) => void,
   handleDeletePost?: (id: string) => void,
   handleArchivePost?: (id: string) => void,
-  handleUnarchivePost?: (id: string) => void
+  handleUnarchivePost?: (id: string) => void,
+  handleSendEmailNotification?: (id: string) => void
 ): ColumnDef<Post>[] => [
   {
     id: "select",
@@ -243,6 +246,31 @@ export const createColumns = (
     },
   },
   {
+    accessorKey: "email_notification_sent",
+    header: "Email Sent",
+    cell: ({ row }) => {
+      const emailSent = row.getValue("email_notification_sent") as boolean;
+      const emailSentAt = row.original.email_notification_sent_at;
+      
+      if (emailSent && emailSentAt) {
+        return (
+          <div className="flex items-center gap-1">
+            <MailCheck className="h-4 w-4 text-green-600" />
+            <span className="text-xs text-green-600">
+              {new Date(emailSentAt).toLocaleDateString()}
+            </span>
+          </div>
+        );
+      }
+      return (
+        <div className="flex items-center gap-1">
+          <Mail className="h-4 w-4 text-gray-400" />
+          <span className="text-xs text-gray-500">Not sent</span>
+        </div>
+      );
+    },
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const post = row.original;
@@ -280,6 +308,20 @@ export const createColumns = (
               <span>Copy Link</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            {post.status === 'published' && (
+              <>
+                <DropdownMenuItem 
+                  onClick={() => handleSendEmailNotification?.(post.id)}
+                  disabled={!handleSendEmailNotification}
+                >
+                  <Mail className="mr-2 h-4 w-4" />
+                  <span>
+                    {post.email_notification_sent ? 'Resend Email to Subscribers' : 'Send Email to Subscribers'}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
             {post.status === 'draft' ? (
               <DropdownMenuItem onClick={() => handlePublishPost?.(post.id)}>
                 <FileText className="mr-2 h-4 w-4" />

@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 import rehypeSanitize from "rehype-sanitize";
+import { useTheme } from "next-themes";
+import { useMemo, type CSSProperties } from "react";
 
 interface MarkdownContentProps {
   source: string;
@@ -13,9 +15,26 @@ const MarkdownPreview = dynamic(() => import("@uiw/react-markdown-preview"), {
 });
 
 export default function MarkdownContent({ source }: MarkdownContentProps) {
+  const { resolvedTheme } = useTheme();
+
+  const colorMode = useMemo<"light" | "dark">(() => {
+    return resolvedTheme === "dark" ? "dark" : "light";
+  }, [resolvedTheme]);
+
+  const markdownStyles = useMemo<CSSProperties & Record<string, string>>(
+    () => ({
+      backgroundColor: "transparent",
+      color: "inherit",
+      "--color-canvas-default": "transparent",
+      "--color-canvas-inset": "transparent",
+      "--color-neutral-muted": "hsl(var(--muted))",
+    }),
+    []
+  );
+
   return (
     <div
-      data-color-mode="light"
+      data-color-mode={colorMode}
       className="prose prose-lg prose-slate dark:prose-invert mx-auto max-w-none
         prose-headings:font-bold prose-headings:tracking-tight
         prose-h1:text-3xl md:prose-h1:text-4xl
@@ -30,8 +49,12 @@ export default function MarkdownContent({ source }: MarkdownContentProps) {
         prose-strong:font-bold prose-strong:text-foreground
         prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
     >
-      <MarkdownPreview source={source || ""} rehypePlugins={[[rehypeSanitize]]} />
+      <MarkdownPreview
+        source={source || ""}
+        rehypePlugins={[[rehypeSanitize]]}
+        className="markdown-preview"
+        style={markdownStyles}
+      />
     </div>
   );
 }
-

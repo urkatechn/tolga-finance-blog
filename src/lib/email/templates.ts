@@ -153,3 +153,100 @@ export function genericEmailText(data: EmailTemplateData) {
   
   return lines.join("\n");
 }
+
+// New Post Notification Templates
+export interface NewPostNotificationData {
+  postTitle: string;
+  postExcerpt?: string;
+  postUrl: string;
+  authorName?: string;
+  categoryName?: string;
+  unsubscribeUrl: string;
+  brandName?: string;
+}
+
+export function newPostNotificationEmailHtml(data: NewPostNotificationData) {
+  const { 
+    postTitle, 
+    postExcerpt, 
+    postUrl, 
+    authorName, 
+    categoryName, 
+    unsubscribeUrl,
+    brandName = "Tolga Tangardigil" 
+  } = data;
+  
+  const preview = `New post: ${postTitle}`;
+  
+  return `
+  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; background:#f8fafc; padding:24px;">
+    <span style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;">${preview}</span>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+      <tr>
+        <td style="padding:22px 24px;background:#0f172a;color:#e2e8f0;">
+          <strong style="font-size:16px;">${brandName}</strong>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:28px 28px 8px 28px;">
+          <h1 style="margin:0;font-size:22px;color:#0f172a;">📝 New Post Published</h1>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:0 28px 20px 28px;">
+          <h2 style="margin:0 0 12px 0;font-size:20px;color:#1e293b;line-height:1.4;">${postTitle}</h2>
+          ${authorName ? `<p style="margin:0 0 8px 0;color:#64748b;font-size:14px;">by ${authorName}${categoryName ? ` in ${categoryName}` : ''}</p>` : ''}
+          ${postExcerpt ? `<p style="margin:12px 0;color:#334155;line-height:1.6;font-size:16px;">${postExcerpt}</p>` : ''}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:0 28px 28px 28px;">
+          <a href="${postUrl}"
+             style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px">
+            Read Full Post
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 28px;background:#f1f5f9;color:#64748b;font-size:12px;line-height:1.5;">
+          You're receiving this because you subscribed to ${brandName}. <a href="${unsubscribeUrl}" style="color:#64748b;">Unsubscribe</a> at any time.
+        </td>
+      </tr>
+    </table>
+  </div>`;
+}
+
+export function newPostNotificationEmailText(data: NewPostNotificationData) {
+  const { 
+    postTitle, 
+    postExcerpt, 
+    postUrl, 
+    authorName, 
+    categoryName, 
+    unsubscribeUrl,
+    brandName = "Tolga Tangardigil" 
+  } = data;
+  
+  const lines = [
+    brandName,
+    '',
+    '📝 New Post Published',
+    '',
+    postTitle,
+    authorName ? `by ${authorName}${categoryName ? ` in ${categoryName}` : ''}` : '',
+    '',
+  ];
+  
+  if (postExcerpt) {
+    lines.push(postExcerpt);
+    lines.push('');
+  }
+  
+  lines.push(`Read the full post: ${postUrl}`);
+  lines.push('');
+  lines.push('---');
+  lines.push(`You're receiving this because you subscribed to ${brandName}.`);
+  lines.push(`Unsubscribe: ${unsubscribeUrl}`);
+  
+  return lines.filter(line => line !== null).join('\n');
+}

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/supabase/user'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { sendNewPostNotifications, shouldSendNotification } from '@/lib/notifications/post-notifications'
 
 export async function GET(request: NextRequest) {
   try {
@@ -187,6 +188,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
     }
     
+    // Send email notifications if post is published
+    if (post && shouldSendNotification('draft', post.status, true, post.email_notification_sent || false)) {
+      try {
+        // Always use the production domain for email links
+        const origin = 'https://tolgatanagardigil.com';
+        if (post.status === 'published') {
+          await sendNewPostNotifications(
+            {
+              id: post.id,
+              title: post.title,
+              slug: post.slug,
+              excerpt: post.excerpt,
+              author: post.author,
+              category: post.category
+            },
+            origin
+          );
+          console.log(`Email notifications sent for new post: ${post.title}`);
+        }
+      } catch (emailError) {
+        console.error('Failed to send email notifications for new post:', emailError);
+        // Don't fail the request if email sending fails
+      }
+    }
+
     // Invalidate caches and revalidate relevant paths
     try {
       revalidateTag('posts')

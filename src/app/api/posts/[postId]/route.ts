@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/supabase/user'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { sendNewPostNotifications, shouldSendNotification } from '@/lib/notifications/post-notifications'
 
 export async function GET(
   request: NextRequest,
@@ -77,7 +78,7 @@ export async function PUT(
     // Get the current post to check ownership and status
     const { data: currentPost, error: fetchError } = await supabase
       .from('posts')
-      .select('author_id, status, published_at')
+      .select('author_id, status, published_at, email_notification_sent')
       .eq('id', id)
       .single()
     
@@ -153,6 +154,29 @@ export async function PUT(
       return NextResponse.json({ error: 'Failed to update post' }, { status: 500 })
     }
     
+    // Send email notifications when post is published for the first time (and email not already sent)
+    if (post && shouldSendNotification(currentPost.status, post.status, false, currentPost.email_notification_sent || false)) {
+      try {
+        // Always use the production domain for email links
+        const origin = 'https://tolgatanagardigil.com';
+        const postData = {
+          id: post.id,
+          title: post.title,
+          slug: post.slug,
+          excerpt: post.excerpt,
+          author: post.author,
+          category: post.category
+        };
+        
+        // Only send notifications when publishing for the first time and email not already sent
+        await sendNewPostNotifications(postData, origin);
+        console.log(`Email notifications sent for published post: ${post.title}`);
+      } catch (emailError) {
+        console.error('Failed to send email notifications for updated post:', emailError);
+        // Don't fail the request if email sending fails
+      }
+    }
+
     // Invalidate caches and revalidate relevant paths
     try {
       revalidateTag('posts')

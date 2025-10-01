@@ -300,6 +300,40 @@ export default function PostsPage() {
     }
   };
 
+  const handleSendEmailNotification = async (postId: string) => {
+    try {
+      const response = await fetch('/api/notifications/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send email notification');
+      }
+      
+      const result = await response.json();
+      
+      toast({
+        title: "Success",
+        description: `Email notification sent to ${result.result.emailsSent} subscribers!`,
+      });
+      
+      // Refresh the data to update email notification status
+      await fetchPosts();
+    } catch (error) {
+      console.error('Error sending email notification:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send email notification",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleBulkDeleteClick = () => {
     if (selectedPosts.length === 0) {
       return;
@@ -699,7 +733,8 @@ export default function PostsPage() {
             handleUnpublishPost, 
             handleDeletePostClick, 
             handleArchivePost, 
-            handleUnarchivePost
+            handleUnarchivePost,
+            handleSendEmailNotification
           )} 
           data={posts}
           onRowSelectionChange={setSelectedPosts}

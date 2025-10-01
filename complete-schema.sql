@@ -57,6 +57,8 @@ CREATE TABLE IF NOT EXISTS posts (
   meta_description TEXT,
   tags TEXT, -- Comma-separated tags
   published_at TIMESTAMP WITH TIME ZONE,
+  email_notification_sent BOOLEAN DEFAULT FALSE,
+  email_notification_sent_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   comments_count INTEGER DEFAULT 0
@@ -106,6 +108,7 @@ CREATE INDEX IF NOT EXISTS idx_posts_published_at ON posts(published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_posts_author_id ON posts(author_id);
 CREATE INDEX IF NOT EXISTS idx_posts_category_id ON posts(category_id);
 CREATE INDEX IF NOT EXISTS idx_posts_featured ON posts(featured) WHERE featured = true;
+CREATE INDEX IF NOT EXISTS idx_posts_email_notification_sent ON posts(email_notification_sent);
 CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
 CREATE INDEX IF NOT EXISTS idx_settings_key ON settings(key);
 CREATE INDEX IF NOT EXISTS idx_authors_is_default ON authors(is_default) WHERE is_default = true;
@@ -420,6 +423,12 @@ INSERT INTO settings (key, value, category, description) VALUES
   ('blog_enable_sidebar', 'true', 'blog', 'Whether to show the sidebar with recent posts and categories'),
   ('blog_recent_posts_limit', '5', 'blog', 'Number of recent posts to show in sidebar'),
   
+  -- Email Notification Settings
+  ('enable_email_notifications', 'true', 'general', 'Whether to send email notifications to subscribers when new posts are published'),
+  ('notification_delay_minutes', '0', 'general', 'Delay in minutes before sending notifications after post publication (0 = immediate)'),
+  ('notification_sender_name', '"Tolga Tangardigil"', 'general', 'Name shown as sender in notification emails'),
+  ('notification_subject_template', '"New post: {title}"', 'general', 'Template for email subject line. Use {title} for post title placeholder'),
+  
   -- Blog Stats Display
   ('blog_show_stats', 'true', 'blog', 'Whether to show statistics in the hero section'),
   ('blog_stats_articles_label', '"Articles"', 'blog', 'Label for articles count stat'),
@@ -448,7 +457,7 @@ ON CONFLICT (key) DO NOTHING;
 INSERT INTO posts (
   id, title, slug, excerpt, content, featured_image_url,
   author_id, category_id, status, featured, meta_title,
-  meta_description, tags, published_at, created_at, updated_at, comments_count
+  meta_description, tags, published_at, email_notification_sent, email_notification_sent_at, created_at, updated_at, comments_count
 ) VALUES
   ('3f58a1e2-7ed9-4d4d-8210-f9723801fb30',
    'Being Multinational Company in Turkey! Root Cause of FX Loss!',
@@ -465,10 +474,11 @@ For the last 5 years period, unfortunately wheter Turkish or foreign companies a
    'published',
    true,
    'Being Multinational Company in Turkey! Root Cause of FX Loss!',
-   'Why FX differences are important in the financial figures? What is the impact of FX issues?
-Role of management teams to eliminate or minimize.',
+   'Why FX differences are important in the financial figures? What is the impact of FX issues?\nRole of management teams to eliminate or minimize.',
    NULL,
    '2025-09-24 21:08:30.788+00',
+   false,
+   NULL,
    '2025-09-24 21:08:23.273943+00',
    '2025-09-24 21:08:31.067608+00',
    0),
@@ -491,6 +501,8 @@ https://docs.google.com/spreadsheets/d/1oOheb_X7GyEj4i95qAQgXAXrO690SJ0L9Ek349kx
    'Here is the tool which can be used for rates tracking.',
    NULL,
    '2025-09-28 20:04:52.998+00',
+   false,
+   NULL,
    '2025-09-28 20:04:38.91418+00',
    '2025-09-28 20:04:53.077621+00',
    0),
@@ -519,6 +531,8 @@ Foreign companies can implement risk mitigation (hedging) methods to protect the
    'There are several reasons and accordingly results of FX rate changes in Turkey. We should discuss how to eliminate risks in Turkey, even "Hedging" is not well-known in this region.',
    NULL,
    '2025-09-28 20:04:57.097+00',
+   false,
+   NULL,
    '2025-09-28 20:00:47.231982+00',
    '2025-09-28 20:04:57.157967+00',
    0),
@@ -545,6 +559,8 @@ deneme postudur
    'Test Post ',
    NULL,
    '2025-09-24 10:59:00.316+00',
+   false,
+   NULL,
    '2025-09-24 10:58:54.348001+00',
    '2025-09-24 11:03:27.948701+00',
    0)
