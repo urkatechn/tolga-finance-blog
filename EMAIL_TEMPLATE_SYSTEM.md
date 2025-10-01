@@ -5,7 +5,7 @@ A comprehensive email template system built on top of Resend for the Finance Blo
 ## Features
 
 - ✅ Professional HTML and text email templates
-- ✅ Consistent branding (Tolga Finance)
+- ✅ Consistent branding (Tolga Tangardigil)
 - ✅ Optional personalization with recipient names
 - ✅ Optional call-to-action buttons
 - ✅ Optional footer text
@@ -30,7 +30,7 @@ The form includes:
 - **Content** (required): Main email body content
 - **Button Text & URL** (optional): Call-to-action button
 - **Footer Text** (optional): Additional footer information
-- **Brand Name** (optional): Defaults to "Tolga Finance"
+- **Brand Name** (optional): Defaults to "Tolga Tangardigil"
 
 ### 2. Using the React Hook
 
@@ -161,7 +161,7 @@ When you send an email with:
 - Button: "Visit Blog" → "https://tolgatanagardigil.com"
 
 The recipient receives a professional email with:
-- Header: "Tolga Finance"
+- Header: "Tolga Tangardigil"
 - Title: "Welcome to our newsletter"
 - Greeting: "Hi John,"
 - Content: The provided message

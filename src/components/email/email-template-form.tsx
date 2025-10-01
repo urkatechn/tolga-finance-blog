@@ -38,7 +38,7 @@ export default function EmailTemplateForm({
     buttonText: "",
     buttonUrl: "",
     footerText: "",
-    brandName: "Tolga Finance"
+    brandName: "Tolga Tangardigil"
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -92,7 +92,7 @@ export default function EmailTemplateForm({
           buttonText: "",
           buttonUrl: "",
           footerText: "",
-          brandName: "Tolga Finance"
+          brandName: "Tolga Tangardigil"
         });
         if (onSuccess) {
           onSuccess();
@@ -246,7 +246,7 @@ export default function EmailTemplateForm({
                 type="text"
                 value={formData.brandName}
                 onChange={(e) => handleInputChange('brandName', e.target.value)}
-                placeholder="Brand name (defaults to 'Tolga Finance')"
+                placeholder="Brand name (defaults to 'Tolga Tangardigil')"
               />
             </div>
           </div>

@@ -452,7 +452,7 @@ INSERT INTO posts (
 ) VALUES
   ('3f58a1e2-7ed9-4d4d-8210-f9723801fb30',
    'Being Multinational Company in Turkey! Root Cause of FX Loss!',
-   'FX1',
+   'being-multinational-company-in-turkey-root-cause-of-fx-loss',
    'Why FX differences are important in the financial figures? What is the impact of FX issues?
 Role of management teams to eliminate or minimize.',
    '## Foreign Currency Risk in Turkey:
@@ -474,7 +474,7 @@ Role of management teams to eliminate or minimize.',
    0),
   ('6348d6e3-d21d-4bfc-bac4-793c3461990d',
    'Docs Tool - Online Rate',
-   'Rates Online',
+   'docs-tool-online-rate',
    'Here is the tool which can be used for rates tracking.',
    '# Rate Controlling & Tracking
 
@@ -496,7 +496,7 @@ https://docs.google.com/spreadsheets/d/1oOheb_X7GyEj4i95qAQgXAXrO690SJ0L9Ek349kx
    0),
   ('c0d1612e-b95d-41f0-a298-cb391f2af49f',
    'Economic and Accounting Effects of FX Rates Volatility',
-   'FX Changes and Results',
+   'economic-and-accounting-effects-of-fx-rates-volatility',
    'There are several reasons and accordingly results of FX rate changes in Turkey. We should discuss how to eliminate risks in Turkey, even "Hedging" is not well-known in this region.',
    '# *Economic and Accounting Effects*
 
@@ -524,7 +524,7 @@ Foreign companies can implement risk mitigation (hedging) methods to protect the
    0),
   ('e5fbccbb-5a0f-49a4-bf5b-2bdff63526f3',
    'Finance Test 2',
-   'f2',
+   'finance-test-2',
    'Test Post ',
    '# Finance test post 2
 

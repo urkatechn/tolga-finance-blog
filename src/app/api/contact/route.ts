@@ -33,24 +33,36 @@ export async function POST(req: NextRequest) {
 
     // Prepare email content
     const fullName = `${firstName.trim()} ${lastName.trim()}`;
-    const emailContent = `You have received a new contact form submission from the Finance Blog.
+    const submittedAt = new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "UTC",
+      timeZoneName: "short",
+    }).format(new Date());
 
-Contact Details:
-- Name: ${fullName}
-- Email: ${email.trim()}
-- Subject: ${subject.trim()}
-
-Message:
-${message.trim()}
-
----
-This message was sent through the contact form on the Finance Blog website.`;
+    const emailContent = [
+      "You just received a new contact request from the Tolga Tangardigil website.",
+      "",
+      "Summary",
+      `- From: ${fullName}`,
+      `- Email: ${email.trim()}`,
+      `- Subject: ${subject.trim()}`,
+      `- Submitted: ${submittedAt}`,
+      "",
+      "Message",
+      message.trim(),
+    ].join("\n");
 
     // Send email using the existing email service
     await sendEmailToDefault({
-      subject: `Contact Form: ${subject.trim()}`,
+      subject: `New Website Contact: ${subject.trim()}`,
       content: emailContent,
-      footerText: `Reply directly to this email to respond to ${fullName} at ${email.trim()}`
+      footerText: `Reply directly to this email to reach ${fullName} at ${email.trim()}.`
+        + " If you prefer, you can copy their address into a new message.",
+      brandName: "Tolga Tangardigil",
     });
 
     return NextResponse.json({

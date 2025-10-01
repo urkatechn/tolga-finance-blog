@@ -1,5 +1,5 @@
 export function subscriptionWelcomeEmailHtml(opts: { unsubscribeUrl: string; brandName?: string }) {
-  const { unsubscribeUrl, brandName = "Tolga Finance" } = opts;
+  const { unsubscribeUrl, brandName = "Tolga Tangardigil" } = opts;
   const preview = `Welcome to ${brandName}!`;
   return `
   <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; background:#f8fafc; padding:24px;">
@@ -39,7 +39,7 @@ export function subscriptionWelcomeEmailHtml(opts: { unsubscribeUrl: string; bra
 }
 
 export function subscriptionWelcomeEmailText(opts: { unsubscribeUrl: string; brandName?: string }) {
-  const { unsubscribeUrl, brandName = "Tolga Finance" } = opts;
+  const { unsubscribeUrl, brandName = "Tolga Tangardigil" } = opts;
   return [
     `Thanks for subscribing to ${brandName}!`,
     ``,
@@ -69,7 +69,7 @@ export function genericEmailHtml(data: EmailTemplateData) {
     buttonText, 
     buttonUrl, 
     footerText,
-    brandName = "Tolga Finance" 
+    brandName = "Tolga Tangardigil" 
   } = data;
   
   const preview = subject;
@@ -125,7 +125,7 @@ export function genericEmailText(data: EmailTemplateData) {
     buttonText, 
     buttonUrl, 
     footerText,
-    brandName = "Tolga Finance" 
+    brandName = "Tolga Tangardigil" 
   } = data;
   
   const greeting = recipientName ? `Hi ${recipientName},` : "Hello!";
