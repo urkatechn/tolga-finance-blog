@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS settings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   key VARCHAR(100) NOT NULL UNIQUE,
   value JSONB,
-  category VARCHAR(50) DEFAULT 'general' CHECK (category IN ('general', 'branding', 'social', 'authors', 'aboutme', 'contact')),
+  category VARCHAR(50) DEFAULT 'general' CHECK (category IN ('general', 'branding', 'social', 'authors', 'aboutme', 'contact', 'blog')),
   description TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -221,45 +221,46 @@ CREATE POLICY "Comments are deletable by authenticated users" ON comments
   FOR DELETE USING (auth.role() = 'authenticated');
 
 -- Insert default categories
-INSERT INTO categories (name, slug, description, color) VALUES
-  ('Personal Finance', 'personal-finance', 'Tips and strategies for managing your personal finances', '#10B981'),
-  ('Investing', 'investing', 'Investment strategies, market analysis, and portfolio management', '#3B82F6'),
-  ('Retirement Planning', 'retirement-planning', 'Planning for your retirement and financial security', '#8B5CF6'),
-  ('Market Analysis', 'market-analysis', 'Analysis of financial markets and economic trends', '#F59E0B'),
-  ('Cryptocurrency', 'cryptocurrency', 'Digital currencies, blockchain technology, and crypto investing', '#EF4444')
-ON CONFLICT (slug) DO NOTHING;
+INSERT INTO categories (id, name, slug, description, color) VALUES
+  ('6be43b9c-9fe8-49d0-a50d-6260085794bd', 'Personal Finance', 'personal-finance', 'Tips and strategies for managing your personal finances', '#10B981'),
+  ('00822ce7-c00b-423f-99dc-89c7b8a7f081', 'Corporate Finance', 'corporate-finance', '', '#3B82F6'),
+  ('11d74a2e-ba06-49b3-8b65-af04d1dc33b9', 'Casual', 'casual', '', '#982abc'),
+  ('9cb7eccb-e765-4a09-bb92-10bac8a248c0', 'Tools', 'tools', '', '#f73b3b'),
+  ('9dd0545f-dfdf-4653-b22a-7948ef744c0e', 'Daily News', 'daily-news', '', '#4a4e54'),
+  ('e61d68a2-7539-44a5-baef-4b489e013fab', 'ERP', 'erp', '', '#51f73b')
+ON CONFLICT (id) DO NOTHING;
 
 -- Insert default author
-INSERT INTO authors (name, email, bio, is_default) VALUES
-  ('Finance Blog Author', 'admin@financeblog.com', 'Welcome to our finance blog! I share insights about personal finance, investing, and wealth building.', true)
-ON CONFLICT DO NOTHING;
+INSERT INTO authors (id, name, email, bio, website_url, social_links, is_default) VALUES
+  ('febc732e-136d-49d3-9ac1-d02d17540f40', 'Tolga Tanagardigil', 'info@tolgatanagardigil.com', 'Finance Professional who has 10 years of experience in the Multinational Companies.', 'tolgatanagardigil.com', '{"linkedin":"https://tr.linkedin.com/in/ttolgatan"}', true)
+ON CONFLICT (id) DO NOTHING;
 
 -- Insert comprehensive settings with all dynamic configuration options
 INSERT INTO settings (key, value, category, description) VALUES
   -- Branding Settings (Header & Visual)
-  ('site_title', '"Finance Blog"', 'branding', 'The main title of the website'),
+  ('site_title', '"Tolga Tanagardigil"', 'branding', 'The main title of the website'),
   ('site_description', '"Your guide to financial freedom and wealth building"', 'branding', 'The description/tagline of the blog'),
   ('site_tagline', '"Your guide to financial freedom and wealth building"', 'branding', 'Subtitle/tagline displayed on the landing page'),
   ('site_keywords', '["finance", "investing", "money", "retirement", "blog"]', 'branding', 'SEO keywords for the site'),
   ('site_url', '"https://finance-blog.example.com"', 'branding', 'The main URL of the website'),
-  ('site_brand_name', '"Finance Blog"', 'branding', 'The brand name shown in header and footer'),
-  ('site_brand_initials', '"FB"', 'branding', 'Initials shown in the logo when no custom logo is set'),
+  ('site_brand_name', '"Tolga Tanagardigil"', 'branding', 'The brand name shown in header and footer'),
+  ('site_brand_initials', '"TT"', 'branding', 'Initials shown in the logo when no custom logo is set'),
   
   -- Visual Assets (Branding)
   ('site_logo_url', '""', 'branding', 'URL to the site logo image'),
-  ('site_favicon_url', '"/favicon.ico"', 'branding', 'URL to the site favicon'),
+  ('site_favicon_url', '"https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/rH_162XtOWOjH4HAmVeZV-1758920097470.jpg"', 'branding', 'URL to the site favicon'),
   
   -- Hero Section Content (Branding)
   ('hero_title', '"Smart Financial Insights & Analysis"', 'branding', 'Main headline on the landing page'),
-  ('hero_subtitle_primary', '"No need to endlessly search the internet anymore"', 'branding', 'Primary subtitle text on the landing page'),
-  ('hero_subtitle_secondary', '"Let us identify and explain the important financial issues for you. Get expert insights on investing, personal finance, and market trends."', 'branding', 'Secondary subtitle text on hero section'),
-  ('hero_cta_primary_text', '"Read Latest Articles"', 'branding', 'Primary call-to-action button text'),
+  ('hero_subtitle_primary', '"Tools, Tips, Support and More."', 'branding', 'Primary subtitle text on the landing page'),
+  ('hero_subtitle_secondary', '"Lets Identify the issues and create unique solutions together."', 'branding', 'Secondary subtitle text on hero section'),
+  ('hero_cta_primary_text', '"Latest Articles."', 'branding', 'Primary call-to-action button text'),
   ('hero_cta_primary_link', '"/blog"', 'branding', 'Link for the primary CTA button'),
   ('hero_cta_secondary_text', '"Get Weekly Insights"', 'branding', 'Secondary call-to-action button text'),
   ('hero_cta_secondary_link', '"#newsletter"', 'branding', 'Link for the secondary CTA button'),
   
   -- Hero Stats (Branding - editable stats in hero section)
-  ('hero_stats_articles_count', '"150+"', 'branding', 'Number of articles stat in hero'),
+  ('hero_stats_articles_count', '"5"', 'branding', 'Number of articles stat in hero'),
   ('hero_stats_articles_label', '"Expert Articles"', 'branding', 'Label for articles stat'),
   ('hero_stats_subscribers_count', '"25K+"', 'branding', 'Number of subscribers stat'),
   ('hero_stats_subscribers_label', '"Subscribers"', 'branding', 'Label for subscribers stat'),
@@ -270,7 +271,7 @@ INSERT INTO settings (key, value, category, description) VALUES
   ('social_linkedin', '"https://www.linkedin.com/in/ttolgatan/"', 'social', 'LinkedIn profile URL'),
   ('social_twitter', '"@financeblog"', 'social', 'Twitter/X handle for social media'),
   ('social_github', '"https://github.com"', 'social', 'GitHub profile URL'),
-  ('social_email', '"contact@financeblog.com"', 'social', 'Contact email address'),
+  ('social_email', '"info@tolgatanagardigil.com"', 'social', 'Contact email address'),
   
   -- Brand Colors (Branding)
   ('brand_primary_color', '"#3B82F6"', 'branding', 'Primary brand color (hex)'),
@@ -295,12 +296,12 @@ INSERT INTO settings (key, value, category, description) VALUES
   ('landing_section_subtitle', '"Real financial advice from someone who has made the mistakes so you do not have to"', 'branding', 'Subtitle for features section'),
   
   -- Feature Cards (Branding - What You'll Find Here section)
-  ('feature_1_title', '"Honest Investing"', 'branding', 'First feature card title'),
+  ('feature_1_title', '"Finance & Accounting"', 'branding', 'First feature card title'),
   ('feature_1_description', '"No get-rich-quick schemes. Just real strategies for building wealth over time, including the mistakes I made along the way."', 'branding', 'First feature card description'),
   ('feature_2_title', '"Money That Works"', 'branding', 'Second feature card title'),
-  ('feature_2_description', '"Practical budgeting, saving, and debt strategies that actually fit into real life. No perfect spreadsheets required."', 'branding', 'Second feature card description'),
+  ('feature_2_description', '""', 'branding', 'Second feature card description'),
   ('feature_3_title', '"Simple Portfolios"', 'branding', 'Third feature card title'),
-  ('feature_3_description', '"Build diversified portfolios without the complexity. Learn what works and what doesn''t from 12+ years of trial and error."', 'branding', 'Third feature card description'),
+  ('feature_3_description', '"Making a difference by doing accurate analysis and making decisions accordingly. Basically, learning how to control financial figures before take an action."', 'branding', 'Third feature card description'),
   
   -- SEO Meta Tags (Branding)
   ('meta_author', '"Finance Blog Team"', 'branding', 'Author meta tag'),
@@ -340,12 +341,12 @@ INSERT INTO settings (key, value, category, description) VALUES
   ('aboutme_topics_subtitle', '"No fluff, no get-rich-quick schemes. Just practical stuff that actually matters."', 'aboutme', 'Topics section subtitle'),
   
   -- Topic Cards
-  ('aboutme_topic_investing_title', '"Investing Reality"', 'aboutme', 'Investing topic card title'),
-  ('aboutme_topic_investing_description', '"Real talk about building wealth through investing. No day trading nonsense, just long-term strategies that work."', 'aboutme', 'Investing topic card description'),
+  ('aboutme_topic_investing_title', '"Finance & Accounting processes, preliminary assessment of changes and innovations in the economy."', 'aboutme', 'Investing topic card title'),
+  ('aboutme_topic_investing_description', '"Real scenarios in business life, alternative solutions in terms of finance. Interactive 1 to 1 sessions to identify issues to create long term action plans."', 'aboutme', 'Investing topic card description'),
   ('aboutme_topic_investing_tags', '["Portfolio Building", "Risk Management", "Market Psychology"]', 'aboutme', 'Investing topic tags array'),
   
   ('aboutme_topic_money_title', '"Money & Life"', 'aboutme', 'Money topic card title'),
-  ('aboutme_topic_money_description', '"How to handle money without it taking over your life. Budgeting, saving, and financial planning that actually sticks."', 'aboutme', 'Money topic card description'),
+  ('aboutme_topic_money_description', '"Finance & accounting is one of the significant part of any organization. It should be accountable, transparent and independent. I''ll try to share real time examples to have a better understanding that why this concept has key role."', 'aboutme', 'Money topic card description'),
   ('aboutme_topic_money_tags', '["Emergency Funds", "Debt Freedom", "Financial Goals"]', 'aboutme', 'Money topic tags array'),
   
   -- Let''s Connect Section
@@ -355,12 +356,33 @@ INSERT INTO settings (key, value, category, description) VALUES
   
   -- Newsletter Join Section (About Page specific)
   ('aboutme_newsletter_title', '"Join the Journey"', 'aboutme', 'About page newsletter section title'),
-  ('aboutme_newsletter_description', '"Get my latest thoughts on investing, money, and life delivered weekly. No spam, just honest insights."', 'aboutme', 'About page newsletter section description')
+  ('aboutme_newsletter_description', '"Get my latest thoughts on investing, money, and life delivered weekly. No spam, just honest insights."', 'aboutme', 'About page newsletter section description'),
+  
+  -- Blog Sidebar Configuration Settings
+  ('sidebar_show_newsletter', 'true', 'blog', 'Show/hide newsletter signup in blog sidebar'),
+  ('sidebar_newsletter_title', '"Stay Updated"', 'blog', 'Newsletter section title in sidebar'),
+  ('sidebar_newsletter_description', '"Get the latest financial insights delivered to your inbox weekly."', 'blog', 'Newsletter section description in sidebar'),
+  ('sidebar_show_trending', 'true', 'blog', 'Show/hide trending posts section in sidebar'),
+  ('sidebar_trending_title', '"Trending Posts"', 'blog', 'Trending posts section title in sidebar'),
+  ('sidebar_trending_limit', '4', 'blog', 'Number of trending posts to show in sidebar'),
+  ('sidebar_show_categories', 'true', 'blog', 'Show/hide categories section in sidebar'),
+  ('sidebar_categories_title', '"Categories"', 'blog', 'Categories section title in sidebar'),
+  ('sidebar_categories_limit', '8', 'blog', 'Number of categories to show in sidebar'),
+  ('sidebar_show_about', 'true', 'blog', 'Show/hide about section in sidebar'),
+  ('sidebar_about_title', '"About Finance Blog"', 'blog', 'About section title in sidebar'),
+  ('sidebar_about_author_name', '"Finance Blog Team"', 'blog', 'Author name in sidebar about section'),
+  ('sidebar_about_author_role', '"Financial Experts"', 'blog', 'Author role in sidebar about section'),
+  ('sidebar_about_description', '"We''re passionate about making finance accessible to everyone. Our team of experts shares insights, tips, and strategies to help you make informed financial decisions."', 'blog', 'About section description in sidebar'),
+  ('sidebar_show_stats', 'true', 'blog', 'Show/hide quick stats section in sidebar'),
+  ('sidebar_stats_articles', '"50+"', 'blog', 'Articles count display in sidebar stats'),
+  ('sidebar_stats_readers', '"10K+"', 'blog', 'Readers count display in sidebar stats'),
+  ('sidebar_stats_categories', '"5"', 'blog', 'Categories count display in sidebar stats'),
+  ('sidebar_stats_updated', '"24/7"', 'blog', 'Update frequency display in sidebar stats')
 ON CONFLICT (key) DO NOTHING;
 
 -- Contact Page Settings
 INSERT INTO settings (key, value, category, description) VALUES
-  ('contact_hero_line1', '"Let’s Chat About"', 'contact', 'Contact hero first line'),
+  ('contact_hero_line1', '"Let''s Share About"', 'contact', 'Contact hero first line'),
   ('contact_hero_title', '"Money & Life"', 'contact', 'Contact hero title'),
   ('contact_hero_subtitle', '"Got questions? Want to share your financial wins or disasters? Or maybe you just want to tell me I''''m completely wrong about something? I''''d love to hear from you."', 'contact', 'Contact hero subtitle'),
   ('contact_linkedin_card_title', '"LinkedIn"', 'contact', 'LinkedIn card title'),
@@ -373,9 +395,160 @@ INSERT INTO settings (key, value, category, description) VALUES
   ('contact_form_description', '"Use this form if you prefer. I read every message, even if it''''s just to tell me my investment advice is terrible."', 'contact', 'Form section description'),
   ('contact_faq_title', '"Common Questions"', 'contact', 'FAQ section title'),
   ('contact_faq_subtitle', '"Before you reach out, here are some things people often ask about."', 'contact', 'FAQ section subtitle'),
-  ('contact_faq_items', '[{"question":"Can you give me personal financial advice?","answer":"I''''m not a licensed financial advisor, so I can''''t give personalized advice. But I''''m happy to share general thoughts and point you toward good resources!"},{"question":"Want to collaborate or guest post?","answer":"I''''m always open to interesting collaborations! Send me your ideas and let''''s see if we can create something valuable together."},{"question":"How do you handle my information?","answer":"I respect your privacy. I won''''t share your email or information with anyone, and I definitely won''''t spam you with sales pitches."},{"question":"Can I suggest article topics?","answer":"Absolutely! I''''m always looking for new topics to explore. If there''''s something you''''re curious about, let me know."}]', 'contact', 'FAQ items as array of {question,answer}'),
+  ('contact_faq_items', '[{"question":"What is your E-mail address for the support?","answer":"If you are asking for support and if you are;\n\n- Finance team member of any company, Person who is willing to learn and create new things, Decided to make a difference in your organization, it may be university or company.\n\nFeel free to contact via support@tolgatanagardigil.com"},{"question":"Want to collaborate or guest post?","answer":"I''m always open to interesting collaborations! Send me your ideas and let''s see if we can create something valuable together."},{"question":"How do you handle my information?","answer":"I respect your privacy. I won''t share your email or information with anyone, and I definitely won''t spam you with sales pitches."},{"question":"Can I suggest article topics?","answer":"Absolutely! I''m always looking for new topics to explore. If there''s something you''re curious about, let me know."}]', 'contact', 'FAQ items as array of {question,answer}'),
   ('contact_faq_enabled', 'true', 'contact', 'Whether to show the FAQ section on contact page')
 ON CONFLICT (key) DO NOTHING;
+
+-- Blog Page Settings
+INSERT INTO settings (key, value, category, description) VALUES
+  -- Blog Hero Section
+  ('blog_hero_title', '"Blog & Insights"', 'blog', 'Main title for the blog page hero section'),
+  ('blog_hero_subtitle', '"Discover the latest insights on finance, investing, and building wealth for your future."', 'blog', 'Subtitle text in blog page hero section'),
+  ('blog_hero_gradient_from', '"from-slate-50"', 'blog', 'Starting gradient color class for hero background'),
+  ('blog_hero_gradient_via', '"via-blue-50"', 'blog', 'Middle gradient color class for hero background'),
+  ('blog_hero_gradient_to', '"to-indigo-50"', 'blog', 'Ending gradient color class for hero background'),
+  ('blog_hero_gradient_from_dark', '"dark:from-gray-900"', 'blog', 'Starting dark gradient color class'),
+  ('blog_hero_gradient_via_dark', '"dark:via-gray-800"', 'blog', 'Middle dark gradient color class'),
+  ('blog_hero_gradient_to_dark', '"dark:to-gray-900"', 'blog', 'Ending dark gradient color class'),
+  
+  -- Blog Content & Layout Settings
+  ('blog_posts_per_page', '12', 'blog', 'Number of posts to display per page on blog listing'),
+  ('blog_show_featured_separately', 'true', 'blog', 'Whether to show featured posts in a separate section'),
+  ('blog_featured_posts_limit', '3', 'blog', 'Maximum number of featured posts to show in featured section'),
+  ('blog_enable_search', 'true', 'blog', 'Whether to enable search functionality'),
+  ('blog_enable_category_filter', 'true', 'blog', 'Whether to enable category filtering'),
+  ('blog_enable_sidebar', 'true', 'blog', 'Whether to show the sidebar with recent posts and categories'),
+  ('blog_recent_posts_limit', '5', 'blog', 'Number of recent posts to show in sidebar'),
+  
+  -- Blog Stats Display
+  ('blog_show_stats', 'true', 'blog', 'Whether to show statistics in the hero section'),
+  ('blog_stats_articles_label', '"Articles"', 'blog', 'Label for articles count stat'),
+  ('blog_stats_categories_label', '"Categories"', 'blog', 'Label for categories count stat'),
+  ('blog_stats_featured_label', '"Featured"', 'blog', 'Label for featured posts count stat'),
+  
+  -- Blog Empty State
+  ('blog_empty_title', '"No articles found"', 'blog', 'Title shown when no articles are found'),
+  ('blog_empty_description_search', '"Try adjusting your search or filter criteria to find more articles."', 'blog', 'Description for empty state when search/filter is active'),
+  ('blog_empty_description_general', '"No articles have been published yet. Check back soon for new content!"', 'blog', 'Description for empty state when no search/filter is active'),
+  ('blog_empty_cta_text', '"View All Articles"', 'blog', 'Button text for empty state'),
+  
+  -- Blog Section Headers
+  ('blog_featured_section_title', '"Featured Articles"', 'blog', 'Title for the featured articles section'),
+  ('blog_latest_section_title', '"Latest Articles"', 'blog', 'Title for the latest articles section when no filter is applied'),
+  
+  -- Blog UI Customization
+  ('blog_enable_animations', 'true', 'blog', 'Whether to enable Framer Motion animations'),
+  ('blog_card_hover_effects', 'true', 'blog', 'Whether to enable hover effects on post cards'),
+  ('blog_show_excerpt', 'true', 'blog', 'Whether to show post excerpts in listing'),
+  ('blog_show_read_time', 'true', 'blog', 'Whether to show estimated reading time'),
+  ('blog_show_comment_count', 'true', 'blog', 'Whether to show comment count on post cards')
+ON CONFLICT (key) DO NOTHING;
+
+-- Insert posts data
+INSERT INTO posts (
+  id, title, slug, excerpt, content, featured_image_url,
+  author_id, category_id, status, featured, meta_title,
+  meta_description, tags, published_at, created_at, updated_at, comments_count
+) VALUES
+  ('3f58a1e2-7ed9-4d4d-8210-f9723801fb30',
+   'Being Multinational Company in Turkey! Root Cause of FX Loss!',
+   'FX1',
+   'Why FX differences are important in the financial figures? What is the impact of FX issues?
+Role of management teams to eliminate or minimize.',
+   '## Foreign Currency Risk in Turkey:
+For the last 5 years period, unfortunately wheter Turkish or foreign companies are suffering from the volatality of FX rates. EUR & USD rates are increased enormously and now we should consider to plan precautions.
+
+![R7NqZmS0_jwPrPtUW4Tgw-1758748087850.jpg](https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/R7NqZmS0_jwPrPtUW4Tgw-1758748087850.jpg)',
+   'https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/gIjU6TpQGuNePTiDeV-Bp-1758747786033.jpg',
+   'febc732e-136d-49d3-9ac1-d02d17540f40',
+   '00822ce7-c00b-423f-99dc-89c7b8a7f081',
+   'published',
+   true,
+   'Being Multinational Company in Turkey! Root Cause of FX Loss!',
+   'Why FX differences are important in the financial figures? What is the impact of FX issues?
+Role of management teams to eliminate or minimize.',
+   NULL,
+   '2025-09-24 21:08:30.788+00',
+   '2025-09-24 21:08:23.273943+00',
+   '2025-09-24 21:08:31.067608+00',
+   0),
+  ('6348d6e3-d21d-4bfc-bac4-793c3461990d',
+   'Docs Tool - Online Rate',
+   'Rates Online',
+   'Here is the tool which can be used for rates tracking.',
+   '# Rate Controlling & Tracking
+
+https://docs.google.com/spreadsheets/d/1oOheb_X7GyEj4i95qAQgXAXrO690SJ0L9Ek349kx6R4/edit?gid=0#gid=0
+
+
+> Tolga TANAĞARDIGİL - Finance Partner',
+   NULL,
+   'febc732e-136d-49d3-9ac1-d02d17540f40',
+   '9cb7eccb-e765-4a09-bb92-10bac8a248c0',
+   'published',
+   false,
+   'Docs Tool - Online Rate',
+   'Here is the tool which can be used for rates tracking.',
+   NULL,
+   '2025-09-28 20:04:52.998+00',
+   '2025-09-28 20:04:38.91418+00',
+   '2025-09-28 20:04:53.077621+00',
+   0),
+  ('c0d1612e-b95d-41f0-a298-cb391f2af49f',
+   'Economic and Accounting Effects of FX Rates Volatility',
+   'FX Changes and Results',
+   'There are several reasons and accordingly results of FX rate changes in Turkey. We should discuss how to eliminate risks in Turkey, even "Hedging" is not well-known in this region.',
+   '# *Economic and Accounting Effects*
+
+Foreign exchange loss adversely affects the company''s cash flow and appears as a loss item in the company''s financial statements. Additionally, rivals'' foreign exchange advantages in their import or export operations can create indirect effects on the company''s costs and sales; for instance, if a competitor imports goods at a lower exchange rate, the domestic company may lose market share.
+
+---
+**Conclusion and Precautions**
+   
+Foreign companies can implement risk mitigation (hedging) methods to protect themselves from exchange rate losses. However, such techniques are not widespread in Turkey due to the underdevelopment of financial markets and lack of expertise. As a result, unpredictable exchange rate fluctuations and market conditions are the main reasons for exchange rate losses experienced by foreign companies in Turkey.
+
+![DeUevSgV4b3TMW_4kBRVQ-1759089614387.webp](https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/DeUevSgV4b3TMW_4kBRVQ-1759089614387.webp)
+
+',
+   'https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/rH_162XtOWOjH4HAmVeZV-1758920097470.jpg',
+   'febc732e-136d-49d3-9ac1-d02d17540f40',
+   '00822ce7-c00b-423f-99dc-89c7b8a7f081',
+   'published',
+   true,
+   'Economic and Accounting Effects of FX Rates Volatility',
+   'There are several reasons and accordingly results of FX rate changes in Turkey. We should discuss how to eliminate risks in Turkey, even "Hedging" is not well-known in this region.',
+   NULL,
+   '2025-09-28 20:04:57.097+00',
+   '2025-09-28 20:00:47.231982+00',
+   '2025-09-28 20:04:57.157967+00',
+   0),
+  ('e5fbccbb-5a0f-49a4-bf5b-2bdff63526f3',
+   'Finance Test 2',
+   'f2',
+   'Test Post ',
+   '# Finance test post 2
+
+
+deneme postudur
+
+*YAZI KONTROLÜ*
+
+![yXQlcaIH7-lLwzXtXKiS9-1758373111663.png](https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/yXQlcaIH7-lLwzXtXKiS9-1758373111663.png)
+
+![xoudKpUfz3nHAs4hfiB_B-1758372846851.png](https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/xoudKpUfz3nHAs4hfiB_B-1758372846851.png)',
+   'https://kuokxoamxwkroirdrndc.supabase.co/storage/v1/object/public/blog-images/yXQlcaIH7-lLwzXtXKiS9-1758373111663.png',
+   'febc732e-136d-49d3-9ac1-d02d17540f40',
+   'e61d68a2-7539-44a5-baef-4b489e013fab',
+   'published',
+   true,
+   'Finance Test 2',
+   'Test Post ',
+   NULL,
+   '2025-09-24 10:59:00.316+00',
+   '2025-09-24 10:58:54.348001+00',
+   '2025-09-24 11:03:27.948701+00',
+   0)
+ON CONFLICT (id) DO NOTHING;
 
 -- Set the default author ID after authors are created
 INSERT INTO settings (key, value, category, description)

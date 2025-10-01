@@ -204,8 +204,8 @@ export function ContactMotion({ settings }: ContactMotionProps) {
                   show: {
                     opacity: 1,
                     transition: {
-                      staggerChildren: 0.15,
-                      delayChildren: 0.1,
+                      staggerChildren: 0.12,
+                      delayChildren: 0.15,
                     },
                   },
                 }}

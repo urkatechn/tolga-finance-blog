@@ -6,6 +6,7 @@ import { Mail, Linkedin, Twitter, Github } from "lucide-react";
 import type { SiteSettings } from "@/contexts/settings-context";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
 import Image from "next/image";
+import { MobileNavigation } from "@/components/mobile-navigation";
 
 interface ServerHeaderProps {
   settings: SiteSettings;
@@ -43,18 +44,21 @@ export function ServerHeader({ settings }: ServerHeaderProps) {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
+          <div className="flex items-center gap-1">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+            <MobileNavigation navigation={navigation} />
+          </div>
 
         </div>
       </div>

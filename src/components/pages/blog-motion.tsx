@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
+import type { SiteSettings } from "@/contexts/settings-context";
 
 interface Category {
   id: string;
@@ -26,6 +27,7 @@ interface BlogMotionProps {
   commentsCountMap: Record<string, number>;
   hasNext: boolean;
   page: number;
+  settings: SiteSettings;
 }
 
 const easing = [0.16, 1, 0.3, 1] as const;
@@ -82,20 +84,27 @@ export function BlogMotion({
   commentsCountMap,
   hasNext,
   page,
+  settings,
 }: BlogMotionProps) {
   const featuredPosts = posts.filter(post => post.featured);
   const regularPosts = posts.filter(post => !post.featured);
-  const showingFeaturedSeparately = featuredPosts.length > 0 && !sp.search && !sp.category;
+  const showingFeaturedSeparately = settings.blog_show_featured_separately && featuredPosts.length > 0 && !sp.search && !sp.category;
   const listPosts = showingFeaturedSeparately
     ? (regularPosts.length > 0 ? regularPosts : featuredPosts)
     : posts;
   const showFeaturedBadgeInList = showingFeaturedSeparately && regularPosts.length === 0;
+  
+  // Animation settings
+  const enableAnimations = settings.blog_enable_animations ?? true;
+  
+  // Dynamic hero gradient classes
+  const heroGradientClass = `py-16 bg-gradient-to-br ${settings.blog_hero_gradient_from} ${settings.blog_hero_gradient_via} ${settings.blog_hero_gradient_to} ${settings.blog_hero_gradient_from_dark} ${settings.blog_hero_gradient_via_dark} ${settings.blog_hero_gradient_to_dark}`;
 
   return (
     <>
       {/* Hero Section */}
       <motion.section 
-        className="py-16 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+        className={heroGradientClass}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.3 }}
@@ -108,7 +117,7 @@ export function BlogMotion({
               variants={fadeUp}
             >
               <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
-                Blog & Insights
+                {settings.blog_hero_title}
               </span>
             </motion.h1>
             
@@ -116,51 +125,53 @@ export function BlogMotion({
               className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
               variants={fadeUp}
             >
-              Discover the latest insights on finance, investing, and building wealth for your future.
+              {settings.blog_hero_subtitle}
             </motion.p>
 
             {/* Quick Stats */}
-            <motion.div 
-              className="flex flex-wrap justify-center gap-8 text-center"
-              variants={fadeUp}
-            >
-              <div className="flex flex-col">
-                <motion.div 
-                  className="text-3xl font-bold text-blue-600 dark:text-blue-400"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: easing, delay: 0.3 }}
-                  viewport={{ once: true }}
-                >
-                  {posts.length}
-                </motion.div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Articles</div>
-              </div>
-              <div className="flex flex-col">
-                <motion.div 
-                  className="text-3xl font-bold text-purple-600 dark:text-purple-400"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: easing, delay: 0.4 }}
-                  viewport={{ once: true }}
-                >
-                  {categories.length}
-                </motion.div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Categories</div>
-              </div>
-              <div className="flex flex-col">
-                <motion.div 
-                  className="text-3xl font-bold text-green-600 dark:text-green-400"
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: easing, delay: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  {featuredPosts.length}
-                </motion.div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Featured</div>
-              </div>
-            </motion.div>
+            {settings.blog_show_stats && (
+              <motion.div 
+                className="flex flex-wrap justify-center gap-8 text-center"
+                variants={fadeUp}
+              >
+                <div className="flex flex-col">
+                  <motion.div 
+                    className="text-3xl font-bold text-blue-600 dark:text-blue-400"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: easing, delay: 0.3 }}
+                    viewport={{ once: true }}
+                  >
+                    {posts.length}
+                  </motion.div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">{settings.blog_stats_articles_label}</div>
+                </div>
+                <div className="flex flex-col">
+                  <motion.div 
+                    className="text-3xl font-bold text-purple-600 dark:text-purple-400"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: easing, delay: 0.4 }}
+                    viewport={{ once: true }}
+                  >
+                    {categories.length}
+                  </motion.div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">{settings.blog_stats_categories_label}</div>
+                </div>
+                <div className="flex flex-col">
+                  <motion.div 
+                    className="text-3xl font-bold text-green-600 dark:text-green-400"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: easing, delay: 0.5 }}
+                    viewport={{ once: true }}
+                  >
+                    {featuredPosts.length}
+                  </motion.div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">{settings.blog_stats_featured_label}</div>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
       </motion.section>
@@ -175,9 +186,9 @@ export function BlogMotion({
           variants={container}
         >
           <div className="max-w-7xl mx-auto">
-            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+            <div className={`lg:grid ${settings.blog_enable_sidebar ? 'lg:grid-cols-12' : 'lg:grid-cols-1'} lg:gap-8`}>
               {/* Main Content Area */}
-              <motion.div className="lg:col-span-8" variants={slideInLeft}>
+              <motion.div className={settings.blog_enable_sidebar ? "lg:col-span-8" : "lg:col-span-12"} variants={slideInLeft}>
                 {posts.length === 0 ? (
                   <motion.div 
                     className="text-center py-16"
@@ -222,7 +233,7 @@ export function BlogMotion({
                           transition={{ duration: 0.6, ease: easing }}
                           viewport={{ once: true }}
                         >
-                          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Featured Articles</h2>
+                          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{settings.blog_featured_section_title}</h2>
                           <motion.div 
                             className="h-px bg-gradient-to-r from-blue-600 to-transparent flex-1"
                             initial={{ scaleX: 0 }}
@@ -239,14 +250,14 @@ export function BlogMotion({
                           whileInView="show"
                           viewport={{ once: true, amount: 0.1 }}
                         >
-                          {featuredPosts.slice(0, 3).map((post, index) => (
+                        {featuredPosts.slice(0, settings.blog_featured_posts_limit).map((post, index) => (
                             <motion.div 
                               key={post.id}
                               variants={postCardVariant}
                               whileHover={{ x: 8 }}
                               transition={{ type: "spring", stiffness: 300 }}
                             >
-                              <PostCard post={post} featured={true} commentCount={commentsCountMap[post.id] || 0} />
+                              <PostCard post={post} featured={true} commentCount={commentsCountMap[post.id] || 0} settings={settings} />
                             </motion.div>
                           ))}
                         </motion.div>
@@ -268,9 +279,8 @@ export function BlogMotion({
                               ? `${categories.find(c => c.slug === sp.category)?.name || sp.category} Articles`
                               : sp.search 
                                 ? `Search Results for "${sp.search}"`
-                                : "Latest Articles"
-                            }
-                          </h2>
+                                : settings.blog_latest_section_title
+                            }</h2>
                           <motion.span 
                             className="text-sm text-gray-500 dark:text-gray-400"
                             initial={{ opacity: 0, scale: 0.8 }}
@@ -301,6 +311,7 @@ export function BlogMotion({
                               post={post} 
                               showFeaturedBadge={showFeaturedBadgeInList} 
                               commentCount={commentsCountMap[post.id] || 0} 
+                              settings={settings}
                             />
                           </motion.div>
                         ))}
@@ -311,23 +322,26 @@ export function BlogMotion({
               </motion.div>
               
               {/* Sidebar */}
-              <motion.div 
-                className="lg:col-span-4 mt-12 lg:mt-0"
-                variants={slideInRight}
-              >
+              {settings.blog_enable_sidebar && (
                 <motion.div 
-                  className="sticky top-8"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: easing, delay: 0.2 }}
-                  viewport={{ once: true }}
+                  className="lg:col-span-4 mt-12 lg:mt-0"
+                  variants={slideInRight}
                 >
-                  <BlogSidebar 
-                    recentPosts={recentPosts} 
-                    categories={categories}
-                  />
+                  <motion.div 
+                    className="sticky top-8"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: easing, delay: 0.2 }}
+                    viewport={{ once: true }}
+                  >
+                    <BlogSidebar 
+                      recentPosts={recentPosts} 
+                      categories={categories}
+                      settings={settings}
+                    />
+                  </motion.div>
                 </motion.div>
-              </motion.div>
+              )}
             </div>
           </div>
         </motion.div>
@@ -344,8 +358,8 @@ export function BlogMotion({
         >
           <div className="container mx-auto px-4">
             <div className="max-w-7xl mx-auto">
-              <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-                <div className="lg:col-span-8">
+              <div className={`lg:grid ${settings.blog_enable_sidebar ? 'lg:grid-cols-12' : 'lg:grid-cols-1'} lg:gap-8`}>
+                <div className={settings.blog_enable_sidebar ? "lg:col-span-8" : "lg:col-span-12"}>
                   <motion.div 
                     className="flex items-center justify-between mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
                     whileHover={{ scale: 1.01 }}

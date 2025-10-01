@@ -17,10 +17,15 @@ interface BlogPageProps {
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page || 1));
-  const limit = 12;
-  const fetchLimit = limit + 1; // fetch one extra to detect next page
-  // Fetch real data from Supabase with caching
+  
+  // Fetch settings first to get dynamic configuration
   const settings = await getServerSettings();
+  
+  const limit = settings.blog_posts_per_page || 12;
+  const fetchLimit = limit + 1; // fetch one extra to detect next page
+  const recentPostsLimit = settings.blog_recent_posts_limit || 5;
+  
+  // Fetch real data from Supabase with caching
   const [posts, categories, recentPosts] = await Promise.all([
     getCachedPosts({
       category: sp.category,
@@ -29,7 +34,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       offset: (page - 1) * limit,
     }),
     getCachedCategories(),
-    getCachedRecentPosts(5), // Get 5 recent posts for sidebar
+    getCachedRecentPosts(recentPostsLimit),
   ]);
 
   // Pagination
@@ -65,6 +70,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         commentsCountMap={commentsCountMap}
         hasNext={hasNext}
         page={page}
+        settings={settings}
       />
       <ServerFooter settings={settings} />
     </div>

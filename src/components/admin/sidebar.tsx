@@ -15,6 +15,7 @@ import {
   User,
   ChevronDown,
   UserCircle,
+  BookOpen,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -94,6 +95,11 @@ const navItems: NavItem[] = [
         title: "General",
         href: "/admin/settings",
         icon: Settings,
+      },
+      {
+        title: "Blog",
+        href: "/admin/settings/blog",
+        icon: BookOpen,
       },
       {
         title: "Branding",

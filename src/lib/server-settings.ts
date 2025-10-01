@@ -193,6 +193,70 @@ function createDefaultSettings(): SiteSettings {
       },
     ],
     contact_faq_enabled: true,
+    
+    // Blog Page Settings - Default values
+    // Hero Section
+    blog_hero_title: "Blog & Insights",
+    blog_hero_subtitle: "Discover the latest insights on finance, investing, and building wealth for your future.",
+    blog_hero_gradient_from: "from-slate-50",
+    blog_hero_gradient_via: "via-blue-50",
+    blog_hero_gradient_to: "to-indigo-50",
+    blog_hero_gradient_from_dark: "dark:from-gray-900",
+    blog_hero_gradient_via_dark: "dark:via-gray-800",
+    blog_hero_gradient_to_dark: "dark:to-gray-900",
+    
+    // Content & Layout
+    blog_posts_per_page: 12,
+    blog_show_featured_separately: true,
+    blog_featured_posts_limit: 3,
+    blog_enable_search: true,
+    blog_enable_category_filter: true,
+    blog_enable_sidebar: true,
+    blog_recent_posts_limit: 5,
+    
+    // Stats Display
+    blog_show_stats: true,
+    blog_stats_articles_label: "Articles",
+    blog_stats_categories_label: "Categories",
+    blog_stats_featured_label: "Featured",
+    
+    // Empty State
+    blog_empty_title: "No articles found",
+    blog_empty_description_search: "Try adjusting your search or filter criteria to find more articles.",
+    blog_empty_description_general: "No articles have been published yet. Check back soon for new content!",
+    blog_empty_cta_text: "View All Articles",
+    
+    // Section Headers
+    blog_featured_section_title: "Featured Articles",
+    blog_latest_section_title: "Latest Articles",
+    
+    // UI Customization
+    blog_enable_animations: true,
+    blog_card_hover_effects: true,
+    blog_show_excerpt: true,
+    blog_show_read_time: true,
+    blog_show_comment_count: true,
+    
+    // Blog Sidebar Configuration
+    sidebar_show_newsletter: true,
+    sidebar_newsletter_title: "Stay Updated",
+    sidebar_newsletter_description: "Get the latest financial insights delivered to your inbox weekly.",
+    sidebar_show_trending: true,
+    sidebar_trending_title: "Trending Posts",
+    sidebar_trending_limit: 4,
+    sidebar_show_categories: true,
+    sidebar_categories_title: "Categories",
+    sidebar_categories_limit: 8,
+    sidebar_show_about: true,
+    sidebar_about_title: "About Finance Blog",
+    sidebar_about_author_name: "Finance Blog Team",
+    sidebar_about_author_role: "Financial Experts",
+    sidebar_about_description: "We're passionate about making finance accessible to everyone. Our team of experts shares insights, tips, and strategies to help you make informed financial decisions.",
+    sidebar_show_stats: true,
+    sidebar_stats_articles: "50+",
+    sidebar_stats_readers: "10K+",
+    sidebar_stats_categories: "5",
+    sidebar_stats_updated: "24/7",
   };
 }
 

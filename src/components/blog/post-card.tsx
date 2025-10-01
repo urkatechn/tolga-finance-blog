@@ -5,16 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Star, MessageCircle } from "lucide-react";
 import { formatDate, estimateReadTime } from "@/lib/api/supabase-posts";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
+import type { SiteSettings } from "@/contexts/settings-context";
 
 interface PostCardProps {
   post: PostWithCategory;
   featured?: boolean;
   showFeaturedBadge?: boolean;
   commentCount?: number;
+  settings?: SiteSettings;
 }
 
-export default function PostCard({ post, featured = false, showFeaturedBadge = false, commentCount = 0 }: PostCardProps) {
+export default function PostCard({ post, featured = false, showFeaturedBadge = false, commentCount = 0, settings }: PostCardProps) {
   const readTime = estimateReadTime(post.content);
+
+  // Visual settings with defaults
+  const showExcerpt = settings?.blog_show_excerpt ?? true;
+  const showReadTime = settings?.blog_show_read_time ?? true;
+  const showCommentCount = settings?.blog_show_comment_count ?? true;
+  
+  // Animation effects are always enabled (not configurable)
+  const imageHoverClass = "group-hover:scale-105 transition-transform duration-300";
+  const cardHoverClass = "group-hover:text-blue-600 transition-colors";
 
   return (
     <article className="group py-6 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
@@ -47,7 +58,7 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
                   alt={post.title}
                   width={400}
                   height={200}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className={`w-full h-full object-cover ${imageHoverClass}`}
                 />
               </div>
             </Link>
@@ -57,7 +68,7 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
         {/* Title and Content - Mobile */}
         <Link href={`/blog/${post.slug}`} className="group">
           <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors line-clamp-2">
+            <h2 className={`text-lg font-bold text-gray-900 dark:text-white ${cardHoverClass} line-clamp-2`}>
               {post.title}
             </h2>
             {post.category && (
@@ -73,9 +84,11 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
               </Badge>
             )}
           </div>
-          <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-3 mb-4">
-            {post.excerpt || post.content.substring(0, 120) + '...'}
-          </p>
+          {showExcerpt && (
+            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-3 mb-4">
+              {post.excerpt || post.content.substring(0, 120) + '...'}
+            </p>
+          )}
         </Link>
 
         {/* Meta Information - Mobile */}
@@ -96,16 +109,20 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
             )}
 
             {/* Read Time */}
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              <span>{readTime} min read</span>
-            </div>
+            {showReadTime && (
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                <span>{readTime} min read</span>
+              </div>
+            )}
 
             {/* Comments */}
-            <div className="flex items-center gap-1">
-              <MessageCircle className="h-3 w-3" />
-              <span>{commentCount}</span>
-            </div>
+            {showCommentCount && (
+              <div className="flex items-center gap-1">
+                <MessageCircle className="h-3 w-3" />
+                <span>{commentCount}</span>
+              </div>
+            )}
           </div>
 
           {/* Removed more options menu */}
@@ -137,7 +154,7 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
               <div className="flex-1 min-w-0">
                 <Link href={`/blog/${post.slug}`} className="group">
                   <div className="flex items-center gap-2 mb-2">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors line-clamp-2">
+                    <h2 className={`text-xl font-bold text-gray-900 dark:text-white ${cardHoverClass} line-clamp-2`}>
                       {post.title}
                     </h2>
                     {post.category && (
@@ -153,9 +170,11 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
                       </Badge>
                     )}
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">
-                    {post.excerpt || post.content.substring(0, 120) + '...'}
-                  </p>
+                  {showExcerpt && (
+                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">
+                      {post.excerpt || post.content.substring(0, 120) + '...'}
+                    </p>
+                  )}
                 </Link>
 
                 {/* Meta Information */}
@@ -176,16 +195,20 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
                     )}
 
                     {/* Read Time */}
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{readTime} min read</span>
-                    </div>
+                    {showReadTime && (
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span>{readTime} min read</span>
+                      </div>
+                    )}
 
                     {/* Comments */}
-                    <div className="flex items-center gap-1">
-                      <MessageCircle className="h-3 w-3" />
-                      <span>{commentCount}</span>
-                    </div>
+                    {showCommentCount && (
+                      <div className="flex items-center gap-1">
+                        <MessageCircle className="h-3 w-3" />
+                        <span>{commentCount}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Removed more options menu */}
@@ -202,7 +225,7 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
                         alt={post.title}
                         width={128}
                         height={80}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className={`w-full h-full object-cover ${imageHoverClass}`}
                       />
                     </div>
                   </Link>
