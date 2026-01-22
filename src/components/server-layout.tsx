@@ -18,6 +18,7 @@ export function ServerHeader({ settings }: ServerHeaderProps) {
     { name: "Blog", href: "/blog" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
+    { name: "Login", href: "/auth/login" },
   ];
 
   return (
