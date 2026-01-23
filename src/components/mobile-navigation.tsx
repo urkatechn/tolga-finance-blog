@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,9 +16,10 @@ import { cn } from "@/lib/utils";
 
 interface MobileNavigationProps {
   navigation: { name: string; href: string }[];
+  showLogout?: boolean;
 }
 
-export function MobileNavigation({ navigation }: MobileNavigationProps) {
+export function MobileNavigation({ navigation, showLogout }: MobileNavigationProps) {
   const pathname = usePathname();
 
   return (
@@ -49,6 +51,12 @@ export function MobileNavigation({ navigation }: MobileNavigationProps) {
               </SheetClose>
             );
           })}
+          {showLogout && (
+            <LogoutButton
+              variant="outline"
+              className="mt-4 w-full justify-start"
+            />
+          )}
         </nav>
       </SheetContent>
     </Sheet>

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -20,7 +21,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!email || !password) {
       setError('Please fill in all fields')
       return
@@ -51,8 +52,8 @@ export default function LoginForm() {
     } catch (err) {
       console.error('Login error:', err)
       if (err instanceof Error) {
-        setError(err.message.includes('fetch failed') 
-          ? 'Network error. Please check your connection and try again.' 
+        setError(err.message.includes('fetch failed')
+          ? 'Network error. Please check your connection and try again.'
           : 'An unexpected error occurred')
       } else {
         setError('An unexpected error occurred')
@@ -118,6 +119,13 @@ export default function LoginForm() {
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {isLoading ? 'Signing in...' : 'Sign In'}
       </Button>
+
+      <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+        Don't have an account?{' '}
+        <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium">
+          Create one
+        </Link>
+      </div>
     </form>
   )
 }
