@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { SocialAuth } from './social-auth'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -126,6 +127,8 @@ export default function LoginForm() {
           Create one
         </Link>
       </div>
+
+      <SocialAuth />
     </form>
   )
 }

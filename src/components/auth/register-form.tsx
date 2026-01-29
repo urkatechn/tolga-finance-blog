@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { SocialAuth } from './social-auth'
 
 export default function RegisterForm() {
     const [email, setEmail] = useState('')
@@ -164,6 +165,8 @@ export default function RegisterForm() {
                     Sign In
                 </Link>
             </div>
+
+            <SocialAuth />
         </form>
     )
 }
