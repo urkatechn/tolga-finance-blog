@@ -11,6 +11,7 @@ import { ClientNavigation } from "@/components/client-navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { cn } from "@/lib/utils";
+import { AdminNotificationBar } from "@/components/admin/notification-bar";
 
 interface ServerHeaderProps {
   settings: SiteSettings;
@@ -44,6 +45,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
       ? "bg-transparent border-transparent"
       : "border-b bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm border-slate-200/50 dark:border-slate-800/50"
       }`}>
+      {user && <AdminNotificationBar userEmail={user.email || ""} />}
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo / Title */}

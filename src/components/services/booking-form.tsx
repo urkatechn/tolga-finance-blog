@@ -19,14 +19,31 @@ export function BookingForm({ googleMeetUrl }: { googleMeetUrl?: string }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
+
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch("/api/booking", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                setSubmitted(true);
+            } else {
+                alert("Something went wrong. Please try again.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Failed to send request. Check your connection.");
+        } finally {
             setIsSubmitting(false);
-            setSubmitted(true);
-        }, 1500);
+        }
     };
 
     if (submitted) {
@@ -41,10 +58,10 @@ export function BookingForm({ googleMeetUrl }: { googleMeetUrl?: string }) {
                 </div>
                 <h3 className="text-3xl font-bold text-slate-900">Request Sent</h3>
                 <p className="text-slate-600 max-w-sm">
-                    Thank you for your interest. You can already bookmark your meeting link:
+                    Thank you for your interest. We have received your request and will contact you within 24 hours.
                     <br />
                     <a href={googleMeetUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline block mt-2 text-lg">
-                        {googleMeetUrl}
+                        Meeting Room Link
                     </a>
                 </p>
                 <Button variant="outline" className="rounded-full h-12 px-8 border-slate-200 text-slate-600 hover:bg-slate-50" onClick={() => setSubmitted(false)}>
@@ -61,14 +78,14 @@ export function BookingForm({ googleMeetUrl }: { googleMeetUrl?: string }) {
                     <Label className="text-slate-700">Name</Label>
                     <div className="relative">
                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input placeholder="John Doe" className="pl-12 h-14 bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-xl text-slate-900" required />
+                        <Input name="name" placeholder="John Doe" className="pl-12 h-14 bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-xl text-slate-900" required />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label className="text-slate-700">Email</Label>
                     <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input type="email" placeholder="john@company.com" className="pl-12 h-14 bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-xl text-slate-900" required />
+                        <Input name="email" type="email" placeholder="john@company.com" className="pl-12 h-14 bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-xl text-slate-900" required />
                     </div>
                 </div>
             </div>
@@ -78,16 +95,16 @@ export function BookingForm({ googleMeetUrl }: { googleMeetUrl?: string }) {
                     <Label className="text-slate-700">Preferred Date</Label>
                     <div className="relative">
                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input type="date" className="pl-12 h-14 bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-xl text-slate-900" required />
+                        <Input name="date" type="date" className="pl-12 h-14 bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-xl text-slate-900" required />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <Label className="text-slate-700">Service Interest</Label>
-                    <select className="flex h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-slate-900 focus:border-blue-500 transition-all">
-                        <option value="analysis" className="bg-white">Financial Analysis</option>
-                        <option value="investment" className="bg-white">Investment Advisory</option>
-                        <option value="wealth" className="bg-white">Wealth Management</option>
-                        <option value="corporate" className="bg-white">Corporate Finance</option>
+                    <select name="service" className="flex h-14 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-slate-900 focus:border-blue-500 transition-all">
+                        <option value="Financial Analysis" className="bg-white">Financial Analysis</option>
+                        <option value="Investment Advisory" className="bg-white">Investment Advisory</option>
+                        <option value="Wealth Management" className="bg-white">Wealth Management</option>
+                        <option value="Corporate Finance" className="bg-white">Corporate Finance</option>
                     </select>
                 </div>
             </div>
@@ -95,6 +112,7 @@ export function BookingForm({ googleMeetUrl }: { googleMeetUrl?: string }) {
             <div className="space-y-2">
                 <Label className="text-slate-700">Brief Overview of Your Objectives</Label>
                 <Textarea
+                    name="message"
                     placeholder="Tell us about your goals..."
                     className="min-h-[150px] bg-slate-50 border-slate-200 focus:border-blue-500 transition-all rounded-2xl p-4 text-slate-900"
                     required
