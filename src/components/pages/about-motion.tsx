@@ -158,28 +158,30 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         </div>
       </section>
 
-      {/* Journey Section (Timeline) - MOVED TO TOP OF CONTENT */}
+      {/* Professional Experiences Section */}
       <section className="py-20 bg-white dark:bg-slate-950">
-        <div className="container mx-auto px-4 text-center mb-12">
-          <span className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-3 block">Professional Progress</span>
-          <h2 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">The Advisory Path</h2>
+        <div className="container mx-auto px-4 text-center mb-16">
+          <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-3 block">Professional Heritage</span>
+          <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">Professional Experiences</h2>
         </div>
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="relative border-l-2 border-slate-100 dark:border-slate-800 ml-4 md:ml-0 md:left-1/2 md:-translate-x-px">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="relative border-l border-slate-200 dark:border-slate-800 ml-4 md:ml-0 md:left-1/2 md:-translate-x-px">
             {journeyItems.map((item, index) => (
               <motion.div
                 key={index}
-                className={`relative mb-8 md:w-1/2 ${index % 2 === 0 ? 'md:pr-10 md:text-right md:ml-0' : 'md:pl-10 md:ml-auto md:text-left'}`}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.7, ease: easing }}
+                className={`relative mb-16 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right md:ml-0' : 'md:pl-12 md:ml-auto md:text-left'}`}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: easing }}
                 viewport={{ once: true }}
               >
-                <div className={`absolute top-0 w-6 h-6 rounded-full bg-blue-600 border-4 border-white dark:border-slate-950 z-10 ${index % 2 === 0 ? 'md:-right-3 right-full mr-[-3px]' : 'md:-left-3 left-full ml-[-3px]'}`} />
-                <div className="p-6 rounded-[24px] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
-                  <span className="text-blue-600 dark:text-blue-400 font-black text-lg mb-1 block leading-tight">{item.year}</span>
-                  <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2 tracking-tight leading-snug">{item.title}</h3>
-                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-semibold text-[13px]">{item.description}</p>
+                <div className={`absolute top-1.5 w-3 h-3 rounded-full bg-blue-600 border-2 border-white dark:border-slate-950 z-10 ${index % 2 === 0 ? 'md:-right-1.5 right-full mr-[-6px]' : 'md:-left-1.5 left-full ml-[-6px]'}`} />
+                <div className="flex flex-col gap-2">
+                  <span className="text-blue-600 dark:text-blue-400 font-black text-sm uppercase tracking-widest">{item.year}</span>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{item.title}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[13px] font-medium max-w-md ml-auto mr-0 md:ml-auto md:mr-0 inline-block">
+                    {item.description}
+                  </p>
                 </div>
               </motion.div>
             ))}

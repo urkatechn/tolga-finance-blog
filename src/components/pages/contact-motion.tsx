@@ -3,10 +3,11 @@
 import type { SiteSettings } from "@/contexts/settings-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  MessageCircle, 
+import {
+  MessageCircle,
   Clock,
-  Linkedin
+  Linkedin,
+  Mail
 } from "lucide-react";
 import ContactForm from "@/components/contact/contact-form";
 import Link from "next/link";
@@ -51,10 +52,10 @@ export function ContactMotion({ settings }: ContactMotionProps) {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-24">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
-        
-        <motion.div 
+      <section className="relative overflow-hidden bg-white dark:bg-slate-950 pt-32 pb-16">
+        <div className="absolute inset-0 bg-grid-slate-200/[0.2] dark:bg-grid-white/[0.02] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
+
+        <motion.div
           className="relative container mx-auto px-4"
           initial="hidden"
           whileInView="show"
@@ -62,106 +63,102 @@ export function ContactMotion({ settings }: ContactMotionProps) {
           variants={container}
         >
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h1 
-              className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
+            <motion.div variants={fadeUp} className="mb-6">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block animate-in fade-in slide-in-from-bottom-2">Get In Touch</span>
+              <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 text-slate-900 dark:text-white uppercase italic">
+                Bize ulaşmak ister misiniz?
+              </h1>
+            </motion.div>
+
+            <motion.p
+              className="text-lg md:text-xl text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto font-medium"
               variants={fadeUp}
             >
-              <span className="block text-gray-900 dark:text-white mb-2">{settings.contact_hero_line1}</span>
-              <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">{settings.contact_hero_title}</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
-              variants={fadeUp}
-            >
-              {settings.contact_hero_subtitle}
+              Profesyonel finansal danışmanlık ve stratejik iş birliği için doğru yerdesiniz. İletişim formunu kullanarak veya doğrudan e-posta yoluyla bize ulaşabilirsiniz.
             </motion.p>
+
+            {/* Response Time Animated Box */}
+            <motion.div
+              variants={fadeInScale}
+              className="inline-block"
+            >
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200 animate-pulse" />
+                <div className="relative px-8 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex items-center gap-4 shadow-xl">
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <Clock className="w-6 h-6 animate-spin-slow" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Commitment</p>
+                    <p className="text-lg font-black text-slate-900 dark:text-white leading-none">MAXIMUM 24H RESPONSE TIME</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </section>
 
       {/* Contact Methods */}
-      <section className="py-16">
-        <motion.div 
-          className="container mx-auto px-4"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={container}
-        >
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8 mb-16">
-              
-              {/* LinkedIn */}
-              <motion.div variants={slideInLeft} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                <Card className="text-center hover:shadow-lg transition-shadow h-full">
-                  <CardHeader>
-                    <motion.div 
-                      className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mx-auto mb-4"
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.8, ease: easing }}
-                      viewport={{ once: true }}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
-                      <Linkedin className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                    </motion.div>
-                    <CardTitle className="text-xl">{settings.contact_linkedin_card_title}</CardTitle>
-                    <CardDescription className="text-base">{settings.contact_linkedin_card_description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button variant="outline" asChild className="w-full justify-center">
-                        <Link href={settings.social_linkedin || LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
-                          {settings.contact_linkedin_button_text}
-                        </Link>
-                      </Button>
-                    </motion.div>
-                  </CardContent>
-                </Card>
+      <section className="py-20 bg-slate-50/50 dark:bg-slate-900/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Primary Email Card */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="group p-8 rounded-[32px] bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
+              >
+                <div className="flex flex-col h-full justify-between gap-8">
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                      <Mail className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Direct Correspondence</h3>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium mb-6">
+                      For institutional inquiries and partnership proposals, please reach out directly via our primary email address.
+                    </p>
+                  </div>
+                  <a href="mailto:info@tolgatanagardigil.com" className="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-8 transition-all">
+                    info@tolgatanagardigil.com
+                  </a>
+                </div>
               </motion.div>
 
-              {/* Response Time */}
-              <motion.div variants={slideInRight} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                <Card className="text-center hover:shadow-lg transition-shadow h-full">
-                  <CardHeader>
-                    <motion.div 
-                      className="inline-flex items-center justify-center w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full mx-auto mb-4"
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.8, ease: easing, delay: 0.1 }}
-                      viewport={{ once: true }}
-                      whileHover={{ scale: 1.1, rotate: -5 }}
-                    >
-                      <Clock className="h-8 w-8 text-green-600 dark:text-green-400" />
-                    </motion.div>
-                    <CardTitle className="text-xl">{settings.contact_response_title}</CardTitle>
-                    <CardDescription className="text-base">{settings.contact_response_description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <motion.div 
-                      className="text-2xl font-bold text-green-600 dark:text-green-400"
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, ease: easing, delay: 0.3 }}
-                      viewport={{ once: true }}
-                    >
-                      {settings.contact_response_time}
-                    </motion.div>
-                  </CardContent>
-                </Card>
+              {/* LinkedIn & Social Card */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="group p-8 rounded-[32px] bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1"
+              >
+                <div className="flex flex-col h-full justify-between gap-8">
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                      <Linkedin className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Professional Network</h3>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium mb-6">
+                      Connect with Tolga Tanagardigil on LinkedIn to stay updated on latest financial insights and network within the industry.
+                    </p>
+                  </div>
+                  <Button variant="outline" size="lg" className="w-full rounded-2xl h-14 font-black uppercase tracking-widest border-2 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all" asChild>
+                    <Link href={LINKEDIN_URL} target="_blank">Connect on LinkedIn</Link>
+                  </Button>
+                </div>
               </motion.div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Contact Form */}
       <section id="contact-form" className="py-16 bg-gray-50 dark:bg-gray-900">
-        <motion.div 
+        <motion.div
           className="container mx-auto px-4"
           initial="hidden"
           whileInView="show"
@@ -184,7 +181,7 @@ export function ContactMotion({ settings }: ContactMotionProps) {
       {/* FAQ Section */}
       {settings.contact_faq_enabled && Array.isArray((settings as any).contact_faq_items) && (settings as any).contact_faq_items.length > 0 && (
         <section className="py-16">
-          <motion.div 
+          <motion.div
             className="container mx-auto px-4"
             initial="hidden"
             whileInView="show"
@@ -197,7 +194,7 @@ export function ContactMotion({ settings }: ContactMotionProps) {
                 <p className="text-lg text-gray-600 dark:text-gray-400">{settings.contact_faq_subtitle}</p>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 className="grid md:grid-cols-2 gap-8"
                 variants={{
                   hidden: { opacity: 0 },
