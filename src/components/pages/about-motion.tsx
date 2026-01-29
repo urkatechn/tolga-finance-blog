@@ -159,32 +159,40 @@ export function AboutMotion({ settings }: AboutMotionProps) {
       </section>
 
       {/* Professional Experiences Section */}
-      <section className="py-20 bg-white dark:bg-slate-950">
-        <div className="container mx-auto px-4 text-center mb-16">
-          <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-3 block">Professional Heritage</span>
-          <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">Professional Experiences</h2>
-        </div>
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="relative border-l border-slate-200 dark:border-slate-800 ml-4 md:ml-0 md:left-1/2 md:-translate-x-px">
-            {journeyItems.map((item, index) => (
-              <motion.div
-                key={index}
-                className={`relative mb-16 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right md:ml-0' : 'md:pl-12 md:ml-auto md:text-left'}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: easing }}
-                viewport={{ once: true }}
-              >
-                <div className={`absolute top-1.5 w-3 h-3 rounded-full bg-blue-600 border-2 border-white dark:border-slate-950 z-10 ${index % 2 === 0 ? 'md:-right-1.5 right-full mr-[-6px]' : 'md:-left-1.5 left-full ml-[-6px]'}`} />
-                <div className="flex flex-col gap-2">
-                  <span className="text-blue-600 dark:text-blue-400 font-black text-sm uppercase tracking-widest">{item.year}</span>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">{item.title}</h3>
-                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-[13px] font-medium max-w-md ml-auto mr-0 md:ml-auto md:mr-0 inline-block">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+      <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-16">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">Professional Heritage</span>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">Professional Experiences</h2>
+            </div>
+
+            <div className="space-y-12">
+              {journeyItems.map((item, index) => (
+                <motion.div
+                  key={index}
+                  className="group relative grid grid-cols-1 md:grid-cols-[140px_1fr] gap-6 md:gap-12 pb-12 border-b border-slate-100 dark:border-slate-800 last:border-0"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-1">
+                    <span className="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">{item.year}</span>
+                    <div className="h-px w-8 md:w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-blue-600 transition-colors" />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium text-sm md:text-base max-w-2xl">
+                      {item.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
