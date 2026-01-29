@@ -27,18 +27,20 @@ export function ClientNavigation({ navigation, transparent, hasUser }: ClientNav
                         rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
                         className={cn(
                             "transition-all duration-300 font-medium",
-                            transparent
-                                ? isActive
-                                    ? "text-white scale-110 drop-shadow-md"
-                                    : "text-white/70 hover:text-white drop-shadow-sm"
-                                : isActive
-                                    ? "text-blue-600 font-bold"
-                                    : "text-slate-600 hover:text-blue-600"
+                            item.name === "Register"
+                                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-2 rounded-full hover:scale-105 shadow-md"
+                                : transparent
+                                    ? isActive
+                                        ? "text-white scale-110 drop-shadow-md"
+                                        : "text-white/70 hover:text-white drop-shadow-sm"
+                                    : isActive
+                                        ? "text-slate-900 font-bold"
+                                        : "text-slate-600 hover:text-slate-900"
                         )}
                     >
                         {item.name}
-                        {isActive && !transparent && (
-                            <span className="block h-0.5 bg-blue-600 scale-x-100 transition-transform duration-300" />
+                        {isActive && !transparent && item.name !== "Register" && (
+                            <span className="block h-0.5 bg-slate-900 scale-x-100 transition-transform duration-300" />
                         )}
                     </Link>
                 );

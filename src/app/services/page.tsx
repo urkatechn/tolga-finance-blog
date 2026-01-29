@@ -6,48 +6,56 @@ import {
     Clock,
     ArrowRight,
     CheckCircle2,
-    MessagesSquare
+    MessagesSquare,
+    Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServerHeader, ServerFooter } from "@/components/server-layout";
 import { getServerSettings } from "@/lib/server-settings";
 import { BookingForm } from "@/components/services/booking-form";
+import { createClient } from "@/lib/supabase/server";
+import { AdminServicesBar } from "@/components/services/admin-services-bar";
+import { ServiceEditor } from "@/components/services/service-editor";
 
 export default async function ServicesPage() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const isAdmin = user?.email === 'info@tolgatanagardigil.com';
+
     const settings = await getServerSettings();
     const dynamicServices = settings.services || [];
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 selection:bg-blue-500/10">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 selection:bg-slate-500/10">
             <ServerHeader settings={settings} transparent={false} />
 
             <main>
+                {isAdmin && <AdminServicesBar services={dynamicServices} />}
                 {/* Hero Section */}
-                <section className="relative pt-32 pb-20 overflow-hidden">
-                    <div className="absolute inset-0 bg-blue-50/50 pointer-events-none" />
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-blue-400/10 blur-[120px] rounded-full opacity-30 pointer-events-none" />
+                <section className="relative pt-32 pb-20 overflow-hidden bg-unified">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-slate-400/10 blur-[120px] rounded-full opacity-30 pointer-events-none" />
 
                     <div className="container mx-auto px-6 relative z-10">
                         <div className="max-w-4xl mx-auto text-center">
                             <div>
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-sm font-medium mb-6">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium mb-6">
                                     <ShieldCheck className="w-4 h-4" />
-                                    <span>Excellence Through Precision</span>
+                                    <span>Corporate Excellence</span>
                                 </div>
-                                <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-[1.1] text-slate-900">
-                                    Strategic Services for <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600">
-                                        Sustainable Success
+                                <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight leading-[1.1] text-slate-900 dark:text-white">
+                                    Professional Services for <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 dark:from-slate-200 dark:via-slate-300 dark:to-slate-400">
+                                        Strategic Growth
                                     </span>
                                 </h1>
                                 <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-2xl mx-auto">
                                     We provide world-class financial advisory and strategic consulting designed to empower decision-makers and secure long-term value.
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                                    <Button size="lg" className="h-14 px-8 text-lg bg-blue-600 hover:bg-blue-700 rounded-full text-white" asChild>
+                                    <Button size="lg" className="h-14 px-8 text-lg bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 rounded-full text-white shadow-xl" asChild>
                                         <a href="#booking">
-                                            Book a Consultation <ArrowRight className="ml-2 w-5 h-5" />
+                                            Request Consultation <ArrowRight className="ml-2 w-5 h-5" />
                                         </a>
                                     </Button>
                                     <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-full border-slate-200 text-slate-700 hover:bg-slate-50">
@@ -66,21 +74,28 @@ export default async function ServicesPage() {
                             {dynamicServices.map((service: any, index: number) => {
                                 const IconComponent = (Icons as any)[service.icon_name] || Icons.Briefcase;
                                 return (
-                                    <Card key={index} className="h-full bg-white border-slate-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500 group">
+                                    <Card key={index} className="h-full bg-white dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
+                                        {isAdmin && (
+                                            <ServiceEditor
+                                                service={service}
+                                                index={index}
+                                                allServices={dynamicServices}
+                                            />
+                                        )}
                                         <CardContent className="p-8">
-                                            <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-500 ring-1 ring-blue-100">
+                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-200 mb-6 group-hover:scale-110 group-hover:bg-slate-100 transition-all duration-500 ring-1 ring-slate-100 dark:ring-slate-700">
                                                 <IconComponent className="w-8 h-8" />
                                             </div>
-                                            <h3 className="text-2xl font-bold mb-4 text-slate-900 group-hover:text-blue-600 transition-colors">
+                                            <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                                                 {service.title}
                                             </h3>
-                                            <p className="text-slate-600 mb-6 leading-relaxed">
+                                            <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
                                                 {service.description}
                                             </p>
                                             <ul className="space-y-3">
                                                 {(service.features || []).map((feature: string, fIndex: number) => (
-                                                    <li key={fIndex} className="flex items-center gap-3 text-sm text-slate-500">
-                                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                    <li key={fIndex} className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-500">
+                                                        <CheckCircle2 className="w-4 h-4 text-slate-400" />
                                                         {feature}
                                                     </li>
                                                 ))}

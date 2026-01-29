@@ -36,6 +36,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
     }
   } else {
     navigation.push({ name: "Sign In", href: "/auth/login" });
+    navigation.push({ name: "Register", href: "/auth/register" });
   }
 
   return (
