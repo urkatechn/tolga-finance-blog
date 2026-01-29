@@ -29,9 +29,9 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
     { name: "Contact", href: "/contact" },
   ];
 
-  if (user) {
+  if (user && user.email === 'info@tolgatanagardigil.com') {
     navigation.push({ name: "Admin Portal", href: "/admin", target: "_blank" });
-  } else {
+  } else if (!user) {
     navigation.push({ name: "Sign In", href: "/auth/login" });
   }
 
