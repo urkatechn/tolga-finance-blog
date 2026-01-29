@@ -36,9 +36,9 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
   }
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${transparent
+    <header className={`sticky top-0 z-50 transition-all duration-500 ${transparent
       ? "bg-transparent border-transparent"
-      : "border-b bg-white/90 backdrop-blur-xl shadow-sm"
+      : "border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm border-slate-200/50 dark:border-slate-800/50"
       }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
@@ -49,9 +49,9 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
                 "font-bold text-lg md:text-xl tracking-tight transition-all duration-500",
                 transparent
                   ? "text-white drop-shadow-md"
-                  : "text-slate-900"
+                  : "text-slate-900 dark:text-white"
               )}>
-                Tolga Tanagardigil <span className={cn("font-medium hidden sm:inline", transparent ? "text-white/40" : "text-slate-400")}>-</span> <span className={cn("font-normal text-base md:text-lg block sm:inline", transparent ? "text-white/70" : "text-slate-500")}>Finance & Operations Advisory</span>
+                Tolga Tanagardigil <span className={cn("font-medium hidden sm:inline", transparent ? "text-white/40" : "text-slate-400 dark:text-slate-500")}>-</span> <span className={cn("font-normal text-base md:text-lg block sm:inline", transparent ? "text-white/70" : "text-slate-500 dark:text-slate-400")}>Finance & Operations Advisory</span>
               </span>
             </Link>
           </div>
@@ -256,7 +256,7 @@ export function ServerFooter({ settings }: ServerFooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 dark:bg-black text-white py-12">
+    <footer className="bg-slate-950 text-white py-16 border-t border-slate-900">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-8">

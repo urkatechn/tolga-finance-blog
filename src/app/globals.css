@@ -136,3 +136,28 @@ body {
 .bg-grid-slate-700\/25 {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(51 65 85 / 0.25)'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
 }
+
+.bg-unified {
+  @apply min-h-screen relative overflow-hidden;
+  background-color: hsl(var(--background));
+}
+
+.bg-unified::before {
+  content: "";
+  @apply absolute inset-0 pointer-events-none;
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(79, 70, 229, 0.03) 0%, transparent 50%);
+}
+
+.dark .bg-unified::before {
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.07) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(79, 70, 229, 0.07) 0%, transparent 50%);
+}
+
+.bg-unified::after {
+  content: "";
+  @apply absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05];
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='currentColor'%3e%3cpath d='m0 .5h32m-32 32v-32'/%3e%3c/svg%3e");
+}

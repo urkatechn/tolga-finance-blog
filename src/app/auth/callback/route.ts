@@ -25,5 +25,6 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with instructions
+  console.error('Auth code exchange failed: no code provided or error during exchange')
   return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }

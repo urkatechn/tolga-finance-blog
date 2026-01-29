@@ -59,6 +59,12 @@ export default function RegisterForm() {
             }
 
             if (data.user) {
+                // Check if identities is empty - this happens if the user already exists
+                if (data.user.identities?.length === 0) {
+                    setError('An account with this email already exists.')
+                    return
+                }
+
                 setSuccess(true)
                 // If email confirmation is disabled, we might already have a session
                 if (data.session) {
