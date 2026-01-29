@@ -38,7 +38,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${transparent
       ? "bg-transparent border-transparent"
-      : "border-b bg-background/80 backdrop-blur-md"
+      : "border-b bg-white/90 backdrop-blur-xl shadow-sm"
       }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
@@ -48,10 +48,10 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
               <span className={cn(
                 "font-bold text-lg md:text-xl tracking-tight transition-all duration-500",
                 transparent
-                  ? "text-slate-900 invert mix-blend-difference"
+                  ? "text-white drop-shadow-md"
                   : "text-slate-900"
               )}>
-                Tolga Tanagardigil <span className="font-medium text-slate-500 hidden sm:inline">-</span> <span className="font-normal text-slate-500 text-base md:text-lg block sm:inline">Finance & Operations Advisory</span>
+                Tolga Tanagardigil <span className={cn("font-medium hidden sm:inline", transparent ? "text-white/40" : "text-slate-400")}>-</span> <span className={cn("font-normal text-base md:text-lg block sm:inline", transparent ? "text-white/70" : "text-slate-500")}>Finance & Operations Advisory</span>
               </span>
             </Link>
           </div>

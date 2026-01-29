@@ -29,8 +29,8 @@ export function ClientNavigation({ navigation, transparent, hasUser }: ClientNav
                             "transition-all duration-300 font-medium",
                             transparent
                                 ? isActive
-                                    ? "text-white scale-110"
-                                    : "text-white/60 hover:text-white"
+                                    ? "text-white scale-110 drop-shadow-md"
+                                    : "text-white/70 hover:text-white drop-shadow-sm"
                                 : isActive
                                     ? "text-blue-600 font-bold"
                                     : "text-slate-600 hover:text-blue-600"
