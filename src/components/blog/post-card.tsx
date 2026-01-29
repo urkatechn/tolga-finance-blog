@@ -22,213 +22,88 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
   const showExcerpt = settings?.blog_show_excerpt ?? true;
   const showReadTime = settings?.blog_show_read_time ?? true;
   const showCommentCount = settings?.blog_show_comment_count ?? true;
-  
+
   // Animation effects are always enabled (not configurable)
   const imageHoverClass = "group-hover:scale-105 transition-transform duration-300";
   const cardHoverClass = "group-hover:text-blue-600 transition-colors";
 
   return (
-    <article className="group py-6 border-b border-gray-200 dark:border-gray-800 last:border-b-0">
-      {/* Mobile-first layout */}
-      <div className="block sm:hidden">
-        {/* Mobile Layout */}
-        <div className="flex items-start gap-3 mb-3">
-          <Avatar className="h-8 w-8 flex-shrink-0">
-            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Finance Blog Team`} />
-            <AvatarFallback>FB</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-              <span className="font-medium">Finance Blog Team</span>
-              <span>•</span>
-              <time dateTime={post.published_at || ''}>
-                {post.published_at ? formatDate(post.published_at) : 'Draft'}
-              </time>
-            </div>
-          </div>
-        </div>
+    <article className="group relative py-4 px-4 sm:px-6 transition-all">
+      <div className="flex items-start gap-4">
+        {/* Forum Style Vertical Bar */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-1 transition-all group-hover:w-1.5"
+          style={{ backgroundColor: post.category?.color || '#cbd5e1' }}
+        />
 
-        {/* Featured Image - Mobile */}
+        {/* Post Image (Compact Thumbnail) */}
         {post.featured_image_url && (
-          <div className="mb-3">
+          <div className="hidden sm:block flex-shrink-0 mt-1">
             <Link href={`/blog/${post.slug}`}>
-              <div className="w-full h-48 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <div className="w-16 h-16 rounded-lg overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm bg-slate-50 dark:bg-slate-900">
                 <Image
                   src={post.featured_image_url}
                   alt={post.title}
-                  width={400}
-                  height={200}
-                  className={`w-full h-full object-cover ${imageHoverClass}`}
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
             </Link>
           </div>
         )}
 
-        {/* Title and Content - Mobile */}
-        <Link href={`/blog/${post.slug}`} className="group">
-          <div className="flex items-center gap-2 mb-2">
-            <h2 className={`text-lg font-bold text-gray-900 dark:text-white ${cardHoverClass} line-clamp-2`}>
-              {post.title}
-            </h2>
-            {post.category && (
-              <Badge 
-                variant="secondary" 
-                className="text-[10px] px-2 py-0.5"
-                style={{ 
-                  backgroundColor: `${post.category.color}15`,
-                  color: post.category.color,
-                }}
-              >
-                {post.category.name}
-              </Badge>
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+            <Link href={`/blog/${post.slug}`}>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1 leading-tight">
+                {post.title}
+              </h2>
+            </Link>
+            {post.featured && (
+              <Star className="h-3 w-3 text-yellow-500 fill-current" />
             )}
-          </div>
-          {showExcerpt && (
-            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-3 mb-4">
-              {post.excerpt || post.content.substring(0, 120) + '...'}
-            </p>
-          )}
-        </Link>
-
-        {/* Meta Information - Mobile */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-            {/* Featured Star (for featured section) */}
-            {featured && (
-              <div className="flex items-center gap-1 text-yellow-500">
-                <Star className="h-3 w-3 fill-current" />
-              </div>
-            )}
-
-            {/* Featured Badge (for latest list when featured also shown) */}
             {showFeaturedBadge && post.featured && (
-              <Badge className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 border-yellow-200">
+              <Badge className="text-[10px] uppercase font-black px-2 py-0 bg-yellow-400 text-yellow-900 border-none">
                 Featured
               </Badge>
             )}
-
-            {/* Read Time */}
-            {showReadTime && (
-              <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                <span>{readTime} min read</span>
-              </div>
-            )}
-
-            {/* Comments */}
-            {showCommentCount && (
-              <div className="flex items-center gap-1">
-                <MessageCircle className="h-3 w-3" />
-                <span>{commentCount}</span>
-              </div>
-            )}
           </div>
 
-          {/* Removed more options menu */}
-        </div>
-      </div>
+          {showExcerpt && (
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-1 mb-2 font-medium opacity-80 decoration-slate-200 dark:decoration-slate-800 decoration-1 underline-offset-2">
+              {post.excerpt || post.content.substring(0, 100) + '...'}
+            </p>
+          )}
 
-      {/* Desktop Layout */}
-      <div className="hidden sm:block">
-        <div className="flex items-start gap-6">
-          {/* Author Avatar */}
-          <Avatar className="h-10 w-10 flex-shrink-0">
-            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Finance Blog Team`} />
-            <AvatarFallback>FB</AvatarFallback>
-          </Avatar>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            {/* Author and Date */}
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
-              <span className="font-medium">Finance Blog Team</span>
+          {/* Meta Line - Professional Forum look */}
+          <div className="flex items-center justify-between text-[10px] sm:text-xs">
+            <div className="flex items-center gap-4 text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-1.5">
+                <Avatar className="h-4 w-4 border border-slate-200 dark:border-slate-800">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Tolga`} />
+                  <AvatarFallback className="text-[6px]">TT</AvatarFallback>
+                </Avatar>
+                <span className="text-slate-600 dark:text-slate-300">ADMIN</span>
+              </div>
               <span>•</span>
-              <time dateTime={post.published_at || ''}>
-                {post.published_at ? formatDate(post.published_at) : 'Draft'}
-              </time>
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                <span>{post.published_at ? formatDate(post.published_at) : 'Draft'}</span>
+              </div>
+              {showReadTime && (
+                <div className="hidden sm:flex items-center gap-1">
+                  <span>{readTime} MIN READ</span>
+                </div>
+              )}
             </div>
 
-            {/* Title and Excerpt */}
-            <div className="flex gap-6">
-              <div className="flex-1 min-w-0">
-                <Link href={`/blog/${post.slug}`} className="group">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h2 className={`text-xl font-bold text-gray-900 dark:text-white ${cardHoverClass} line-clamp-2`}>
-                      {post.title}
-                    </h2>
-                    {post.category && (
-                      <Badge 
-                        variant="secondary" 
-                        className="text-[10px] px-2 py-0.5"
-                        style={{ 
-                          backgroundColor: `${post.category.color}15`,
-                          color: post.category.color,
-                        }}
-                      >
-                        {post.category.name}
-                      </Badge>
-                    )}
-                  </div>
-                  {showExcerpt && (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">
-                      {post.excerpt || post.content.substring(0, 120) + '...'}
-                    </p>
-                  )}
-                </Link>
-
-                {/* Meta Information */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                    {/* Featured Star (for featured section) */}
-                    {featured && (
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="h-3 w-3 fill-current" />
-                      </div>
-                    )}
-
-                    {/* Featured Badge (for latest list when featured also shown) */}
-                    {showFeaturedBadge && post.featured && (
-                      <Badge className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 border-yellow-200">
-                        Featured
-                      </Badge>
-                    )}
-
-                    {/* Read Time */}
-                    {showReadTime && (
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        <span>{readTime} min read</span>
-                      </div>
-                    )}
-
-                    {/* Comments */}
-                    {showCommentCount && (
-                      <div className="flex items-center gap-1">
-                        <MessageCircle className="h-3 w-3" />
-                        <span>{commentCount}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Removed more options menu */}
-                </div>
-              </div>
-
-              {/* Featured Image */}
-              {post.featured_image_url && (
-                <div className="flex-shrink-0">
-                  <Link href={`/blog/${post.slug}`}>
-                    <div className="w-32 h-20 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                      <Image
-                        src={post.featured_image_url}
-                        alt={post.title}
-                        width={128}
-                        height={80}
-                        className={`w-full h-full object-cover ${imageHoverClass}`}
-                      />
-                    </div>
-                  </Link>
+            <div className="flex items-center gap-3">
+              {showCommentCount && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-600 dark:text-slate-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors font-bold">
+                  <MessageCircle className="h-3 w-3" />
+                  <span>{commentCount}</span>
                 </div>
               )}
             </div>

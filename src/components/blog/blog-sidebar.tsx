@@ -50,130 +50,87 @@ export default function BlogSidebar({ recentPosts = [], categories = [], setting
 
   return (
     <div className="space-y-6">
-      {/* Newsletter Signup */}
-      {(settings?.sidebar_show_newsletter ?? true) && (
-        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border-blue-200 dark:border-blue-800">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-blue-600" />
-              <CardTitle className="text-lg">{settings?.sidebar_newsletter_title || "Stay Updated"}</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {submitted ? (
-              <div className="text-center">
-                <div className="flex justify-center mb-3">
-                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6 text-blue-600" />
-                  </div>
-                </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">Subscribed! Check your inbox soon.</p>
-              </div>
-            ) : (
-              <>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {settings?.sidebar_newsletter_description || "Get the latest financial insights delivered to your inbox weekly."}
-                </p>
-                <form onSubmit={handleSubscribe} className="space-y-2">
-                  <Input 
-                    placeholder="Enter your email" 
-                    type="email"
-                    className="bg-white dark:bg-gray-800"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                  />
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700" type="submit" disabled={loading || !email}>
-                    {loading ? 'Subscribing...' : 'Subscribe'}
-                  </Button>
-                  {error && (
-                    <p className="text-xs text-red-600 dark:text-red-400">{error}</p>
-                  )}
-                </form>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  No spam. Unsubscribe anytime.
-                </p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
       {/* Trending Posts */}
       {recentPosts.length > 0 && (settings?.sidebar_show_trending ?? true) && (
-        <Card>
-          <CardHeader className="pb-4">
+        <Card className="border-slate-200/50 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-lg overflow-hidden">
+          <CardHeader className="pb-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-orange-600" />
-              <CardTitle className="text-lg">{settings?.sidebar_trending_title || "Trending Posts"}</CardTitle>
+              <TrendingUp className="h-4 w-4 text-slate-500" />
+              <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                {settings?.sidebar_trending_title || "Trending Posts"}
+              </CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {recentPosts.slice(0, settings?.sidebar_trending_limit || 4).map((post, index) => (
-              <div key={post.id} className="flex gap-3 group">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                  <span className="text-sm font-bold text-orange-600">
-                    {index + 1}
+          <CardContent className="p-0">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {recentPosts.slice(0, settings?.sidebar_trending_limit || 5).map((post, index) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className="flex gap-4 p-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group"
+                >
+                  <span className="text-xl font-black text-slate-200 dark:text-slate-800 group-hover:text-slate-300 dark:group-hover:text-slate-700 transition-colors leading-none">
+                    {String(index + 1).padStart(2, '0')}
                   </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <Link href={`/blog/${post.slug}`}>
-                    <h4 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-sm line-clamp-2 text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug">
                       {post.title}
                     </h4>
-                  </Link>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    <Clock className="h-3 w-3" />
-                    <span>2 min read</span>
-                    {post.category && (
-                      <>
-                        <span>•</span>
-                        <span style={{ color: post.category.color }}>
+                    <div className="flex items-center gap-3 mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span>2 min read</span>
+                      </div>
+                      {post.category && (
+                        <span className="font-medium px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800" style={{ color: post.category.color }}>
                           {post.category.name}
                         </span>
-                      </>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
-            <Button variant="ghost" size="sm" asChild className="w-full justify-between mt-4">
-              <Link href="/blog">
+                </Link>
+              ))}
+            </div>
+          </CardContent>
+          <div className="p-3 bg-slate-50/30 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-800">
+            <Button variant="ghost" size="sm" asChild className="w-full text-xs text-slate-500 hover:text-slate-900 justify-center">
+              <Link href="/blog" className="flex items-center gap-2">
                 <span>View All Posts</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-3 w-3" />
               </Link>
             </Button>
-          </CardContent>
+          </div>
         </Card>
       )}
 
       {/* Categories */}
       {categories.length > 0 && (settings?.sidebar_show_categories ?? true) && (
-        <Card>
-          <CardHeader className="pb-4">
+        <Card className="border-slate-200/50 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-lg overflow-hidden">
+          <CardHeader className="pb-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <Tag className="h-5 w-5 text-purple-600" />
-              <CardTitle className="text-lg">{settings?.sidebar_categories_title || "Categories"}</CardTitle>
+              <Tag className="h-4 w-4 text-slate-500" />
+              <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                {settings?.sidebar_categories_title || "Categories"}
+              </CardTitle>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4">
             <div className="flex flex-wrap gap-2">
-              {categories.slice(0, settings?.sidebar_categories_limit || 8).map((category) => (
+              {categories.slice(0, settings?.sidebar_categories_limit || 12).map((category) => (
                 <Link key={category.id} href={`/blog?category=${category.slug}`}>
-                  <Badge 
-                    variant="secondary" 
-                    className="hover:scale-105 transition-transform cursor-pointer"
-                    style={{ 
-                      backgroundColor: `${category.color}15`,
+                  <Badge
+                    variant="secondary"
+                    className="hover:scale-105 transition-all cursor-pointer font-medium px-2.5 py-1"
+                    style={{
+                      backgroundColor: `${category.color}10`,
                       color: category.color,
                       borderColor: `${category.color}30`
                     }}
                   >
-                    {category.name}
+                    #{category.name}
                     {category.post_count && (
-                      <span className="ml-1 text-xs opacity-70">
-                        ({category.post_count})
+                      <span className="ml-1.5 opacity-60 text-[10px]">
+                        {category.post_count}
                       </span>
                     )}
                   </Badge>
@@ -186,60 +143,33 @@ export default function BlogSidebar({ recentPosts = [], categories = [], setting
 
       {/* About Section */}
       {(settings?.sidebar_show_about ?? true) && (
-        <Card>
-          <CardHeader className="pb-4">
+        <Card className="border-slate-200/50 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md shadow-lg overflow-hidden">
+          <CardHeader className="pb-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-green-600" />
-              <CardTitle className="text-lg">{settings?.sidebar_about_title || "About Finance Blog"}</CardTitle>
+              <Users className="h-4 w-4 text-slate-500" />
+              <CardTitle className="text-sm font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                Team
+              </CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${settings?.sidebar_about_author_name || "Finance Blog Team"}`} alt={`${settings?.sidebar_about_author_name || "Finance Blog Team"} avatar`} />
-                <AvatarFallback>{(settings?.sidebar_about_author_name || "Finance Blog").split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}</AvatarFallback>
+          <CardContent className="p-5 space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-10 w-10 border-2 border-slate-100 dark:border-slate-800">
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=Tolga`} />
+                <AvatarFallback>TT</AvatarFallback>
               </Avatar>
-              <div>
-                <h4 className="font-medium">{settings?.sidebar_about_author_name || "Finance Blog Team"}</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {settings?.sidebar_about_author_role || "Financial Experts"}
+              <div className="min-w-0">
+                <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 underline decoration-slate-200 dark:decoration-slate-800 decoration-2 underline-offset-4">
+                  {settings?.sidebar_about_author_name || "Tolga Tanagardigil"}
+                </h4>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                  {settings?.sidebar_about_author_role || "Financial Consultant"}
                 </p>
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              {settings?.sidebar_about_description || "We're passionate about making finance accessible to everyone. Our team of experts shares insights, tips, and strategies to help you make informed financial decisions."}
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+              {settings?.sidebar_about_description || "Insightful financial analysis and market trends from a professional perspective."}
             </p>
-            <Button variant="outline" size="sm" asChild className="w-full">
-              <Link href="/about">
-                Learn More About Us
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Quick Stats */}
-      {(settings?.sidebar_show_stats ?? true) && (
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border-green-200 dark:border-green-800">
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-green-600">{settings?.sidebar_stats_articles || "50+"}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Articles</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">{settings?.sidebar_stats_readers || "10K+"}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Readers</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">{settings?.sidebar_stats_categories || "5"}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Categories</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-green-600">{settings?.sidebar_stats_updated || "24/7"}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Updated</div>
-              </div>
-            </div>
           </CardContent>
         </Card>
       )}

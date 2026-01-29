@@ -3,6 +3,7 @@
 import PostCard from "@/components/blog/post-card";
 import BlogSidebar from "@/components/blog/blog-sidebar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
@@ -228,99 +229,77 @@ export function BlogMotion({
                   </motion.div>
                 ) : (
                   <>
-                    {/* Featured Posts Section */}
+                    {/* Featured Posts Section (Conditional) */}
                     {showingFeaturedSeparately && (
-                      <motion.div className="mb-16" variants={fadeUp}>
-                        <motion.div
-                          className="flex items-center gap-3 mb-8"
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.6, ease: easing }}
-                          viewport={{ once: true }}
-                        >
-                          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{settings.blog_featured_section_title}</h2>
-                          <motion.div
-                            className="h-px bg-gradient-to-r from-blue-600 to-transparent flex-1"
-                            initial={{ scaleX: 0 }}
-                            whileInView={{ scaleX: 1 }}
-                            transition={{ duration: 0.8, ease: easing, delay: 0.2 }}
-                            viewport={{ once: true }}
-                            style={{ originX: 0 }}
-                          />
-                        </motion.div>
-                        <motion.div
-                          className="space-y-0"
-                          variants={staggerContainer}
-                          initial="hidden"
-                          whileInView="show"
-                          viewport={{ once: true, amount: 0.1 }}
-                        >
-                          {featuredPosts.slice(0, settings.blog_featured_posts_limit).map((post, index) => (
+                      <motion.div className="mb-12" variants={fadeUp}>
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
+                          <h2 className="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">
+                            {settings.blog_featured_section_title}
+                          </h2>
+                        </div>
+                        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
+                          {featuredPosts.slice(0, settings.blog_featured_posts_limit).map((post) => (
                             <motion.div
                               key={post.id}
                               variants={postCardVariant}
-                              whileHover={{ x: 8 }}
-                              transition={{ type: "spring", stiffness: 300 }}
+                              className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
                             >
                               <PostCard post={post} featured={true} commentCount={commentsCountMap[post.id] || 0} settings={settings} />
                             </motion.div>
                           ))}
-                        </motion.div>
+                        </div>
                       </motion.div>
                     )}
 
-                    {/* All Posts Section */}
-                    <motion.div variants={fadeUp}>
-                      <motion.div
-                        className="flex items-center justify-between mb-8"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, ease: easing }}
-                        viewport={{ once: true }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {sp.category && sp.category !== "all"
-                              ? `${categories.find(c => c.slug === sp.category)?.name || sp.category} Articles`
-                              : sp.search
-                                ? `Search Results for "${sp.search}"`
-                                : settings.blog_latest_section_title
-                            }</h2>
-                          <motion.span
-                            className="text-sm text-gray-500 dark:text-gray-400"
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.4, ease: easing, delay: 0.1 }}
-                            viewport={{ once: true }}
-                          >
-                            ({listPosts.length} {listPosts.length === 1 ? 'article' : 'articles'})
-                          </motion.span>
-                        </div>
-                      </motion.div>
+                    {/* All Posts Grouped by Category */}
+                    <motion.div variants={fadeUp} className="space-y-10">
+                      {/* Define grouping logic */}
+                      {Object.entries(
+                        listPosts.reduce((acc, post) => {
+                          const catName = post.category?.name || "Uncategorized";
+                          if (!acc[catName]) acc[catName] = [];
+                          acc[catName].push(post);
+                          return acc;
+                        }, {} as Record<string, typeof listPosts>)
+                      ).map(([catName, posts]) => (
+                        <div key={catName} className="relative">
+                          {/* Category Header */}
+                          <div className="flex items-center justify-between mb-4 sticky top-0 z-10 py-2 bg-unified/80 backdrop-blur-sm -mx-4 px-4 sm:mx-0 sm:px-0">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="w-1.5 h-5 rounded-full"
+                                style={{ backgroundColor: posts[0].category?.color || '#cbd5e1' }}
+                              />
+                              <h3 className="text-lg font-black uppercase tracking-wide text-slate-900 dark:text-slate-100">
+                                {catName}
+                              </h3>
+                              <Badge variant="outline" className="text-[10px] font-bold border-slate-200 dark:border-slate-800 text-slate-400">
+                                {posts.length}
+                              </Badge>
+                            </div>
+                            <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1 ml-4 hidden sm:block opacity-50" />
+                          </div>
 
-                      <motion.div
-                        className="space-y-0"
-                        variants={staggerContainer}
-                        initial="hidden"
-                        whileInView="show"
-                        viewport={{ once: true, amount: 0.1 }}
-                      >
-                        {listPosts.map((post, index) => (
-                          <motion.div
-                            key={post.id}
-                            variants={postCardVariant}
-                            whileHover={{ x: 8 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                          >
-                            <PostCard
-                              post={post}
-                              showFeaturedBadge={showFeaturedBadgeInList}
-                              commentCount={commentsCountMap[post.id] || 0}
-                              settings={settings}
-                            />
-                          </motion.div>
-                        ))}
-                      </motion.div>
+                          {/* Posts in list/forum style */}
+                          <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
+                            {posts.map((post) => (
+                              <motion.div
+                                key={post.id}
+                                variants={postCardVariant}
+                                className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+                              >
+                                <PostCard
+                                  post={post}
+                                  showFeaturedBadge={showFeaturedBadgeInList}
+                                  commentCount={commentsCountMap[post.id] || 0}
+                                  settings={settings}
+                                />
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </motion.div>
                   </>
                 )}
