@@ -120,7 +120,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
                   <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-8 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95" asChild>
                     <Link href="/contact"><LocalizedText tKey="button.message" fallback="Message" /></Link>
                   </Button>
-                  <Button variant="outline" size="lg" className="rounded-2xl px-8 font-bold border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" asChild>
+                  <Button variant="outline" size="lg" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest border-2 hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all" asChild>
                     <Link href={LINKEDIN_URL} target="_blank"><LocalizedText tKey="button.connect" fallback="Connect" /></Link>
                   </Button>
                 </div>

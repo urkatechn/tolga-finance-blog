@@ -312,13 +312,15 @@ export function ServerFooter({ settings }: ServerFooterProps) {
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-6">Navigational Hub</h3>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-6">
+                <LocalizedText tKey="footer.nav_hub" fallback="Navigational Hub" />
+              </h3>
               <ul className="space-y-4">
-                <li><Link href="/" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Home</Link></li>
-                <li><Link href="/blog" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Strategic Blog</Link></li>
-                <li><Link href="/services" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Services</Link></li>
-                <li><Link href="/about" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">About</Link></li>
-                <li><Link href="/contact" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Secure Contact</Link></li>
+                <li><Link href="/" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="nav.home" fallback="Home" /></Link></li>
+                <li><Link href="/blog" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="footer.blog" fallback="Strategic Blog" /></Link></li>
+                <li><Link href="/services" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="nav.services" fallback="Services" /></Link></li>
+                <li><Link href="/about" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="nav.about" fallback="About" /></Link></li>
+                <li><Link href="/contact" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="footer.contact" fallback="Secure Contact" /></Link></li>
               </ul>
             </div>
 
@@ -328,7 +330,7 @@ export function ServerFooter({ settings }: ServerFooterProps) {
           {/* Bottom Bar */}
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-300 mb-4 md:mb-0">
-              © {currentYear} {settings.site_brand_name}. All rights reserved.
+              © {currentYear} {settings.site_brand_name}. <LocalizedText tKey="footer.rights" fallback="All rights reserved." />
             </p>
           </div>
         </div>

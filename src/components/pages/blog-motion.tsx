@@ -24,6 +24,7 @@ import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PostEditor } from "@/components/blog/post-editor";
+import { LocalizedText } from "@/components/localized-text";
 
 interface Category {
   id: string;
@@ -165,7 +166,7 @@ export function BlogMotion({
               variants={fadeUp}
             >
               <span className="block text-transparent bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
-                {settings.blog_hero_title}
+                <LocalizedText tKey="blog.hero_title" fallback={settings.blog_hero_title} />
               </span>
             </motion.h1>
 
@@ -173,7 +174,7 @@ export function BlogMotion({
               className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
               variants={fadeUp}
             >
-              {settings.blog_hero_subtitle}
+              <LocalizedText tKey="blog.hero_subtitle" fallback={settings.blog_hero_subtitle} />
             </motion.p>
 
             {/* Quick Stats */}
@@ -255,11 +256,11 @@ export function BlogMotion({
                     >
                       <div className="text-4xl">📚</div>
                     </motion.div>
-                    <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">No articles found</h3>
+                    <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white"><LocalizedText tKey="blog.no_articles" fallback="No articles found" /></h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
                       {sp.search || sp.category
-                        ? "Try adjusting your search or filter criteria to find more articles."
-                        : "No articles have been published yet. Check back soon for new content!"
+                        ? <LocalizedText tKey="blog.adjust_criteria" fallback="Try adjusting your search or filter criteria to find more articles." />
+                        : <LocalizedText tKey="blog.no_published" fallback="No articles have been published yet. Check back soon for new content!" />
                       }
                     </p>
                     <motion.div
@@ -267,7 +268,7 @@ export function BlogMotion({
                       whileTap={{ scale: 0.95 }}
                     >
                       <Button asChild>
-                        <Link href="/blog">View All Articles</Link>
+                        <Link href="/blog"><LocalizedText tKey="blog.view_all" fallback="View All Articles" /></Link>
                       </Button>
                     </motion.div>
                   </motion.div>
@@ -446,7 +447,7 @@ export function BlogMotion({
                             }).toString()}`}
                             className="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200 hover:text-slate-600 font-medium transition-colors"
                           >
-                            <span>←</span> Previous
+                            <span>←</span> <LocalizedText tKey="blog.previous" fallback="Previous" />
                           </Link>
                         </motion.div>
                       )}
@@ -459,7 +460,7 @@ export function BlogMotion({
                       transition={{ duration: 0.4 }}
                       viewport={{ once: true }}
                     >
-                      Page {page}
+                      <LocalizedText tKey="blog.page" fallback="Page" /> {page}
                     </motion.div>
 
                     <div>
@@ -476,7 +477,7 @@ export function BlogMotion({
                             }).toString()}`}
                             className="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200 hover:text-slate-600 font-medium transition-colors"
                           >
-                            Next <span>→</span>
+                            <LocalizedText tKey="blog.next" fallback="Next" /> <span>→</span>
                           </Link>
                         </motion.div>
                       )}

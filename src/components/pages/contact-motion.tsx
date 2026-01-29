@@ -13,6 +13,7 @@ import ContactForm from "@/components/contact/contact-form";
 import Link from "next/link";
 import { LINKEDIN_URL } from "@/lib/site-config";
 import { motion } from "framer-motion";
+import { LocalizedText } from "@/components/localized-text";
 
 interface ContactMotionProps {
   settings: SiteSettings;
@@ -64,9 +65,11 @@ export function ContactMotion({ settings }: ContactMotionProps) {
         >
           <div className="max-w-4xl mx-auto text-center">
             <motion.div variants={fadeUp} className="mb-6">
-              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block animate-in fade-in slide-in-from-bottom-2">Get In Touch</span>
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block animate-in fade-in slide-in-from-bottom-2">
+                <LocalizedText tKey="contact.get_in_touch" fallback="Get In Touch" />
+              </span>
               <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 text-slate-900 dark:text-white uppercase italic">
-                Just one click away!
+                <LocalizedText tKey="contact.hero_title" fallback="Just one click away!" />
               </h1>
             </motion.div>
 
@@ -74,7 +77,7 @@ export function ContactMotion({ settings }: ContactMotionProps) {
               className="text-lg md:text-xl text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto font-medium"
               variants={fadeUp}
             >
-              Feel free to reach out to us.
+              <LocalizedText tKey="contact.hero_subtitle" fallback="Feel free to reach out to us." />
             </motion.p>
 
             {/* Response Time Animated Box */}
@@ -89,8 +92,12 @@ export function ContactMotion({ settings }: ContactMotionProps) {
                     <Clock className="w-6 h-6 animate-spin-slow" />
                   </div>
                   <div className="text-left">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Commitment</p>
-                    <p className="text-lg font-black text-slate-900 dark:text-white leading-none">MAXIMUM 24H RESPONSE TIME</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
+                      <LocalizedText tKey="contact.commitment" fallback="Commitment" />
+                    </p>
+                    <p className="text-lg font-black text-slate-900 dark:text-white leading-none">
+                      <LocalizedText tKey="contact.response_time" fallback="MAXIMUM 24H RESPONSE TIME" />
+                    </p>
                   </div>
                 </div>
               </div>
@@ -117,9 +124,11 @@ export function ContactMotion({ settings }: ContactMotionProps) {
                     <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
                       <Mail className="w-7 h-7" />
                     </div>
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Direct Correspondence</h3>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
+                      <LocalizedText tKey="contact.direct_correspondence_title" fallback="Direct Correspondence" />
+                    </h3>
                     <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium mb-6">
-                      For institutional inquiries and partnership proposals, please reach out directly via our primary email address.
+                      <LocalizedText tKey="contact.direct_correspondence_desc" fallback="For institutional inquiries and partnership proposals, please reach out directly via our primary email address." />
                     </p>
                   </div>
                   <a
@@ -145,13 +154,17 @@ export function ContactMotion({ settings }: ContactMotionProps) {
                     <div className="w-14 h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
                       <Linkedin className="w-7 h-7" />
                     </div>
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Professional Network</h3>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
+                      <LocalizedText tKey="contact.professional_network_title" fallback="Professional Network" />
+                    </h3>
                     <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium mb-6">
-                      Connect with Tolga Tanagardigil on LinkedIn to stay updated on latest financial insights and network within the industry.
+                      <LocalizedText tKey="contact.professional_network_desc" fallback="Connect with Tolga Tanagardigil on LinkedIn to stay updated on latest financial insights and network within the industry." />
                     </p>
                   </div>
                   <Button variant="outline" size="lg" className="w-full rounded-2xl h-14 font-black uppercase tracking-widest border-2 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all" asChild>
-                    <Link href={LINKEDIN_URL} target="_blank">Connect on LinkedIn</Link>
+                    <Link href={LINKEDIN_URL} target="_blank">
+                      <LocalizedText tKey="contact.linkedin_button" fallback="Connect on LinkedIn" />
+                    </Link>
                   </Button>
                 </div>
               </motion.div>

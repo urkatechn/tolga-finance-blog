@@ -17,6 +17,7 @@ import { BookingForm } from "@/components/services/booking-form";
 import { createClient } from "@/lib/supabase/server";
 import { AdminServicesBar } from "@/components/services/admin-services-bar";
 import { ServiceEditor } from "../../components/services/service-editor";
+import { LocalizedText } from "@/components/localized-text";
 
 export default async function ServicesPage() {
     const supabase = await createClient();
@@ -42,27 +43,27 @@ export default async function ServicesPage() {
                         <div className="max-w-5xl mx-auto text-center">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
                                 <ShieldCheck className="w-3.5 h-3.5" />
-                                <span>Financial and Operational Process Advisory</span>
+                                <span><LocalizedText tKey="services.hero_badge" fallback="Financial and Operational Process Advisory" /></span>
                             </div>
 
                             <h1 className="text-5xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.95] text-slate-900 dark:text-white drop-shadow-sm">
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 via-slate-800 to-slate-900 dark:from-slate-100 dark:via-slate-300 dark:to-slate-500">
-                                    Financial Future Matters!
+                                    <LocalizedText tKey="services.hero_title" fallback="Financial Future Matters!" />
                                 </span>
                             </h1>
 
                             <p className="text-xl text-slate-500 dark:text-slate-400 mb-12 leading-relaxed max-w-2xl mx-auto font-medium">
-                                Customized high-stakes financial architecture designed for elite decision-makers who demand operational precision and strategic mastery.
+                                <LocalizedText tKey="services.hero_subtitle" fallback="Customized high-stakes financial architecture designed for elite decision-makers who demand operational precision and strategic mastery." />
                             </p>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
                                 <Button size="lg" className="h-16 px-10 text-base font-bold bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200 rounded-2xl text-white shadow-2xl transition-all hover:scale-105 active:scale-95" asChild>
                                     <a href="#booking">
-                                        Executive Booking <ArrowRight className="ml-2 w-5 h-5" />
+                                        <LocalizedText tKey="services.button_booking" fallback="Executive Booking" /> <ArrowRight className="ml-2 w-5 h-5" />
                                     </a>
                                 </Button>
                                 <Button variant="outline" size="lg" className="h-16 px-10 text-base font-bold rounded-2xl border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all hover:scale-105 backdrop-blur-sm">
-                                    Methodology
+                                    <LocalizedText tKey="services.button_methodology" fallback="Methodology" />
                                 </Button>
                             </div>
                         </div>
@@ -91,11 +92,11 @@ export default async function ServicesPage() {
                                                 </div>
 
                                                 <h3 className="text-2xl font-black mb-4 text-slate-900 dark:text-white tracking-tight leading-tight">
-                                                    {service.title}
+                                                    <LocalizedText tKey={service.title} fallback={service.title} />
                                                 </h3>
 
                                                 <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm font-medium">
-                                                    {service.description}
+                                                    <LocalizedText tKey={service.description} fallback={service.description} />
                                                 </p>
 
                                                 <div className="space-y-3.5 border-t border-slate-100 dark:border-slate-800 pt-8">
@@ -130,11 +131,10 @@ export default async function ServicesPage() {
                                     <div className="relative z-10">
                                         <div className="w-12 h-1 px-0 bg-white/20 mb-10" />
                                         <h2 className="text-4xl md:text-5xl font-black mb-8 leading-[1.1] tracking-tighter">
-                                            Initiate Strategic <br />
-                                            Advisory
+                                            <LocalizedText tKey="services.booking_title" fallback="Initiate Strategic Advisory" />
                                         </h2>
                                         <p className="text-slate-400 text-lg mb-12 leading-relaxed font-medium">
-                                            The first step toward institutional excellence begins with a private consultation to establish your strategic objectives.
+                                            <LocalizedText tKey="services.booking_desc" fallback="The first step toward institutional excellence begins with a private consultation to establish your strategic objectives." />
                                         </p>
 
                                         <div className="space-y-8">
@@ -143,8 +143,8 @@ export default async function ServicesPage() {
                                                     <Clock className="w-5 h-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Timeframe</p>
-                                                    <p className="text-base font-bold text-white">30-Min Executive Review</p>
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1"><LocalizedText tKey="services.booking_time_label" fallback="Timeframe" /></p>
+                                                    <p className="text-base font-bold text-white"><LocalizedText tKey="services.booking_time_value" fallback="30-Min Executive Review" /></p>
                                                 </div>
                                             </div>
 
@@ -153,9 +153,9 @@ export default async function ServicesPage() {
                                                     <MessagesSquare className="w-5 h-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1">Secure Channel</p>
+                                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-1"><LocalizedText tKey="services.booking_channel_label" fallback="Secure Channel" /></p>
                                                     <a href={settings.google_meet_url} target="_blank" rel="noopener noreferrer" className="text-base font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2">
-                                                        Google Meet Infrastructure <ArrowRight className="w-3 h-3" />
+                                                        <LocalizedText tKey="services.booking_channel_value" fallback="Google Meet Infrastructure" /> <ArrowRight className="w-3 h-3" />
                                                     </a>
                                                 </div>
                                             </div>
@@ -163,7 +163,7 @@ export default async function ServicesPage() {
 
                                         <div className="mt-20 py-8 px-10 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm">
                                             <p className="italic text-slate-300 text-sm leading-relaxed font-medium">
-                                                "We do not merely advise; we architect paths to absolute financial dominance through rigorous analysis and strategic foresight."
+                                                "<LocalizedText tKey="services.booking_quote" fallback="We do not merely advise; we architect paths to absolute financial dominance through rigorous analysis and strategic foresight." />"
                                             </p>
                                         </div>
                                     </div>
@@ -173,8 +173,8 @@ export default async function ServicesPage() {
                                 <div className="lg:w-[55%] p-10 md:p-16 lg:p-20 bg-white dark:bg-slate-900/50">
                                     <div className="max-w-md mx-auto">
                                         <div className="mb-10">
-                                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Registration</h3>
-                                            <p className="text-slate-500 text-sm font-medium">Provide your contact details to begin the engagement.</p>
+                                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2"><LocalizedText tKey="services.form_title" fallback="Registration" /></h3>
+                                            <p className="text-slate-500 text-sm font-medium"><LocalizedText tKey="services.form_desc" fallback="Provide your contact details to begin the engagement." /></p>
                                         </div>
                                         <BookingForm googleMeetUrl={settings.google_meet_url} />
                                     </div>
