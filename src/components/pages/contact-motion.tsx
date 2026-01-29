@@ -66,7 +66,7 @@ export function ContactMotion({ settings }: ContactMotionProps) {
             <motion.div variants={fadeUp} className="mb-6">
               <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block animate-in fade-in slide-in-from-bottom-2">Get In Touch</span>
               <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 text-slate-900 dark:text-white uppercase italic">
-                Bize ulaşmak ister misiniz?
+                Just one click away!
               </h1>
             </motion.div>
 
@@ -74,7 +74,7 @@ export function ContactMotion({ settings }: ContactMotionProps) {
               className="text-lg md:text-xl text-slate-500 dark:text-slate-400 mb-12 max-w-2xl mx-auto font-medium"
               variants={fadeUp}
             >
-              Profesyonel finansal danışmanlık ve stratejik iş birliği için doğru yerdesiniz. İletişim formunu kullanarak veya doğrudan e-posta yoluyla bize ulaşabilirsiniz.
+              Feel free to reach out to us.
             </motion.p>
 
             {/* Response Time Animated Box */}
@@ -122,8 +122,12 @@ export function ContactMotion({ settings }: ContactMotionProps) {
                       For institutional inquiries and partnership proposals, please reach out directly via our primary email address.
                     </p>
                   </div>
-                  <a href="mailto:info@tolgatanagardigil.com" className="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 hover:underline hover:underline-offset-8 transition-all">
-                    info@tolgatanagardigil.com
+                  <a
+                    href="mailto:info@tolgatanagardigil.com"
+                    className="flex items-center justify-center w-20 h-20 rounded-[24px] bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-blue-600 dark:text-blue-400 hover:bg-blue-600 dark:hover:bg-blue-600 hover:text-white dark:hover:text-white hover:border-transparent transition-all shadow-xl group-hover:scale-105"
+                    aria-label="Send us an email"
+                  >
+                    <Mail className="w-10 h-10" />
                   </a>
                 </div>
               </motion.div>
@@ -176,71 +180,73 @@ export function ContactMotion({ settings }: ContactMotionProps) {
             </motion.div>
           </div>
         </motion.div>
-      </section>
+      </section >
 
       {/* FAQ Section */}
-      {settings.contact_faq_enabled && Array.isArray((settings as any).contact_faq_items) && (settings as any).contact_faq_items.length > 0 && (
-        <section className="py-16">
-          <motion.div
-            className="container mx-auto px-4"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={container}
-          >
-            <div className="max-w-4xl mx-auto">
-              <motion.div className="text-center mb-12" variants={fadeUp}>
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">{settings.contact_faq_title}</h2>
-                <p className="text-lg text-gray-600 dark:text-gray-400">{settings.contact_faq_subtitle}</p>
-              </motion.div>
+      {
+        settings.contact_faq_enabled && Array.isArray((settings as any).contact_faq_items) && (settings as any).contact_faq_items.length > 0 && (
+          <section className="py-16">
+            <motion.div
+              className="container mx-auto px-4"
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={container}
+            >
+              <div className="max-w-4xl mx-auto">
+                <motion.div className="text-center mb-12" variants={fadeUp}>
+                  <h2 className="text-3xl md:text-4xl font-bold mb-4">{settings.contact_faq_title}</h2>
+                  <p className="text-lg text-gray-600 dark:text-gray-400">{settings.contact_faq_subtitle}</p>
+                </motion.div>
 
-              <motion.div
-                className="grid md:grid-cols-2 gap-8"
-                variants={{
-                  hidden: { opacity: 0 },
-                  show: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.12,
-                      delayChildren: 0.15,
+                <motion.div
+                  className="grid md:grid-cols-2 gap-8"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.12,
+                        delayChildren: 0.15,
+                      },
                     },
-                  },
-                }}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, amount: 0.1 }}
-              >
-                {((settings as any).contact_faq_items as Array<{ question: string; answer: string }>).map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    variants={{
-                      hidden: { opacity: 0, y: 30, scale: 0.95 },
-                      show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: easing } },
-                    }}
-                    whileHover={{ y: -3, scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <Card className="h-full hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-center space-x-3 mb-3">
-                          <motion.div
-                            whileHover={{ rotate: 360 }}
-                            transition={{ duration: 0.5 }}
-                          >
-                            <MessageCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                          </motion.div>
-                          <CardTitle className="text-xl">{item.question}</CardTitle>
-                        </div>
-                        <CardDescription className="text-base leading-relaxed">{item.answer}</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          </motion.div>
-        </section>
-      )}
+                  }}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, amount: 0.1 }}
+                >
+                  {((settings as any).contact_faq_items as Array<{ question: string; answer: string }>).map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      variants={{
+                        hidden: { opacity: 0, y: 30, scale: 0.95 },
+                        show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: easing } },
+                      }}
+                      whileHover={{ y: -3, scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <Card className="h-full hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                          <div className="flex items-center space-x-3 mb-3">
+                            <motion.div
+                              whileHover={{ rotate: 360 }}
+                              transition={{ duration: 0.5 }}
+                            >
+                              <MessageCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                            </motion.div>
+                            <CardTitle className="text-xl">{item.question}</CardTitle>
+                          </div>
+                          <CardDescription className="text-base leading-relaxed">{item.answer}</CardDescription>
+                        </CardHeader>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
+            </motion.div>
+          </section>
+        )
+      }
     </>
   );
 }
