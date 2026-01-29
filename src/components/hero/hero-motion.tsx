@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, TrendingUp, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
+import { LiveSubscriberCount } from "./live-subscriber-count";
 
 interface ClientHeroProps {
   settings: SiteSettings;
@@ -82,7 +83,9 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
               <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/30 mb-3">
                 <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{settings.hero_stats_subscribers_count}</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                <LiveSubscriberCount initialCount={settings.hero_stats_subscribers_count} />
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{settings.hero_stats_subscribers_label}</div>
             </motion.div>
 

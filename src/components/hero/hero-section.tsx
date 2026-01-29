@@ -4,10 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Users, BookOpen } from "lucide-react";
 import { useSettings } from "@/contexts/settings-context";
+import { LiveSubscriberCount } from "./live-subscriber-count";
 
 export default function HeroSection() {
   const { settings } = useSettings();
-  
+
   // Use settings with fallbacks
   const heroTitle = settings?.hero_title || "Smart Financial Insights & Analysis";
   const heroSubtitlePrimary = settings?.hero_subtitle_primary || "No need to endlessly search the internet anymore";
@@ -16,7 +17,7 @@ export default function HeroSection() {
   const ctaPrimaryLink = settings?.hero_cta_primary_link || "/blog";
   const ctaSecondaryText = settings?.hero_cta_secondary_text || "Get Weekly Insights";
   const ctaSecondaryLink = settings?.hero_cta_secondary_link || "#newsletter";
-  
+
   // Hero stats
   const articlesCount = settings?.hero_stats_articles_count || "150+";
   const articlesLabel = settings?.hero_stats_articles_label || "Expert Articles";
@@ -24,12 +25,12 @@ export default function HeroSection() {
   const subscribersLabel = settings?.hero_stats_subscribers_label || "Subscribers";
   const successCount = settings?.hero_stats_success_count || "98%";
   const successLabel = settings?.hero_stats_success_label || "Success Rate";
-  
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
-      
+
       <div className="relative container mx-auto px-6 py-24 lg:py-32">
         <div className="max-w-5xl mx-auto text-center">
           {/* Main Heading */}
@@ -45,7 +46,7 @@ export default function HeroSection() {
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
             {heroSubtitlePrimary}
           </p>
-          
+
           <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
             {heroSubtitleSecondary}
           </p>
@@ -73,15 +74,17 @@ export default function HeroSection() {
               <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{articlesCount}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{articlesLabel}</div>
             </div>
-            
+
             <div className="flex flex-col items-center p-6 rounded-2xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
               <div className="p-3 rounded-full bg-green-100 dark:bg-green-900/30 mb-3">
                 <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{subscribersCount}</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                <LiveSubscriberCount initialCount={subscribersCount} />
+              </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">{subscribersLabel}</div>
             </div>
-            
+
             <div className="flex flex-col items-center p-6 rounded-2xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
               <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 mb-3">
                 <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
