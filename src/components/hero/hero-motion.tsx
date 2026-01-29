@@ -57,8 +57,8 @@ function HeroBackgroundSlider({ images }: { images: string[] }) {
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[5000ms]"
             style={{ backgroundImage: `url(${images[index]})` }}
           />
-          {/* Overlay for contrast */}
-          <div className="absolute inset-0 bg-slate-900/40 dark:bg-black/60" />
+          {/* Enhanced Overlay for contrast and header visibility - darker at top */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/60 dark:from-black/90 dark:via-black/50 dark:to-black/70" />
         </motion.div>
       </AnimatePresence>
     </div>
@@ -73,7 +73,7 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
   ].filter(Boolean);
 
   return (
-    <section className="relative overflow-hidden min-h-screen flex items-center bg-slate-900">
+    <section className="relative overflow-hidden min-h-screen flex items-center bg-slate-900 pt-16">
       {/* Background Slider */}
       {heroImages.length > 0 && <HeroBackgroundSlider images={heroImages} />}
 
@@ -89,17 +89,15 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
       >
         <div className="max-w-5xl mx-auto text-center">
           <motion.div className="mb-8" variants={fadeUp}>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 leading-tight">
-              <span className="block text-white">
-                {settings.hero_title}
-              </span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight mb-6 leading-[1.1] text-white drop-shadow-2xl">
+              {settings.hero_title}
             </h1>
           </motion.div>
 
-          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-slate-100 mb-4 max-w-3xl mx-auto leading-relaxed">
+          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
             {settings.hero_subtitle_primary}
           </motion.p>
-          <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-200 mb-12 max-w-2xl mx-auto">
+          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto drop-shadow-md">
             {settings.hero_subtitle_secondary}
           </motion.p>
 
@@ -114,31 +112,31 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
             </Button>
           </motion.div>
 
-          <motion.div variants={fade} className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <motion.div variants={fadeUp} className="flex flex-col items-center p-6 rounded-2xl bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20">
-              <div className="p-3 rounded-full bg-blue-500/20 mb-3">
-                <BookOpen className="h-6 w-6 text-blue-300" />
+          <motion.div variants={fade} className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-500 shadow-2xl">
+              <div className="p-4 rounded-2xl bg-blue-500/30 group-hover:bg-blue-500/40 transition-colors mb-4 border border-blue-400/30 shadow-inner">
+                <BookOpen className="h-7 w-7 text-blue-200" />
               </div>
-              <div className="text-2xl font-bold text-white mb-1">{settings.hero_stats_articles_count}</div>
-              <div className="text-sm text-slate-300">{settings.hero_stats_articles_label}</div>
+              <div className="text-3xl font-black text-white mb-2 tracking-tight">{settings.hero_stats_articles_count}</div>
+              <div className="text-sm font-bold text-white/60 uppercase tracking-widest">{settings.hero_stats_articles_label}</div>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="flex flex-col items-center p-6 rounded-2xl bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20">
-              <div className="p-3 rounded-full bg-green-500/20 mb-3">
-                <Users className="h-6 w-6 text-green-300" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-500 shadow-2xl">
+              <div className="p-4 rounded-2xl bg-green-500/30 group-hover:bg-green-500/40 transition-colors mb-4 border border-green-400/30 shadow-inner">
+                <Users className="h-7 w-7 text-green-200" />
               </div>
-              <div className="text-2xl font-bold text-white mb-1">
+              <div className="text-3xl font-black text-white mb-2 tracking-tight">
                 <LiveSubscriberCount initialCount={settings.hero_stats_subscribers_count} />
               </div>
-              <div className="text-sm text-slate-300">{settings.hero_stats_subscribers_label}</div>
+              <div className="text-sm font-bold text-white/60 uppercase tracking-widest">{settings.hero_stats_subscribers_label}</div>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="flex flex-col items-center p-6 rounded-2xl bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20">
-              <div className="p-3 rounded-full bg-purple-500/20 mb-3">
-                <TrendingUp className="h-6 w-6 text-purple-300" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-500 shadow-2xl">
+              <div className="p-4 rounded-2xl bg-purple-500/30 group-hover:bg-purple-500/40 transition-colors mb-4 border border-purple-400/30 shadow-inner">
+                <TrendingUp className="h-7 w-7 text-purple-200" />
               </div>
-              <div className="text-2xl font-bold text-white mb-1">{settings.hero_stats_success_count}</div>
-              <div className="text-sm text-slate-300">{settings.hero_stats_success_label}</div>
+              <div className="text-3xl font-black text-white mb-2 tracking-tight">{settings.hero_stats_success_count}</div>
+              <div className="text-sm font-bold text-white/60 uppercase tracking-widest">{settings.hero_stats_success_label}</div>
             </motion.div>
           </motion.div>
         </div>

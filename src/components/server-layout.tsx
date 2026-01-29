@@ -12,9 +12,10 @@ import { LogoutButton } from "@/components/auth/logout-button";
 
 interface ServerHeaderProps {
   settings: SiteSettings;
+  transparent?: boolean;
 }
 
-export async function ServerHeader({ settings }: ServerHeaderProps) {
+export async function ServerHeader({ settings, transparent = false }: ServerHeaderProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -32,7 +33,10 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${transparent
+        ? "bg-transparent border-transparent"
+        : "border-b bg-background/80 backdrop-blur-md"
+      }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -47,11 +51,12 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
                   className="h-8 w-8"
                 />
               ) : (
-                <div className="h-8 w-8 rounded bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
+                <div className={`h-8 w-8 rounded flex items-center justify-center font-bold text-lg ${transparent ? "bg-white/20 text-white" : "bg-primary text-primary-foreground"
+                  }`}>
                   {settings.site_brand_initials || settings.site_brand_name?.charAt(0) || 'B'}
                 </div>
               )}
-              <span className="font-bold text-xl">{settings.site_brand_name}</span>
+              <span className={`font-bold text-xl ${transparent ? "text-white" : ""}`}>{settings.site_brand_name}</span>
             </Link>
           </div>
 
@@ -64,12 +69,15 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
                   href={item.href}
                   target={item.target}
                   rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className={`transition-colors ${transparent
+                      ? "text-white/80 hover:text-white"
+                      : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {item.name}
                 </Link>
               ))}
-              {user && <LogoutButton variant="ghost" />}
+              {user && <LogoutButton variant={transparent ? "ghost" : "ghost"} className={transparent ? "text-white hover:text-white" : ""} />}
             </nav>
             <MobileNavigation navigation={navigation} showLogout={!!user} />
           </div>

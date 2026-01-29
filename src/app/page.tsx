@@ -41,14 +41,18 @@ async function getFeaturedPosts() {
 export default async function Home() {
   // Fetch featured posts from database
   const featuredPosts = await getFeaturedPosts();
-  
+
   // Load settings server-side to prevent hydration mismatch
   const settings = await getServerSettings();
 
   return (
     <div className="min-h-screen">
-      <ServerHeader settings={settings} />
-      <ClientHeroSection settings={settings} />
+      <div className="relative">
+        <div className="absolute top-0 left-0 right-0 z-50">
+          <ServerHeader settings={settings} transparent={true} />
+        </div>
+        <ClientHeroSection settings={settings} />
+      </div>
 
       {/* What You'll Find Here - Animated */}
       <ClientFeaturesSection settings={settings} />
@@ -60,7 +64,7 @@ export default async function Home() {
 
       {/* Newsletter Subscription Section - Animated */}
       <ClientNewsletterSection settings={settings} />
-      
+
       <ServerFooter settings={settings} />
     </div>
   );
