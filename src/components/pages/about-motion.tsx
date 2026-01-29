@@ -18,6 +18,7 @@ import Link from "next/link";
 import { LINKEDIN_URL } from "@/lib/site-config";
 import ContactButton from "@/components/ui/contact-button";
 import { motion } from "framer-motion";
+import { LocalizedText } from "@/components/localized-text";
 
 interface AboutMotionProps {
   settings: SiteSettings;
@@ -117,10 +118,10 @@ export function AboutMotion({ settings }: AboutMotionProps) {
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-8 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95" asChild>
-                    <Link href="/contact">Message</Link>
+                    <Link href="/contact"><LocalizedText tKey="button.message" fallback="Message" /></Link>
                   </Button>
                   <Button variant="outline" size="lg" className="rounded-2xl px-8 font-bold border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" asChild>
-                    <Link href={LINKEDIN_URL} target="_blank">Connect</Link>
+                    <Link href={LINKEDIN_URL} target="_blank"><LocalizedText tKey="button.connect" fallback="Connect" /></Link>
                   </Button>
                 </div>
               </div>
@@ -163,8 +164,12 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-16">
-              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">Professional Heritage</span>
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">Professional Experiences</h2>
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
+                <LocalizedText tKey="about.professional_heritage" fallback="Professional Heritage" />
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+                <LocalizedText tKey="about.professional_experiences" fallback="Professional Experiences" />
+              </h2>
             </div>
 
             <div className="space-y-12">
@@ -202,7 +207,9 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16">
             <div className="lg:w-2/3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">Professional Summary</h2>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">
+                <LocalizedText tKey="about.professional_summary" fallback="Professional Summary" />
+              </h2>
               <div className="space-y-6 text-slate-600 dark:text-slate-400 text-lg leading-relaxed font-normal">
                 <p>{settings.aboutme_story_reality_content1}</p>
                 <p>{settings.aboutme_story_reality_content2}</p>
@@ -210,7 +217,9 @@ export function AboutMotion({ settings }: AboutMotionProps) {
             </div>
 
             <div className="lg:w-1/3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">Key Statistics</h2>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">
+                <LocalizedText tKey="about.key_statistics" fallback="Key Statistics" />
+              </h2>
               <div className="space-y-6">
                 {personalStats.map((stat, idx) => (
                   <div key={idx} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
@@ -244,8 +253,12 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         >
           <div className="max-w-4xl mx-auto text-center">
             <motion.div variants={fadeUp} className="mb-12">
-              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">Professional Engagement</span>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic uppercase">Networking</h2>
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">
+                <LocalizedText tKey="about.engagement" fallback="Professional Engagement" />
+              </span>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic uppercase">
+                <LocalizedText tKey="about.networking" fallback="Networking" />
+              </h2>
               <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
                 Bridge the gap between vision and reality. Initiate a professional engagement through our secure channels.
               </p>
@@ -258,7 +271,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
                     <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                       <Mail className="w-5 h-5" />
                     </div>
-                    <span className="text-sm font-black uppercase tracking-widest">Send E-mail</span>
+                    <span className="text-sm font-black uppercase tracking-widest"><LocalizedText tKey="button.send_email" fallback="Send E-mail" /></span>
                   </Link>
                 </Button>
               </motion.div>
@@ -269,7 +282,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
                     <div className="p-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 group-hover:scale-110 transition-transform">
                       <Linkedin className="w-5 h-5" />
                     </div>
-                    <span className="text-sm font-black uppercase tracking-widest">LinkedIn Connect</span>
+                    <span className="text-sm font-black uppercase tracking-widest"><LocalizedText tKey="button.linkedin" fallback="LinkedIn Connect" /></span>
                   </Link>
                 </Button>
               </motion.div>
@@ -280,7 +293,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
                     <div className="p-2 rounded-xl bg-white/20 text-white group-hover:scale-110 transition-transform">
                       <Calendar className="w-5 h-5" />
                     </div>
-                    <span className="text-sm font-black uppercase tracking-widest">Meeting Request</span>
+                    <span className="text-sm font-black uppercase tracking-widest"><LocalizedText tKey="button.meeting_request" fallback="Meeting Request" /></span>
                   </a>
                 </Button>
               </motion.div>

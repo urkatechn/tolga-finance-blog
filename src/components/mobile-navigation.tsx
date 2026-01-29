@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
-
+import { LanguageSwitcher } from "@/components/nav/language-switcher";
+import { useTranslation } from "@/contexts/language-context";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,6 +22,7 @@ interface MobileNavigationProps {
 
 export function MobileNavigation({ navigation, showLogout }: MobileNavigationProps) {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <Sheet>
@@ -34,6 +36,8 @@ export function MobileNavigation({ navigation, showLogout }: MobileNavigationPro
         <nav className="mt-8 flex flex-col space-y-4">
           {navigation.map((item) => {
             const isActive = pathname === item.href;
+            const translationKey = `nav.${item.name.toLowerCase().replace(/\s+/g, '')}`;
+            const translatedName = t(translationKey);
 
             return (
               <SheetClose asChild key={item.name}>
@@ -46,17 +50,25 @@ export function MobileNavigation({ navigation, showLogout }: MobileNavigationPro
                       : "text-muted-foreground hover:text-primary"
                   )}
                 >
-                  {item.name}
+                  {translatedName !== translationKey ? translatedName : item.name}
                 </Link>
               </SheetClose>
             );
           })}
-          {showLogout && (
-            <LogoutButton
-              variant="outline"
-              className="mt-4 w-full justify-start"
-            />
-          )}
+
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-4">
+            {showLogout && (
+              <LogoutButton
+                variant="outline"
+                className="w-full justify-start"
+              />
+            )}
+
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Language:</span>
+              <LanguageSwitcher />
+            </div>
+          </div>
         </nav>
       </SheetContent>
     </Sheet>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import SupabaseProvider from "@/components/supabase-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SettingsProvider } from "@/contexts/settings-context";
+import { LanguageProvider } from "@/contexts/language-context";
 import { getServerSettings } from "@/lib/server-settings";
 import { DynamicFavicon } from "@/components/dynamic-favicon";
 
@@ -68,9 +69,11 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SupabaseProvider>
             <SettingsProvider>
-              <DynamicFavicon />
-              {children}
-              <Toaster />
+              <LanguageProvider>
+                <DynamicFavicon />
+                {children}
+                <Toaster />
+              </LanguageProvider>
             </SettingsProvider>
           </SupabaseProvider>
         </ThemeProvider>

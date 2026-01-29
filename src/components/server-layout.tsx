@@ -11,7 +11,7 @@ import { ClientNavigation } from "@/components/client-navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { cn } from "@/lib/utils";
-import { AdminNotificationBar } from "@/components/admin/notification-bar";
+import { LocalizedText } from "@/components/localized-text";
 
 interface ServerHeaderProps {
   settings: SiteSettings;
@@ -45,7 +45,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
       ? "bg-transparent border-transparent"
       : "border-b bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm border-slate-200/50 dark:border-slate-800/50"
       }`}>
-      {user && <AdminNotificationBar userEmail={user.email || ""} />}
+      {/* AdminNotificationBar removed as it's now internal to ClientNavigation bell */}
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo / Title */}
@@ -67,6 +67,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
               navigation={navigation}
               transparent={transparent}
               hasUser={!!user}
+              userEmail={user?.email || ""}
             />
             <MobileNavigation navigation={navigation} showLogout={!!user} />
           </div>
@@ -93,30 +94,30 @@ export function ServerHeroSection({ settings }: ServerHeroSectionProps) {
           <div className="mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 leading-tight">
               <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
-                {settings.hero_title}
+                <LocalizedText tKey="hero.title" fallback={settings.hero_title} />
               </span>
             </h1>
           </div>
 
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
-            {settings.hero_subtitle_primary}
+            <LocalizedText tKey="hero.subtitle_primary" fallback={settings.hero_subtitle_primary} />
           </p>
 
           <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
-            {settings.hero_subtitle_secondary}
+            <LocalizedText tKey="hero.subtitle_secondary" fallback={settings.hero_subtitle_secondary} />
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
             <Button asChild size="lg" className="text-lg px-8 py-6 h-auto">
               <Link href={settings.hero_cta_primary_link}>
-                {settings.hero_cta_primary_text} <ArrowRight className="ml-2 h-5 w-5" />
+                <LocalizedText tKey="hero.cta_primary" fallback={settings.hero_cta_primary_text} /> <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto" asChild>
               <Link href={settings.hero_cta_secondary_link}>
-                {settings.hero_cta_secondary_text}
+                <LocalizedText tKey="hero.cta_secondary" fallback={settings.hero_cta_secondary_text} />
               </Link>
             </Button>
           </div>
@@ -188,36 +189,44 @@ export function ServerFeaturesSection({ settings }: ServerFeaturesProps) {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">{settings.landing_section_title}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <LocalizedText tKey="features.title" fallback={settings.landing_section_title} />
+            </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              {settings.landing_section_subtitle}
+              <LocalizedText tKey="features.subtitle" fallback={settings.landing_section_subtitle} />
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <TrendingUp className="h-8 w-8 text-blue-600 mb-4" />
-                <CardTitle className="text-xl mb-2">{settings.feature_1_title}</CardTitle>
+                <CardTitle className="text-xl mb-2">
+                  <LocalizedText tKey="feature.1.title" fallback={settings.feature_1_title} />
+                </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  {settings.feature_1_description}
+                  <LocalizedText tKey="feature.1.desc" fallback={settings.feature_1_description} />
                 </CardDescription>
               </CardHeader>
             </Card>
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <DollarSign className="h-8 w-8 text-green-600 mb-4" />
-                <CardTitle className="text-xl mb-2">{settings.feature_2_title}</CardTitle>
+                <CardTitle className="text-xl mb-2">
+                  <LocalizedText tKey="feature.2.title" fallback={settings.feature_2_title} />
+                </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  {settings.feature_2_description}
+                  <LocalizedText tKey="feature.2.desc" fallback={settings.feature_2_description} />
                 </CardDescription>
               </CardHeader>
             </Card>
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <PieChart className="h-8 w-8 text-purple-600 mb-4" />
-                <CardTitle className="text-xl mb-2">{settings.feature_3_title}</CardTitle>
+                <CardTitle className="text-xl mb-2">
+                  <LocalizedText tKey="feature.3.title" fallback={settings.feature_3_title} />
+                </CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  {settings.feature_3_description}
+                  <LocalizedText tKey="feature.3.desc" fallback={settings.feature_3_description} />
                 </CardDescription>
               </CardHeader>
             </Card>
