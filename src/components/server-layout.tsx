@@ -26,10 +26,9 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
   ];
 
   if (user) {
-    navigation.push({ name: "Admin", href: "/admin" });
+    navigation.push({ name: "Admin Portal", href: "/admin" });
   } else {
-    navigation.push({ name: "Login", href: "/auth/login" });
-    navigation.push({ name: "Register", href: "/auth/register" });
+    navigation.push({ name: "Sign In", href: "/auth/login" });
   }
 
   return (

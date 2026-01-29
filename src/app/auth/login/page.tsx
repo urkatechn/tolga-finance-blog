@@ -7,7 +7,7 @@ import LoginForm from '@/components/auth/login-form'
 export default async function LoginPage() {
   // If user is already authenticated, redirect to admin
   const user = await getUser()
-  
+
   if (user) {
     redirect('/admin')
   }
@@ -16,14 +16,14 @@ export default async function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-block text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
           >
             Finance Blog
           </Link>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Admin Portal
+            Member Area
           </p>
         </div>
 
@@ -31,15 +31,15 @@ export default async function LoginPage() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Welcome Back</CardTitle>
             <CardDescription>
-              Sign in to access the admin panel
+              Sign in to your account
             </CardDescription>
           </CardHeader>
           <CardContent>
             <LoginForm />
-            
+
             <div className="text-center mt-6">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-sm text-blue-600 hover:text-blue-700 underline"
               >
                 ← Back to homepage
@@ -50,7 +50,7 @@ export default async function LoginPage() {
 
         <div className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400">
           <p>
-            Need access? Contact the administrator.
+            Welcome to our community.
           </p>
         </div>
       </div>
