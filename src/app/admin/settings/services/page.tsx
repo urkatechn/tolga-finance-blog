@@ -6,17 +6,16 @@ import {
     Loader2,
     Plus,
     Trash2,
-    GripVertical,
     Video,
     Info,
-    CheckCircle2,
     BarChart3,
     Target,
     LineChart,
     ShieldCheck,
     Users2,
     Briefcase,
-    Zap
+    Zap,
+    LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +27,7 @@ import { Separator } from "@/components/ui/separator";
 import { useSettings } from '@/contexts/settings-context';
 import { PageSkeleton } from "@/components/admin/sidebar-skeleton";
 
-const AVAILABLE_ICONS = [
+const AVAILABLE_ICONS: { name: string; icon: LucideIcon }[] = [
     { name: "BarChart3", icon: BarChart3 },
     { name: "Target", icon: Target },
     { name: "LineChart", icon: LineChart },
@@ -50,12 +49,7 @@ export default function ServicesSettingsPage() {
     useEffect(() => {
         if (settings) {
             setGoogleMeetUrl(settings.google_meet_url || '');
-            try {
-                setServices(JSON.parse(settings.services_json || '[]'));
-            } catch (e) {
-                console.error("Failed to parse services_json", e);
-                setServices([]);
-            }
+            setServices(settings.services || []);
         }
     }, [settings]);
 
@@ -113,7 +107,7 @@ export default function ServicesSettingsPage() {
                 },
                 body: JSON.stringify({
                     settings: {
-                        services_json: JSON.stringify(services),
+                        services: services, // Send as array, API will stringify
                         google_meet_url: googleMeetUrl
                     }
                 }),
@@ -208,88 +202,93 @@ export default function ServicesSettingsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6">
-                    {services.map((service, index) => (
-                        <Card key={index} className="relative overflow-hidden group">
-                            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
-                            <CardHeader className="pb-3">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-slate-100 rounded-lg">
-                                            {AVAILABLE_ICONS.find(i => i.name === service.icon_name)?.icon({ className: "w-5 h-5 text-blue-600" }) || <Briefcase className="w-5 h-5" />}
-                                        </div>
-                                        <CardTitle className="text-lg">Service #{index + 1}</CardTitle>
-                                    </div>
-                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveService(index)} className="text-destructive hover:bg-destructive/10">
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <div className="space-y-2">
-                                            <Label>Service Title</Label>
-                                            <Input
-                                                value={service.title}
-                                                onChange={(e) => handleServiceChange(index, 'title', e.target.value)}
-                                                placeholder="e.g. Financial Planning"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Icon</Label>
-                                            <div className="grid grid-cols-4 gap-2">
-                                                {AVAILABLE_ICONS.map((icon) => (
-                                                    <Button
-                                                        key={icon.name}
-                                                        variant={service.icon_name === icon.name ? "default" : "outline"}
-                                                        size="sm"
-                                                        className="h-10 p-0"
-                                                        onClick={() => handleServiceChange(index, 'icon_name', icon.name)}
-                                                    >
-                                                        <icon.icon className="w-4 h-4" />
-                                                    </Button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Short Description</Label>
-                                        <Textarea
-                                            value={service.description}
-                                            onChange={(e) => handleServiceChange(index, 'description', e.target.value)}
-                                            placeholder="What does this service entail?"
-                                            className="min-h-[120px]"
-                                        />
-                                    </div>
-                                </div>
+                    {services.map((service, index) => {
+                        const SelectedIcon = AVAILABLE_ICONS.find(i => i.name === service.icon_name)?.icon || Briefcase;
 
-                                <Separator />
-
-                                <div className="space-y-3">
+                        return (
+                            <Card key={index} className="relative overflow-hidden group">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+                                <CardHeader className="pb-3">
                                     <div className="flex items-center justify-between">
-                                        <Label className="text-sm font-semibold">Key Features / Modules</Label>
-                                        <Button variant="ghost" size="sm" onClick={() => handleAddFeature(index)} className="h-7 text-xs">
-                                            <Plus className="w-3 h-3 mr-1" /> Add Feature
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-slate-100 rounded-lg">
+                                                <SelectedIcon className="w-5 h-5 text-blue-600" />
+                                            </div>
+                                            <CardTitle className="text-lg">Service #{index + 1}</CardTitle>
+                                        </div>
+                                        <Button variant="ghost" size="icon" onClick={() => handleRemoveService(index)} className="text-destructive hover:bg-destructive/10">
+                                            <Trash2 className="w-4 h-4" />
                                         </Button>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        {(service.features || []).map((feature: string, fIndex: number) => (
-                                            <div key={fIndex} className="flex items-center gap-2">
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label>Service Title</Label>
                                                 <Input
-                                                    value={feature}
-                                                    onChange={(e) => handleFeatureChange(index, fIndex, e.target.value)}
-                                                    className="h-9 text-sm"
+                                                    value={service.title}
+                                                    onChange={(e) => handleServiceChange(index, 'title', e.target.value)}
+                                                    placeholder="e.g. Financial Planning"
                                                 />
-                                                <Button variant="ghost" size="icon" onClick={() => handleRemoveFeature(index, fIndex)} className="h-9 w-9 text-muted-foreground hover:text-destructive">
-                                                    <Trash2 className="w-3.5 h-3.5" />
-                                                </Button>
                                             </div>
-                                        ))}
+                                            <div className="space-y-2">
+                                                <Label>Icon</Label>
+                                                <div className="grid grid-cols-4 gap-2">
+                                                    {AVAILABLE_ICONS.map((icon) => (
+                                                        <Button
+                                                            key={icon.name}
+                                                            type="button"
+                                                            variant={service.icon_name === icon.name ? "default" : "outline"}
+                                                            size="sm"
+                                                            className="h-10 p-0"
+                                                            onClick={() => handleServiceChange(index, 'icon_name', icon.name)}
+                                                        >
+                                                            <icon.icon className="w-4 h-4" />
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Short Description</Label>
+                                            <Textarea
+                                                value={service.description}
+                                                onChange={(e) => handleServiceChange(index, 'description', e.target.value)}
+                                                placeholder="What does this service entail?"
+                                                className="min-h-[120px]"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
+
+                                    <Separator />
+
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-sm font-semibold">Key Features / Modules</Label>
+                                            <Button variant="ghost" size="sm" onClick={() => handleAddFeature(index)} className="h-7 text-xs">
+                                                <Plus className="w-3 h-3 mr-1" /> Add Feature
+                                            </Button>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {(service.features || []).map((feature: string, fIndex: number) => (
+                                                <div key={fIndex} className="flex items-center gap-2">
+                                                    <Input
+                                                        value={feature}
+                                                        onChange={(e) => handleFeatureChange(index, fIndex, e.target.value)}
+                                                        className="h-9 text-sm"
+                                                    />
+                                                    <Button variant="ghost" size="icon" onClick={() => handleRemoveFeature(index, fIndex)} className="h-9 w-9 text-muted-foreground hover:text-destructive">
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                 </div>
             </div>
 

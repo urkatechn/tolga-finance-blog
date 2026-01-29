@@ -16,13 +16,7 @@ import { BookingForm } from "@/components/services/booking-form";
 
 export default async function ServicesPage() {
     const settings = await getServerSettings();
-
-    let dynamicServices = [];
-    try {
-        dynamicServices = JSON.parse(settings.services_json || "[]");
-    } catch (e) {
-        console.error("Failed to parse services_json", e);
-    }
+    const dynamicServices = settings.services || [];
 
     return (
         <div className="min-h-screen bg-white text-slate-900 selection:bg-blue-500/10">
@@ -65,6 +59,7 @@ export default async function ServicesPage() {
                     </div>
                 </section>
 
+                {/* Services Grid */}
                 <section className="py-24 bg-slate-50/50 relative">
                     <div className="container mx-auto px-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

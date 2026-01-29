@@ -36,7 +36,7 @@ export interface SiteSettings {
   hero_stats_success_label: string;
 
   // Services
-  services_json: string;
+  services: any[];
   google_meet_url: string;
 
   // Social Media
@@ -251,7 +251,7 @@ function createDefaultSettings(): SiteSettings {
     hero_stats_success_label: DEFAULT_SITE_CONFIG.hero.stats.successLabel,
 
     // Services
-    services_json: JSON.stringify([
+    services: [
       {
         title: "Financial Analysis & Planning",
         description: "Deep-dive analysis of your current financial standing with data-driven projections for future growth and stability.",
@@ -288,7 +288,7 @@ function createDefaultSettings(): SiteSettings {
         features: ["Executive Coaching", "Strategic Workshops", "Crisis Management"],
         icon_name: "Briefcase"
       }
-    ]),
+    ],
     google_meet_url: "https://meet.google.com/new",
 
     // Social Media
