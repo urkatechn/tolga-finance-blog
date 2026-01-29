@@ -22,6 +22,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
   const navigation: { name: string; href: string; target?: string }[] = [
     { name: "Home", href: "/" },
     { name: "Blog", href: "/blog" },
+    { name: "Services", href: "/services" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
@@ -34,8 +35,8 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${transparent
-        ? "bg-transparent border-transparent"
-        : "border-b bg-background/80 backdrop-blur-md"
+      ? "bg-transparent border-transparent"
+      : "border-b bg-background/80 backdrop-blur-md"
       }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
@@ -70,8 +71,8 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
                   target={item.target}
                   rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
                   className={`transition-colors ${transparent
-                      ? "text-white/80 hover:text-white"
-                      : "text-muted-foreground hover:text-foreground"
+                    ? "text-white/80 hover:text-white"
+                    : "text-muted-foreground hover:text-foreground"
                     }`}
                 >
                   {item.name}
