@@ -30,7 +30,12 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
   ];
 
   if (user) {
-    navigation.push({ name: "Admin Portal", href: "/admin", target: "_blank" });
+    navigation.push({ name: "Profile", href: "/profile" });
+
+    // Only show Admin Portal to the specific admin email
+    if (user.email === 'info@tolgatanagardigil.com') {
+      navigation.push({ name: "Admin Portal", href: "/admin", target: "_blank" });
+    }
   } else {
     navigation.push({ name: "Sign In", href: "/auth/login" });
   }
