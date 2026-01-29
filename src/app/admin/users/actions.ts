@@ -17,7 +17,7 @@ export async function getUserProfiles() {
     return data
 }
 
-export async function updateUserProfile(userId: string, updates: { member_level?: string, title?: string, role?: string }) {
+export async function updateUserProfile(userId: string, updates: { member_level?: string, title?: string, role?: string, member_rank?: number }) {
     const supabase = createClient()
     const { data, error } = await supabase
         .from('user_profiles')

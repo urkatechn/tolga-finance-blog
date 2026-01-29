@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { 
-  MessageCircle, 
-  Send, 
+import {
+  MessageCircle,
+  Send,
   Reply
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { StarRating } from '@/components/ui/star-rating';
 
 interface Comment {
   id: string;
@@ -23,6 +24,7 @@ interface Comment {
   created_at: string;
   parent_id?: string;
   is_approved: boolean;
+  member_rank?: number;
   replies?: Comment[];
 }
 
@@ -69,11 +71,11 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         if (response.ok) {
           const { comments: fetchedComments } = await response.json();
           // Sort comments by created_at date in descending order (newest first)
-          const sortedComments = fetchedComments.sort((a: Comment, b: Comment) => 
+          const sortedComments = fetchedComments.sort((a: Comment, b: Comment) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
           setComments(sortedComments);
-          
+
         }
       } catch (error) {
         console.error('Error loading comments:', error);
@@ -168,7 +170,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
         toast.success('Comment submitted!', {
           description: 'Your comment has been submitted and is pending approval.',
         });
-        
+
         // Reset form but keep controlled fields defined
         setNewComment(prev => ({
           author_name: prev.author_name,
@@ -176,15 +178,15 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
           content: "",
           honeypot: ""
         }));
-        
+
         setReplyingTo(null);
-        
+
         // Refresh comments to show new approved comments
         const commentsResponse = await fetch(`/api/posts/${postId}/comments`);
         if (commentsResponse.ok) {
           const { comments: updatedComments } = await commentsResponse.json();
           // Sort comments by created_at date in descending order (newest first)
-          const sortedComments = updatedComments.sort((a: Comment, b: Comment) => 
+          const sortedComments = updatedComments.sort((a: Comment, b: Comment) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
           setComments(sortedComments);
@@ -232,7 +234,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
             )}
           </div>
         </div>
-        
+
         <div className="h-px bg-gradient-to-r from-border via-border/50 to-transparent" />
       </div>
 
@@ -296,7 +298,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="content" className="text-sm font-medium flex items-center gap-2">
                 <span className="w-2 h-2 bg-primary rounded-full" />
@@ -315,7 +317,7 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
                 Your comment will be reviewed before being published
               </p>
             </div>
-            
+
             <div className="flex items-center justify-between pt-2">
               <p className="text-xs text-muted-foreground">
                 By commenting, you agree to our community guidelines.
@@ -371,8 +373,8 @@ export default function CommentsSection({ postId, initialComments = [] }: Commen
             <p className="text-muted-foreground mb-6">
               Be the first to share your thoughts and start the discussion!
             </p>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => document.getElementById('content')?.focus()}
               className="border-primary/20 hover:bg-primary/5"
             >
@@ -431,16 +433,16 @@ function CommentItemRow({
   getGravatarUrlFromHash: (hash?: string, size?: number) => string | undefined;
 }) {
   const hasReplies = comment.replies && comment.replies.length > 0;
-  
+
   return (
     <Card className={`${isReply ? 'ml-8 bg-muted/20 border-l-4 border-l-primary/30' : 'hover:shadow-md transition-shadow duration-200'} ${!isLast && !isReply ? 'mb-2' : ''}`}>
       <CardContent className="p-6">
         <div className="flex space-x-4">
           <div className="flex-shrink-0">
             <Avatar className={`${isReply ? 'h-10 w-10' : 'h-12 w-12'} ring-2 ring-background shadow-sm`}>
-              <AvatarImage 
-                src={getGravatarUrlFromHash(comment.gravatar_hash)} 
-                alt={`${comment.author_name} avatar`} 
+              <AvatarImage
+                src={getGravatarUrlFromHash(comment.gravatar_hash)}
+                alt={`${comment.author_name} avatar`}
               />
               <AvatarFallback className={`${isReply ? 'text-sm' : 'text-base'} font-medium bg-gradient-to-br from-primary/20 to-primary/30`}>
                 {getInitials(comment.author_name)}
@@ -453,6 +455,9 @@ function CommentItemRow({
               <span className={`font-semibold ${isReply ? 'text-sm' : 'text-base'} text-foreground`}>
                 {comment.author_name}
               </span>
+              {comment.member_rank && comment.member_rank > 0 && (
+                <StarRating rank={comment.member_rank} size={12} className="opacity-80" />
+              )}
               <div className="flex items-center space-x-2">
                 <time className="text-sm text-muted-foreground" dateTime={comment.created_at}>
                   {formatDistanceToNow(new Date(comment.created_at))} ago
@@ -507,7 +512,7 @@ function CommentItemRow({
                       Replying to {comment.author_name}
                     </span>
                   </div>
-                  
+
                   <form onSubmit={(e) => handleSubmitComment(e, comment.id)} className="space-y-4">
                     <div className="grid gap-3 sm:grid-cols-2">
                       <Input
@@ -588,21 +593,21 @@ function CommentItemRow({
                 {comment.replies!
                   .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                   .map((reply, index) => (
-                  <CommentItemRow
-                    key={reply.id}
-                    comment={reply}
-                    isReply={true}
-                    isLast={index === comment.replies!.length - 1}
-                    replyingTo={replyingTo}
-                    setReplyingTo={setReplyingTo}
-                    newComment={newComment}
-                    setNewComment={setNewComment}
-                    isSubmitting={isSubmitting}
-                    handleSubmitComment={handleSubmitComment}
-                    getInitials={getInitials}
-                    getGravatarUrlFromHash={getGravatarUrlFromHash}
-                  />
-                ))}
+                    <CommentItemRow
+                      key={reply.id}
+                      comment={reply}
+                      isReply={true}
+                      isLast={index === comment.replies!.length - 1}
+                      replyingTo={replyingTo}
+                      setReplyingTo={setReplyingTo}
+                      newComment={newComment}
+                      setNewComment={setNewComment}
+                      isSubmitting={isSubmitting}
+                      handleSubmitComment={handleSubmitComment}
+                      getInitials={getInitials}
+                      getGravatarUrlFromHash={getGravatarUrlFromHash}
+                    />
+                  ))}
               </div>
             )}
           </div>
