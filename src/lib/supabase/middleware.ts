@@ -40,12 +40,19 @@ export async function updateSession(request: NextRequest) {
     // Continue without user to allow graceful fallback
   }
 
-  // Protect admin routes that require authentication
-  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
-    // Redirect to login page
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+  // Protect admin routes that require authentication and specific email
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!user) {
+      // Redirect to login page
+      return NextResponse.redirect(new URL('/auth/login', request.url))
+    }
+
+    if (user.email !== 'info@tolgatanagardigil.com') {
+      // Redirect unauthorized users to home
+      return NextResponse.redirect(new URL('/', request.url))
+    }
   }
-  
+
   // Optional: Protect other routes that require authentication
   if (request.nextUrl.pathname.startsWith('/protected') && !user) {
     // Redirect to login page

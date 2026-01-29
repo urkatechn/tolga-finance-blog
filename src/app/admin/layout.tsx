@@ -10,11 +10,20 @@ export const metadata = {
   description: "Admin dashboard for managing the finance blog",
 };
 
-export default function AdminLayout({
+import { getUser } from "@/lib/supabase/user";
+import { redirect } from "next/navigation";
+
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getUser();
+
+  if (!user || user.email !== 'info@tolgatanagardigil.com') {
+    redirect('/');
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -33,7 +42,7 @@ export default function AdminLayout({
         {/* Global new post button - responsive */}
         <Button className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 shadow-lg" size="lg" asChild>
           <a href="/admin/posts/new" aria-label="Create new post">
-            <Pencil className="mr-2 h-4 w-4" /> 
+            <Pencil className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">New Post</span>
             <span className="sm:hidden">New</span>
           </a>

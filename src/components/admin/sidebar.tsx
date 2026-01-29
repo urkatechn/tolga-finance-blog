@@ -17,6 +17,7 @@ import {
   UserCircle,
   BookOpen,
   Briefcase,
+  ShieldCheck,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -87,6 +88,11 @@ const navItems: NavItem[] = [
     title: "Subscribers",
     href: "/admin/subscribers",
     icon: Users,
+  },
+  {
+    title: "Users",
+    href: "/admin/users",
+    icon: ShieldCheck,
   },
   {
     title: "Settings",
