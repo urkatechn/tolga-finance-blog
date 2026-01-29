@@ -18,7 +18,7 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const navigation = [
+  const navigation: { name: string; href: string; target?: string }[] = [
     { name: "Home", href: "/" },
     { name: "Blog", href: "/blog" },
     { name: "About", href: "/about" },
@@ -26,7 +26,7 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
   ];
 
   if (user) {
-    navigation.push({ name: "Admin Portal", href: "/admin" });
+    navigation.push({ name: "Admin Portal", href: "/admin", target: "_blank" });
   } else {
     navigation.push({ name: "Sign In", href: "/auth/login" });
   }
@@ -62,6 +62,8 @@ export async function ServerHeader({ settings }: ServerHeaderProps) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  target={item.target}
+                  rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {item.name}

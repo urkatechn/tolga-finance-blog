@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getServerSettings();
-  
+
   return {
     title: {
       default: settings.site_brand_name,
@@ -46,6 +46,13 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: settings.site_favicon_url || "/favicon.ico",
+    },
+    manifest: "/manifest.json",
+    themeColor: "#2563eb",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: settings.site_brand_name,
     },
   };
 }
