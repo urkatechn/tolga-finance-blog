@@ -104,13 +104,13 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-500/25">
-              <Link href={settings.hero_cta_primary_link}>
-                {settings.hero_cta_primary_text} <ArrowRight className="ml-2 h-5 w-5" />
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-500/25 rounded-2xl transition-all hover:scale-105 active:scale-95">
+              <Link href="/blog">
+                Read Articles Here <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-white/20 text-white hover:bg-white/10 backdrop-blur-sm" asChild>
-              <Link href={settings.hero_cta_secondary_link}>{settings.hero_cta_secondary_text}</Link>
+            <Button size="lg" className="text-lg px-8 py-6 h-auto bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-500/25 rounded-2xl transition-all hover:scale-105 active:scale-95" asChild>
+              <a href="#newsletter">Follow!</a>
             </Button>
           </motion.div>
 
