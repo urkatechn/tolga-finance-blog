@@ -42,11 +42,10 @@ export default async function ServicesPage() {
                         <div className="max-w-5xl mx-auto text-center">
                             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
                                 <ShieldCheck className="w-3.5 h-3.5" />
-                                <span>Institutional Grade Advisory</span>
+                                <span>Financial and Operational Process Advisory</span>
                             </div>
 
                             <h1 className="text-5xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.95] text-slate-900 dark:text-white drop-shadow-sm">
-                                Engineering <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 via-slate-800 to-slate-900 dark:from-slate-100 dark:via-slate-300 dark:to-slate-500">
                                     Financial Future Matters!
                                 </span>
