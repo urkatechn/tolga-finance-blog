@@ -92,3 +92,96 @@ export async function uploadAvatar(formData: FormData) {
     revalidatePath('/profile')
     return { success: true, url: publicUrl }
 }
+
+export async function getSubscriptionStatus() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return false
+
+    const { data, error } = await supabase
+        .from('subscribers')
+        .select('is_subscribed')
+        .eq('email', user.email)
+        .maybeSingle()
+
+    if (error) {
+        console.error('Error fetching subscription status:', error)
+        return false
+    }
+
+    return data?.is_subscribed || false
+}
+
+export async function toggleSubscription(isSubscribed: boolean) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { success: false, error: 'Unauthorized' }
+
+    const email = user.email!
+    const now = new Date().toISOString()
+
+    // Check if subscriber exists
+    const { data: existing } = await supabase
+        .from('subscribers')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle()
+
+    let error
+    if (existing) {
+        const { error: updateError } = await supabase
+            .from('subscribers')
+            .update({
+                is_subscribed: isSubscribed,
+                update_date_time: now
+            })
+            .eq('id', existing.id)
+        error = updateError
+    } else if (isSubscribed) {
+        const { error: insertError } = await supabase
+            .from('subscribers')
+            .insert({
+                email,
+                is_subscribed: true,
+                subscription_date_time: now,
+                update_date_time: now
+            })
+        error = insertError
+    }
+
+    if (error) {
+        console.error('Error toggling subscription:', error)
+        return { success: false, error: 'Failed to update subscription' }
+    }
+
+    revalidatePath('/profile')
+    return { success: true }
+}
+
+export async function deactivateAccount() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { success: false, error: 'Unauthorized' }
+
+    const { error } = await supabase
+        .from('user_profiles')
+        .update({
+            status: 'inactive',
+            updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+
+    if (error) {
+        console.error('Error deactivating account:', error)
+        return { success: false, error: 'Failed to deactivate account' }
+    }
+
+    // Sign out user after deactivation
+    await supabase.auth.signOut()
+
+    revalidatePath('/')
+    return { success: true }
+}

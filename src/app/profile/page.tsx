@@ -7,18 +7,22 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import {
-    User,
-    Upload,
-    Loader2,
-    CheckCircle2,
     Camera,
     Briefcase,
     Trophy,
-    Mail
+    Mail,
+    ArrowLeft,
+    Bell,
+    ShieldAlert,
+    Settings,
+    User,
+    Loader2
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { getProfile, updateProfile, uploadAvatar } from './actions'
+import { getProfile, updateProfile, uploadAvatar, getSubscriptionStatus, toggleSubscription, deactivateAccount } from './actions'
 import Image from 'next/image'
+import Link from 'next/link'
+import { Switch } from '@/components/ui/switch'
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState<any>(null)
@@ -30,15 +34,21 @@ export default function ProfilePage() {
     // Form State
     const [fullName, setFullName] = useState('')
     const [title, setTitle] = useState('')
+    const [isSubscribed, setIsSubscribed] = useState(false)
 
     const fetchProfile = async () => {
         setIsLoading(true)
-        const data = await getProfile()
-        if (data) {
-            setProfile(data)
-            setFullName(data.full_name || '')
-            setTitle(data.title || '')
+        const [profileData, subscriptionData] = await Promise.all([
+            getProfile(),
+            getSubscriptionStatus()
+        ])
+
+        if (profileData) {
+            setProfile(profileData)
+            setFullName(profileData.full_name || '')
+            setTitle(profileData.title || '')
         }
+        setIsSubscribed(subscriptionData)
         setIsLoading(false)
     }
 
@@ -84,6 +94,31 @@ export default function ProfilePage() {
         setIsUploading(false)
     }
 
+    const handleToggleSubscription = async (checked: boolean) => {
+        setIsSubscribed(checked)
+        const result = await toggleSubscription(checked)
+        if (result.success) {
+            toast.success(checked ? 'Subscribed to newsletter' : 'Unsubscribed from newsletter')
+        } else {
+            setIsSubscribed(!checked) // Revert on failure
+            toast.error(result.error || 'Failed to update subscription')
+        }
+    }
+
+    const handleDeactivate = async () => {
+        if (window.confirm('Are you sure you want to deactivate your account? This will sign you out and mark your profile as inactive.')) {
+            setIsSaving(true)
+            const result = await deactivateAccount()
+            if (result.success) {
+                toast.success('Account deactivated. Redirecting...')
+                window.location.href = '/'
+            } else {
+                toast.error(result.error || 'Failed to deactivate account')
+                setIsSaving(false)
+            }
+        }
+    }
+
     if (isLoading) {
         return (
             <div className="container mx-auto px-4 py-12 flex justify-center items-center min-h-[60vh]">
@@ -95,9 +130,17 @@ export default function ProfilePage() {
     return (
         <div className="bg-unified min-h-screen py-12">
             <div className="container mx-auto px-4 max-w-4xl">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-2">My Profile</h1>
-                    <p className="text-slate-600 dark:text-slate-400">Manage your personal information and how you appear on the site.</p>
+                <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <Button variant="ghost" size="sm" asChild className="mb-4 -ml-2 text-slate-500 hover:text-slate-900 group">
+                            <Link href="/">
+                                <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                                Back to Home
+                            </Link>
+                        </Button>
+                        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 mb-2">My Profile</h1>
+                        <p className="text-slate-600 dark:text-slate-400">Manage your personal information and how you appear on the site.</p>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -144,7 +187,7 @@ export default function ProfilePage() {
                             <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
                                 <div className="flex items-center gap-2">
                                     <Trophy className={`h-4 w-4 ${profile?.member_level === 'Gold' ? 'text-yellow-500' :
-                                            profile?.member_level === 'Silver' ? 'text-slate-400' : 'text-orange-500'
+                                        profile?.member_level === 'Silver' ? 'text-slate-400' : 'text-orange-500'
                                         }`} />
                                     <span className="text-sm font-medium">Member Level</span>
                                 </div>
@@ -206,6 +249,58 @@ export default function ProfilePage() {
                                     </Button>
                                 </div>
                             </form>
+                        </CardContent>
+                    </Card>
+
+                    {/* Account Settings */}
+                    <Card className="md:col-span-3 shadow-xl border-slate-200/50 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md mt-4">
+                        <CardHeader>
+                            <div className="flex items-center gap-2">
+                                <Settings className="h-5 w-5 text-slate-400" />
+                                <CardTitle className="text-lg">Account Settings</CardTitle>
+                            </div>
+                            <CardDescription>Privacy and subscription preferences.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-1 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                                            <Bell className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-sm">Newsletter Subscription</p>
+                                            <p className="text-xs text-slate-500">Receive latest financial insights and blog updates.</p>
+                                        </div>
+                                    </div>
+                                    <Switch
+                                        checked={isSubscribed}
+                                        onCheckedChange={handleToggleSubscription}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-4 rounded-2xl bg-red-50/30 dark:bg-red-900/10 border border-red-100/50 dark:border-red-900/20">
+                                    <div className="flex items-start gap-3">
+                                        <div className="mt-1 p-2 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                                            <ShieldAlert className="h-4 w-4" />
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-sm">Deactivate Account</p>
+                                            <p className="text-xs text-slate-500">Temporarily hide your profile. You can come back later.</p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleDeactivate}
+                                        className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-900/30 dark:hover:bg-red-900/20"
+                                    >
+                                        Deactivate
+                                    </Button>
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
