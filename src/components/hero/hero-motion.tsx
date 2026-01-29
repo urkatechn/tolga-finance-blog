@@ -90,41 +90,41 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
       >
         <div className="max-w-5xl mx-auto text-center">
           <motion.div className="mb-8" variants={fadeUp}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight mb-6 leading-[1.1] text-white drop-shadow-2xl">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight mb-6 leading-[1.1] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
               {settings.hero_title}
             </h1>
           </motion.div>
 
-          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-white mb-4 max-w-3xl mx-auto leading-relaxed font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
             {settings.hero_subtitle_primary}
           </motion.p>
-          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto drop-shadow-md">
+          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl mx-auto drop-shadow-md font-medium">
             {settings.hero_subtitle_secondary}
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-500/25">
+            <Button asChild size="lg" className="text-lg px-8 py-6 h-auto bg-slate-100 hover:bg-white text-slate-900 border-0 shadow-lg font-bold">
               <Link href={settings.hero_cta_primary_link}>
                 {settings.hero_cta_primary_text} <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-white/20 text-white hover:bg-white/10 backdrop-blur-sm" asChild>
+            <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto border-white/30 text-white hover:bg-white/10 backdrop-blur-sm font-semibold" asChild>
               <Link href={settings.hero_cta_secondary_link}>{settings.hero_cta_secondary_text}</Link>
             </Button>
           </motion.div>
 
           <motion.div variants={fade} className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-blue-500/30 transition-all duration-500 shadow-2xl">
-              <div className="p-4 rounded-2xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors mb-4 border border-blue-500/20 shadow-inner">
-                <BookOpen className="h-7 w-7 text-blue-400" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-slate-900/40 backdrop-blur-xl border border-white/10 hover:bg-slate-900/60 hover:border-white/20 transition-all duration-500 shadow-2xl">
+              <div className="p-4 rounded-2xl bg-white/5 group-hover:bg-white/10 transition-colors mb-4 border border-white/10 shadow-inner">
+                <BookOpen className="h-7 w-7 text-slate-100" />
               </div>
               <div className="text-3xl font-black text-white mb-2 tracking-tight">{settings.hero_stats_articles_count}</div>
               <div className="text-sm font-bold text-white/50 uppercase tracking-widest">{settings.hero_stats_articles_label}</div>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-green-500/30 transition-all duration-500 shadow-2xl">
-              <div className="p-4 rounded-2xl bg-green-500/10 group-hover:bg-green-500/20 transition-colors mb-4 border border-green-500/20 shadow-inner">
-                <Users className="h-7 w-7 text-green-400" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-slate-900/40 backdrop-blur-xl border border-white/10 hover:bg-slate-900/60 hover:border-white/20 transition-all duration-500 shadow-2xl">
+              <div className="p-4 rounded-2xl bg-white/5 group-hover:bg-white/10 transition-colors mb-4 border border-white/10 shadow-inner">
+                <Users className="h-7 w-7 text-slate-100" />
               </div>
               <div className="text-3xl font-black text-white mb-2 tracking-tight">
                 <LiveSubscriberCount initialCount={settings.hero_stats_subscribers_count} />
@@ -132,9 +132,9 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
               <div className="text-sm font-bold text-white/50 uppercase tracking-widest">{settings.hero_stats_subscribers_label}</div>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-purple-500/30 transition-all duration-500 shadow-2xl">
-              <div className="p-4 rounded-2xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors mb-4 border border-purple-500/20 shadow-inner">
-                <TrendingUp className="h-7 w-7 text-purple-400" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-slate-900/40 backdrop-blur-xl border border-white/10 hover:bg-slate-900/60 hover:border-white/20 transition-all duration-500 shadow-2xl">
+              <div className="p-4 rounded-2xl bg-white/5 group-hover:bg-white/10 transition-colors mb-4 border border-white/10 shadow-inner">
+                <TrendingUp className="h-7 w-7 text-slate-100" />
               </div>
               <div className="text-3xl font-black text-white mb-2 tracking-tight">{settings.hero_stats_success_count}</div>
               <div className="text-sm font-bold text-white/50 uppercase tracking-widest">{settings.hero_stats_success_label}</div>
