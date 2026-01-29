@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
 import type { SiteSettings } from "@/contexts/settings-context";
+import { AdminBlogBar } from "@/components/blog/admin-blog-bar";
 
 interface Category {
   id: string;
@@ -28,6 +29,7 @@ interface BlogMotionProps {
   hasNext: boolean;
   page: number;
   settings: SiteSettings;
+  isAdmin?: boolean;
 }
 
 const easing = [0.16, 1, 0.3, 1] as const;
@@ -85,6 +87,7 @@ export function BlogMotion({
   hasNext,
   page,
   settings,
+  isAdmin = false,
 }: BlogMotionProps) {
   const featuredPosts = posts.filter(post => post.featured);
   const regularPosts = posts.filter(post => !post.featured);
@@ -93,17 +96,17 @@ export function BlogMotion({
     ? (regularPosts.length > 0 ? regularPosts : featuredPosts)
     : posts;
   const showFeaturedBadgeInList = showingFeaturedSeparately && regularPosts.length === 0;
-  
+
   // Animation settings
   const enableAnimations = settings.blog_enable_animations ?? true;
-  
+
   // Dynamic hero gradient classes
   const heroGradientClass = `py-16 bg-gradient-to-br ${settings.blog_hero_gradient_from} ${settings.blog_hero_gradient_via} ${settings.blog_hero_gradient_to} ${settings.blog_hero_gradient_from_dark} ${settings.blog_hero_gradient_via_dark} ${settings.blog_hero_gradient_to_dark}`;
 
   return (
     <>
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         className={heroGradientClass}
         initial="hidden"
         whileInView="show"
@@ -112,16 +115,16 @@ export function BlogMotion({
       >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h1 
+            <motion.h1
               className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6"
               variants={fadeUp}
             >
-              <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
+              <span className="block text-transparent bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
                 {settings.blog_hero_title}
               </span>
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
               variants={fadeUp}
             >
@@ -130,12 +133,12 @@ export function BlogMotion({
 
             {/* Quick Stats */}
             {settings.blog_show_stats && (
-              <motion.div 
+              <motion.div
                 className="flex flex-wrap justify-center gap-8 text-center"
                 variants={fadeUp}
               >
                 <div className="flex flex-col">
-                  <motion.div 
+                  <motion.div
                     className="text-3xl font-bold text-blue-600 dark:text-blue-400"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -147,7 +150,7 @@ export function BlogMotion({
                   <div className="text-sm text-gray-600 dark:text-gray-400">{settings.blog_stats_articles_label}</div>
                 </div>
                 <div className="flex flex-col">
-                  <motion.div 
+                  <motion.div
                     className="text-3xl font-bold text-purple-600 dark:text-purple-400"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -159,7 +162,7 @@ export function BlogMotion({
                   <div className="text-sm text-gray-600 dark:text-gray-400">{settings.blog_stats_categories_label}</div>
                 </div>
                 <div className="flex flex-col">
-                  <motion.div 
+                  <motion.div
                     className="text-3xl font-bold text-green-600 dark:text-green-400"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -178,7 +181,7 @@ export function BlogMotion({
 
       {/* Main Content */}
       <section className="py-12">
-        <motion.div 
+        <motion.div
           className="container mx-auto px-4"
           initial="hidden"
           whileInView="show"
@@ -189,8 +192,10 @@ export function BlogMotion({
             <div className={`lg:grid ${settings.blog_enable_sidebar ? 'lg:grid-cols-12' : 'lg:grid-cols-1'} lg:gap-8`}>
               {/* Main Content Area */}
               <motion.div className={settings.blog_enable_sidebar ? "lg:col-span-8" : "lg:col-span-12"} variants={slideInLeft}>
+                {isAdmin && <AdminBlogBar posts={posts} />}
+
                 {posts.length === 0 ? (
-                  <motion.div 
+                  <motion.div
                     className="text-center py-16"
                     variants={fadeInScale}
                     whileHover={{ scale: 1.02 }}
@@ -207,7 +212,7 @@ export function BlogMotion({
                     </motion.div>
                     <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">No articles found</h3>
                     <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-                      {sp.search || sp.category 
+                      {sp.search || sp.category
                         ? "Try adjusting your search or filter criteria to find more articles."
                         : "No articles have been published yet. Check back soon for new content!"
                       }
@@ -226,7 +231,7 @@ export function BlogMotion({
                     {/* Featured Posts Section */}
                     {showingFeaturedSeparately && (
                       <motion.div className="mb-16" variants={fadeUp}>
-                        <motion.div 
+                        <motion.div
                           className="flex items-center gap-3 mb-8"
                           initial={{ opacity: 0, x: -20 }}
                           whileInView={{ opacity: 1, x: 0 }}
@@ -234,7 +239,7 @@ export function BlogMotion({
                           viewport={{ once: true }}
                         >
                           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{settings.blog_featured_section_title}</h2>
-                          <motion.div 
+                          <motion.div
                             className="h-px bg-gradient-to-r from-blue-600 to-transparent flex-1"
                             initial={{ scaleX: 0 }}
                             whileInView={{ scaleX: 1 }}
@@ -243,15 +248,15 @@ export function BlogMotion({
                             style={{ originX: 0 }}
                           />
                         </motion.div>
-                        <motion.div 
+                        <motion.div
                           className="space-y-0"
                           variants={staggerContainer}
                           initial="hidden"
                           whileInView="show"
                           viewport={{ once: true, amount: 0.1 }}
                         >
-                        {featuredPosts.slice(0, settings.blog_featured_posts_limit).map((post, index) => (
-                            <motion.div 
+                          {featuredPosts.slice(0, settings.blog_featured_posts_limit).map((post, index) => (
+                            <motion.div
                               key={post.id}
                               variants={postCardVariant}
                               whileHover={{ x: 8 }}
@@ -266,7 +271,7 @@ export function BlogMotion({
 
                     {/* All Posts Section */}
                     <motion.div variants={fadeUp}>
-                      <motion.div 
+                      <motion.div
                         className="flex items-center justify-between mb-8"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -275,13 +280,13 @@ export function BlogMotion({
                       >
                         <div className="flex items-center gap-3">
                           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {sp.category && sp.category !== "all" 
+                            {sp.category && sp.category !== "all"
                               ? `${categories.find(c => c.slug === sp.category)?.name || sp.category} Articles`
-                              : sp.search 
+                              : sp.search
                                 ? `Search Results for "${sp.search}"`
                                 : settings.blog_latest_section_title
                             }</h2>
-                          <motion.span 
+                          <motion.span
                             className="text-sm text-gray-500 dark:text-gray-400"
                             initial={{ opacity: 0, scale: 0.8 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -292,8 +297,8 @@ export function BlogMotion({
                           </motion.span>
                         </div>
                       </motion.div>
-                      
-                      <motion.div 
+
+                      <motion.div
                         className="space-y-0"
                         variants={staggerContainer}
                         initial="hidden"
@@ -301,16 +306,16 @@ export function BlogMotion({
                         viewport={{ once: true, amount: 0.1 }}
                       >
                         {listPosts.map((post, index) => (
-                          <motion.div 
+                          <motion.div
                             key={post.id}
                             variants={postCardVariant}
                             whileHover={{ x: 8 }}
                             transition={{ type: "spring", stiffness: 300 }}
                           >
-                            <PostCard 
-                              post={post} 
-                              showFeaturedBadge={showFeaturedBadgeInList} 
-                              commentCount={commentsCountMap[post.id] || 0} 
+                            <PostCard
+                              post={post}
+                              showFeaturedBadge={showFeaturedBadgeInList}
+                              commentCount={commentsCountMap[post.id] || 0}
                               settings={settings}
                             />
                           </motion.div>
@@ -320,22 +325,22 @@ export function BlogMotion({
                   </>
                 )}
               </motion.div>
-              
+
               {/* Sidebar */}
               {settings.blog_enable_sidebar && (
-                <motion.div 
+                <motion.div
                   className="lg:col-span-4 mt-12 lg:mt-0"
                   variants={slideInRight}
                 >
-                  <motion.div 
+                  <motion.div
                     className="sticky top-8"
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, ease: easing, delay: 0.2 }}
                     viewport={{ once: true }}
                   >
-                    <BlogSidebar 
-                      recentPosts={recentPosts} 
+                    <BlogSidebar
+                      recentPosts={recentPosts}
                       categories={categories}
                       settings={settings}
                     />
@@ -346,10 +351,10 @@ export function BlogMotion({
           </div>
         </motion.div>
       </section>
-      
+
       {/* Pagination Controls */}
       {(hasNext || page > 1) && (
-        <motion.section 
+        <motion.section
           className="pb-12"
           initial="hidden"
           whileInView="show"
@@ -360,7 +365,7 @@ export function BlogMotion({
             <div className="max-w-7xl mx-auto">
               <div className={`lg:grid ${settings.blog_enable_sidebar ? 'lg:grid-cols-12' : 'lg:grid-cols-1'} lg:gap-8`}>
                 <div className={settings.blog_enable_sidebar ? "lg:col-span-8" : "lg:col-span-12"}>
-                  <motion.div 
+                  <motion.div
                     className="flex items-center justify-between mt-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
                     whileHover={{ scale: 1.01 }}
                     transition={{ type: "spring", stiffness: 300 }}
@@ -377,15 +382,15 @@ export function BlogMotion({
                               ...(sp.search ? { search: sp.search } : {}),
                               page: String(page - 1),
                             }).toString()}`}
-                            className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                            className="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200 hover:text-slate-600 font-medium transition-colors"
                           >
                             <span>←</span> Previous
                           </Link>
                         </motion.div>
                       )}
                     </div>
-                    
-                    <motion.div 
+
+                    <motion.div
                       className="text-sm text-gray-600 dark:text-gray-400"
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
@@ -394,7 +399,7 @@ export function BlogMotion({
                     >
                       Page {page}
                     </motion.div>
-                    
+
                     <div>
                       {hasNext && (
                         <motion.div
@@ -407,7 +412,7 @@ export function BlogMotion({
                               ...(sp.search ? { search: sp.search } : {}),
                               page: String(page + 1),
                             }).toString()}`}
-                            className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                            className="inline-flex items-center gap-2 text-sm text-slate-800 dark:text-slate-200 hover:text-slate-600 font-medium transition-colors"
                           >
                             Next <span>→</span>
                           </Link>

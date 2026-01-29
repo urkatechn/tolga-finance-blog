@@ -7,9 +7,9 @@ import { BlogMotion } from "@/components/pages/blog-motion";
 export const revalidate = 1800; // Revalidate every 30 minutes
 
 interface BlogPageProps {
-  searchParams: Promise<{ 
-    category?: string; 
-    search?: string; 
+  searchParams: Promise<{
+    category?: string;
+    search?: string;
     page?: string;
   }>;
 }
@@ -17,14 +17,19 @@ interface BlogPageProps {
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page || 1));
-  
+
   // Fetch settings first to get dynamic configuration
   const settings = await getServerSettings();
-  
+
   const limit = settings.blog_posts_per_page || 12;
   const fetchLimit = limit + 1; // fetch one extra to detect next page
   const recentPostsLimit = settings.blog_recent_posts_limit || 5;
-  
+
+  // Create supabase client to get session/user
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAdmin = user?.email === 'info@tolgatanagardigil.com';
+
   // Fetch real data from Supabase with caching
   const [posts, categories, recentPosts] = await Promise.all([
     getCachedPosts({
@@ -43,7 +48,6 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   // Fetch comment counts for listed posts (approved, not spam)
   const postIds = visiblePosts.map(p => p.id);
-  const supabase = await createClient();
   const commentsCountMap: Record<string, number> = {};
   if (postIds.length > 0) {
     const { data: comments } = await supabase
@@ -57,12 +61,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     });
   }
 
-  // These variables are now handled inside the BlogMotion component
-
   return (
     <div className="min-h-screen">
       <ServerHeader settings={settings} />
-      <BlogMotion 
+      <BlogMotion
         posts={visiblePosts}
         categories={categories}
         recentPosts={recentPosts}
@@ -71,6 +73,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         hasNext={hasNext}
         page={page}
         settings={settings}
+        isAdmin={isAdmin}
       />
       <ServerFooter settings={settings} />
     </div>
