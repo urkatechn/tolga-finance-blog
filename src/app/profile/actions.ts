@@ -35,7 +35,6 @@ export async function updateProfile(formData: { full_name: string; title: string
             id: user.id,
             full_name: formData.full_name,
             title: formData.title,
-            email: user.email,
             updated_at: new Date().toISOString(),
         }, { onConflict: 'id' })
 
@@ -82,7 +81,6 @@ export async function uploadAvatar(formData: FormData) {
         .upsert({
             id: user.id,
             avatar_url: publicUrl,
-            email: user.email,
             updated_at: new Date().toISOString(),
         }, { onConflict: 'id' })
 

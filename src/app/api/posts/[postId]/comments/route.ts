@@ -30,17 +30,6 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to fetch comments' }, { status: 500 });
     }
 
-    // Fetch all user profiles to get ranks (linked by email)
-    const { data: profiles } = await supabase
-      .from('user_profiles')
-      .select('email, member_rank')
-      .not('email', 'is', null);
-
-    const rankMap = new Map<string, number>();
-    (profiles as { email: string | null; member_rank: number | null }[] | null)?.forEach(p => {
-      if (p.email) rankMap.set(p.email.toLowerCase(), p.member_rank || 1);
-    });
-
     // Create a privacy-safe structure with optional gravatar hash (no email in response)
     type PublicComment = {
       id: string;
@@ -50,7 +39,6 @@ export async function GET(
       created_at: string;
       parent_id: string | null;
       is_approved: boolean;
-      member_rank: number;
       replies: PublicComment[];
     };
 
@@ -65,7 +53,6 @@ export async function GET(
     const rootComments: PublicComment[] = [];
 
     comments?.forEach((c: any) => {
-      const email = c.author_email?.toLowerCase();
       const publicC: PublicComment = {
         id: c.id,
         author_name: c.author_name,
@@ -74,7 +61,6 @@ export async function GET(
         created_at: c.created_at,
         parent_id: c.parent_id,
         is_approved: c.is_approved,
-        member_rank: email ? (rankMap.get(email) || 1) : 1,
         replies: [],
       };
       commentsMap.set(c.id, publicC);

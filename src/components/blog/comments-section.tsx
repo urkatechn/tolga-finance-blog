@@ -14,7 +14,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { StarRating } from '@/components/ui/star-rating';
 
 interface Comment {
   id: string;
@@ -24,7 +23,6 @@ interface Comment {
   created_at: string;
   parent_id?: string;
   is_approved: boolean;
-  member_rank?: number;
   replies?: Comment[];
 }
 
@@ -455,9 +453,6 @@ function CommentItemRow({
               <span className={`font-semibold ${isReply ? 'text-sm' : 'text-base'} text-foreground`}>
                 {comment.author_name}
               </span>
-              {comment.member_rank && comment.member_rank > 0 && (
-                <StarRating rank={comment.member_rank} size={12} className="opacity-80" />
-              )}
               <div className="flex items-center space-x-2">
                 <time className="text-sm text-muted-foreground" dateTime={comment.created_at}>
                   {formatDistanceToNow(new Date(comment.created_at))} ago

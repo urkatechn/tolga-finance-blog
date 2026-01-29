@@ -23,7 +23,6 @@ import { getProfile, updateProfile, uploadAvatar, getSubscriptionStatus, toggleS
 import Image from 'next/image'
 import Link from 'next/link'
 import { Switch } from '@/components/ui/switch'
-import { StarRating } from '@/components/ui/star-rating'
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState<any>(null)
@@ -192,12 +191,9 @@ export default function ProfilePage() {
                                         }`} />
                                     <span className="text-sm font-medium">Member Level</span>
                                 </div>
-                                <div className="flex flex-col items-end gap-1">
-                                    <Badge className="bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
-                                        {profile?.member_level || 'Starter'}
-                                    </Badge>
-                                    <StarRating rank={profile?.member_rank || 1} />
-                                </div>
+                                <Badge className="bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900">
+                                    {profile?.member_level || 'Starter'}
+                                </Badge>
                             </div>
                             <p className="text-xs text-center text-slate-500 font-mono">
                                 Member since {new Date(profile?.created_at).toLocaleDateString()}
