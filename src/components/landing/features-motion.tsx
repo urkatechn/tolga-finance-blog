@@ -30,35 +30,43 @@ export function ClientFeaturesSection({ settings }: Props) {
               {settings.landing_section_subtitle}
             </p>
           </motion.div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <motion.div variants={fadeUp}>
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <TrendingUp className="h-8 w-8 text-blue-600 mb-4" />
-                  <CardTitle className="text-xl mb-2">{settings.feature_1_title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div variants={fadeUp} className="h-full">
+              <Card className="h-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200/60 dark:border-slate-800/60 hover:border-blue-500/50 dark:hover:border-blue-400/50 transition-all duration-500 rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1">
+                <CardHeader className="p-8 lg:p-10">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6 shadow-inner">
+                    <TrendingUp className="h-7 w-7" />
+                  </div>
+                  <CardTitle className="text-2xl font-black mb-4 tracking-tight">Finance & Accounting</CardTitle>
+                  <CardDescription className="text-sm font-medium leading-relaxed text-slate-500 dark:text-slate-400">
                     {settings.feature_1_description}
                   </CardDescription>
                 </CardHeader>
               </Card>
             </motion.div>
-            <motion.div variants={fadeUp}>
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <DollarSign className="h-8 w-8 text-green-600 mb-4" />
-                  <CardTitle className="text-xl mb-2">{settings.feature_2_title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
+
+            <motion.div variants={fadeUp} className="h-full">
+              <Card className="h-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200/60 dark:border-slate-800/60 hover:border-green-500/50 dark:hover:border-green-400/50 transition-all duration-500 rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1">
+                <CardHeader className="p-8 lg:p-10">
+                  <div className="w-14 h-14 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 dark:text-green-400 mb-6 shadow-inner">
+                    <DollarSign className="h-7 w-7" />
+                  </div>
+                  <CardTitle className="text-2xl font-black mb-4 tracking-tight">Operations</CardTitle>
+                  <CardDescription className="text-sm font-medium leading-relaxed text-slate-500 dark:text-slate-400">
                     {settings.feature_2_description}
                   </CardDescription>
                 </CardHeader>
               </Card>
             </motion.div>
-            <motion.div variants={fadeUp}>
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <PieChart className="h-8 w-8 text-purple-600 mb-4" />
-                  <CardTitle className="text-xl mb-2">{settings.feature_3_title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
+
+            <motion.div variants={fadeUp} className="h-full">
+              <Card className="h-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200/60 dark:border-slate-800/60 hover:border-purple-500/50 dark:hover:border-purple-400/50 transition-all duration-500 rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1">
+                <CardHeader className="p-8 lg:p-10">
+                  <div className="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-6 shadow-inner">
+                    <PieChart className="h-7 w-7" />
+                  </div>
+                  <CardTitle className="text-2xl font-black mb-4 tracking-tight">Process Development</CardTitle>
+                  <CardDescription className="text-sm font-medium leading-relaxed text-slate-500 dark:text-slate-400">
                     {settings.feature_3_description}
                   </CardDescription>
                 </CardHeader>

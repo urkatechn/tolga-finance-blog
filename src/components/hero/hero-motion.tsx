@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, TrendingUp, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LiveSubscriberCount } from "./live-subscriber-count";
+import { LiveVisitorCount } from "./live-visitor-count";
 import { useState, useEffect } from "react";
 
 interface ClientHeroProps {
@@ -114,30 +115,34 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
           </motion.div>
 
           <motion.div variants={fade} className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-blue-500/30 transition-all duration-500 shadow-2xl">
-              <div className="p-4 rounded-2xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors mb-4 border border-blue-500/20 shadow-inner">
-                <BookOpen className="h-7 w-7 text-blue-400" />
-              </div>
-              <div className="text-3xl font-black text-white mb-2 tracking-tight">{settings.hero_stats_articles_count}</div>
-              <div className="text-sm font-bold text-white/50 uppercase tracking-widest">{settings.hero_stats_articles_label}</div>
-            </motion.div>
+            <Link href="/blog" className="block group">
+              <motion.div variants={fadeUp} className="flex flex-col items-center p-6 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-blue-500/30 transition-all duration-500 shadow-2xl h-full">
+                <div className="p-3 rounded-2xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors mb-4 border border-blue-500/20 shadow-inner">
+                  <BookOpen className="h-6 w-6 text-blue-400" />
+                </div>
+                <div className="text-2xl font-black text-white mb-1 tracking-tight">{settings.hero_stats_articles_count}</div>
+                <div className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">Articles</div>
+              </motion.div>
+            </Link>
 
-            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-green-500/30 transition-all duration-500 shadow-2xl">
-              <div className="p-4 rounded-2xl bg-green-500/10 group-hover:bg-green-500/20 transition-colors mb-4 border border-green-500/20 shadow-inner">
-                <Users className="h-7 w-7 text-green-400" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-6 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-green-500/30 transition-all duration-500 shadow-2xl">
+              <div className="p-3 rounded-2xl bg-green-500/10 group-hover:bg-green-500/20 transition-colors mb-4 border border-green-500/20 shadow-inner">
+                <Users className="h-6 w-6 text-green-400" />
               </div>
-              <div className="text-3xl font-black text-white mb-2 tracking-tight">
+              <div className="text-2xl font-black text-white mb-1 tracking-tight">
                 <LiveSubscriberCount initialCount={settings.hero_stats_subscribers_count} />
               </div>
-              <div className="text-sm font-bold text-white/50 uppercase tracking-widest">{settings.hero_stats_subscribers_label}</div>
+              <div className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">Subscribers</div>
             </motion.div>
 
-            <motion.div variants={fadeUp} className="group flex flex-col items-center p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-purple-500/30 transition-all duration-500 shadow-2xl">
-              <div className="p-4 rounded-2xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors mb-4 border border-purple-500/20 shadow-inner">
-                <TrendingUp className="h-7 w-7 text-purple-400" />
+            <motion.div variants={fadeUp} className="group flex flex-col items-center p-6 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-purple-500/30 transition-all duration-500 shadow-2xl">
+              <div className="p-3 rounded-2xl bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors mb-4 border border-purple-500/20 shadow-inner">
+                <TrendingUp className="h-6 w-6 text-purple-400" />
               </div>
-              <div className="text-3xl font-black text-white mb-2 tracking-tight">{settings.hero_stats_success_count}</div>
-              <div className="text-sm font-bold text-white/50 uppercase tracking-widest">{settings.hero_stats_success_label}</div>
+              <div className="text-2xl font-black text-white mb-1 tracking-tight">
+                <LiveVisitorCount />
+              </div>
+              <div className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">Visitors</div>
             </motion.div>
           </motion.div>
         </div>
