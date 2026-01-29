@@ -31,12 +31,12 @@ export async function updateProfile(formData: { full_name: string; title: string
 
     const { error } = await supabase
         .from('user_profiles')
-        .update({
+        .upsert({
+            id: user.id,
             full_name: formData.full_name,
             title: formData.title,
             updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id)
+        }, { onConflict: 'id' })
 
     if (error) {
         console.error('Error updating profile:', error)
@@ -75,14 +75,14 @@ export async function uploadAvatar(formData: FormData) {
         .from('avatars')
         .getPublicUrl(filePath)
 
-    // Update profile with new avatar URL
+    // Use upsert to ensure profile exists
     const { error: updateError } = await supabase
         .from('user_profiles')
-        .update({
+        .upsert({
+            id: user.id,
             avatar_url: publicUrl,
             updated_at: new Date().toISOString(),
-        })
-        .eq('id', user.id)
+        }, { onConflict: 'id' })
 
     if (updateError) {
         console.error('Error updating profile with avatar:', updateError)
