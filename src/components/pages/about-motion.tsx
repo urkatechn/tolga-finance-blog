@@ -4,12 +4,14 @@ import type { SiteSettings } from "@/contexts/settings-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Coffee, 
-  BookOpen, 
-  TrendingUp, 
+import {
+  Coffee,
+  BookOpen,
+  TrendingUp,
   Heart,
-  Linkedin
+  Linkedin,
+  Mail,
+  Calendar
 } from "lucide-react";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
 import Link from "next/link";
@@ -76,7 +78,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
     return [];
   };
 
-  const settingsWithTags = settings as typeof settings & { 
+  const settingsWithTags = settings as typeof settings & {
     aboutme_topic_investing_tags?: unknown;
     aboutme_topic_money_tags?: unknown;
   };
@@ -85,287 +87,202 @@ export function AboutMotion({ settings }: AboutMotionProps) {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-24">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))]" />
-        
-        <motion.div 
-          className="relative container mx-auto px-4"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={container}
-        >
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.h1 
-              className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
-              variants={fadeUp}
-            >
-              <span className="block text-gray-900 dark:text-white mb-2">{settings.aboutme_hero_greeting}</span>
-              <span className="block text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent] [background-clip:text]">
-                {settings.aboutme_hero_title}
-              </span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
-              variants={fadeUp}
-            >
-              {settings.aboutme_hero_subtitle}
-            </motion.p>
-          </div>
-        </motion.div>
-      </section>
+      {/* LinkedIn Style Profile Header */}
+      <section className="relative pt-24 pb-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto overflow-hidden rounded-[32px] border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 shadow-2xl">
+            {/* Cover Image / Gradient */}
+            <div className="h-48 md:h-64 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-20 bg-grid-white/[0.2] [mask-image:linear-gradient(0deg,white,transparent)]" />
+              <div className="absolute top-0 right-0 p-6">
+                <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest text-white/80">
+                  Institutional Profile
+                </div>
+              </div>
+            </div>
 
-      {/* Personal Stats */}
-      <section className="py-16 bg-white dark:bg-gray-950">
-        <motion.div 
-          className="container mx-auto px-4"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={container}
-        >
-          <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {personalStats.map((stat, index) => {
-                const Icon = stat.icon;
-                return (
-                  <motion.div 
-                    key={index} 
-                    className="text-center"
-                    variants={fadeUp}
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <motion.div 
-                      className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4"
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.8, ease: easing, delay: index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      <Icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                    </motion.div>
-                    <motion.div 
-                      className="text-4xl font-bold text-gray-900 dark:text-white mb-2"
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, ease: easing, delay: 0.3 + index * 0.1 }}
-                      viewport={{ once: true }}
-                    >
-                      {stat.value}
-                    </motion.div>
-                    <div className="text-gray-600 dark:text-gray-400 text-lg">
-                      {stat.label}
-                    </div>
-                  </motion.div>
-                );
-              })}
+            {/* Profile Info Overlay */}
+            <div className="px-8 md:px-12 pb-12 relative">
+              <div className="relative -mt-16 md:-mt-20 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, ease: easing }}
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[40px] bg-white dark:bg-slate-900 p-2 shadow-2xl border-4 border-white dark:border-slate-800"
+                >
+                  <div className="w-full h-full rounded-[32px] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl md:text-5xl font-black text-slate-400">
+                    {settings.site_brand_initials || "TT"}
+                  </div>
+                </motion.div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-8 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95" asChild>
+                    <Link href="/contact">Message</Link>
+                  </Button>
+                  <Button variant="outline" size="lg" className="rounded-2xl px-8 font-bold border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all" asChild>
+                    <Link href={LINKEDIN_URL} target="_blank">Connect</Link>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="max-w-3xl">
+                <motion.h1
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-2 tracking-tight"
+                >
+                  {settings.site_brand_name}
+                </motion.h1>
+                <motion.p
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium mb-6 leading-relaxed"
+                >
+                  {settings.aboutme_hero_title}
+                </motion.p>
+                <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-slate-400">
+                  <span className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" /> Strategic Advisor
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Heart className="w-4 h-4" /> Global Finance
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* My Story */}
-      <section className="py-16">
-        <motion.div 
-          className="container mx-auto px-4"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={container}
-        >
-          <div className="max-w-4xl mx-auto">
-            <motion.div className="text-center mb-12" variants={fadeUp}>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">{settings.aboutme_story_title}</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">{settings.aboutme_story_subtitle}</p>
-            </motion.div>
+      {/* About Description (Stats integrated) */}
+      <section className="py-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16">
+            <div className="lg:w-2/3">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-xs tracking-[0.2em] text-slate-500">Professional Summary</h2>
+              <div className="space-y-6 text-slate-600 dark:text-slate-400 text-lg leading-relaxed font-normal">
+                <p>{settings.aboutme_story_reality_content1}</p>
+                <p>{settings.aboutme_story_reality_content2}</p>
+              </div>
+            </div>
 
-            <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-              <motion.div variants={slideInLeft}>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{settings.aboutme_story_reality_title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">{settings.aboutme_story_reality_content1}</p>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{settings.aboutme_story_reality_content2}</p>
-              </motion.div>
-              
-              <motion.div className="space-y-6" variants={slideInRight}>
-                {journeyItems.map((item, index) => (
-                  <motion.div 
-                    key={index} 
-                    className="flex items-start space-x-4"
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, ease: easing, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                  >
-                    <motion.div 
-                      className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center"
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    >
-                      <span className="text-blue-600 dark:text-blue-400 font-bold text-sm">{item.year}</span>
-                    </motion.div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{item.title}</h4>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{item.description}</p>
+            <div className="lg:w-1/3">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-xs tracking-[0.2em] text-slate-500">Key Statistics</h2>
+              <div className="space-y-6">
+                {personalStats.map((stat, idx) => (
+                  <div key={idx} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <stat.icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{stat.value}</p>
+                        <p className="text-xs font-bold uppercase tracking-widest text-slate-400">{stat.label}</p>
+                      </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* What I Write About */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
-        <motion.div 
-          className="container mx-auto px-4"
+      {/* Networking Section (Replaces Let's Connect) */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-900/40 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-slate-200/[0.3] dark:bg-grid-white/[0.02] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
+
+        <motion.div
+          className="container mx-auto px-4 relative z-10"
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={container}
-        >
-          <div className="max-w-4xl mx-auto">
-            <motion.div className="text-center mb-12" variants={fadeUp}>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{settings.aboutme_topics_title}</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400">{settings.aboutme_topics_subtitle}</p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <motion.div variants={fadeInScale} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                <Card className="hover:shadow-lg transition-shadow h-full">
-                  <CardHeader>
-                    <div className="flex items-center space-x-3 mb-3">
-                      <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                      </motion.div>
-                      <CardTitle className="text-xl">{settings.aboutme_topic_investing_title}</CardTitle>
-                    </div>
-                    <CardDescription className="text-base leading-relaxed">{settings.aboutme_topic_investing_description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {investingTags.map((t, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: i * 0.05 }}
-                          viewport={{ once: true }}
-                          whileHover={{ scale: 1.05 }}
-                        >
-                          <Badge variant="secondary">{t}</Badge>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={fadeInScale} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-                <Card className="hover:shadow-lg transition-shadow h-full">
-                  <CardHeader>
-                    <div className="flex items-center space-x-3 mb-3">
-                      <motion.div
-                        whileHover={{ scale: 1.2 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <Heart className="h-6 w-6 text-red-500" />
-                      </motion.div>
-                      <CardTitle className="text-xl">{settings.aboutme_topic_money_title}</CardTitle>
-                    </div>
-                    <CardDescription className="text-base leading-relaxed">{settings.aboutme_topic_money_description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {moneyTags.map((t, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: i * 0.05 }}
-                          viewport={{ once: true }}
-                          whileHover={{ scale: 1.05 }}
-                        >
-                          <Badge variant="secondary">{t}</Badge>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Let's Connect */}
-      <section className="py-16">
-        <motion.div 
-          className="container mx-auto px-4"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true }}
           variants={container}
         >
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h2 
-              className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6"
-              variants={fadeUp}
-            >
-              {settings.aboutme_connect_title}
-            </motion.h2>
-            <motion.p 
-              className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto"
-              variants={fadeUp}
-            >
-              {settings.aboutme_connect_subtitle}
-            </motion.p>
-            
-            <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-              variants={fadeUp}
-            >
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <ContactButton />
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button variant="outline" size="lg" className="text-lg px-8 py-6 h-auto" asChild>
-                  <Link href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
-                    <Linkedin className="mr-2 h-5 w-5" />
-                    Connect on LinkedIn
+            <motion.div variants={fadeUp} className="mb-12">
+              <span className="text-blue-600 dark:text-blue-400 text-xs font-black uppercase tracking-[0.3em] mb-4 block">Institutional Engagement</span>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic uppercase">Networking</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                Bridge the gap between vision and reality. Initiate a professional engagement through our secure institutional channels.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <motion.div variants={fadeInScale}>
+                <Button size="lg" className="w-full h-24 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-3xl flex flex-col items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 group" asChild>
+                  <Link href={`mailto:${settings.social_email}`}>
+                    <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black uppercase tracking-widest">Send E-mail</span>
                   </Link>
                 </Button>
               </motion.div>
-            </motion.div>
 
-            <motion.div 
-              className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 max-w-2xl mx-auto"
-              variants={fadeInScale}
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <p className="text-gray-700 dark:text-gray-300 italic">"{settings.aboutme_connect_quote}"</p>
-            </motion.div>
+              <motion.div variants={fadeInScale}>
+                <Button size="lg" className="w-full h-24 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-3xl flex flex-col items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 group" asChild>
+                  <Link href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
+                    <div className="p-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 group-hover:scale-110 transition-transform">
+                      <Linkedin className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black uppercase tracking-widest">LinkedIn Connect</span>
+                  </Link>
+                </Button>
+              </motion.div>
+
+              <motion.div variants={fadeInScale}>
+                <Button size="lg" className="w-full h-24 bg-blue-600 hover:bg-blue-500 text-white border-0 rounded-3xl flex flex-col items-center justify-center gap-2 shadow-[0_20px_40px_rgba(37,99,235,0.2)] hover:shadow-[0_25px_50px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 group" asChild>
+                  <a href={settings.google_meet_url} target="_blank" rel="noopener noreferrer">
+                    <div className="p-2 rounded-xl bg-white/20 text-white group-hover:scale-110 transition-transform">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black uppercase tracking-widest">Meeting Request</span>
+                  </a>
+                </Button>
+              </motion.div>
+            </div>
           </div>
         </motion.div>
       </section>
 
+      {/* Journey Section (Timeline) */}
+      <section className="py-24 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4 text-center mb-16">
+          <span className="text-slate-400 text-xs font-black uppercase tracking-[0.2em] mb-4 block">Institutional Progress</span>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">The Advisory Path</h2>
+        </div>
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="relative border-l-2 border-slate-100 dark:border-slate-800 ml-4 md:ml-0 md:left-1/2 md:-translate-x-px">
+            {journeyItems.map((item, index) => (
+              <motion.div
+                key={index}
+                className={`relative mb-12 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right md:ml-0' : 'md:pl-12 md:ml-auto md:text-left'}`}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, ease: easing }}
+                viewport={{ once: true }}
+              >
+                <div className={`absolute top-0 w-8 h-8 rounded-full bg-blue-600 border-4 border-white dark:border-slate-950 z-10 ${index % 2 === 0 ? 'md:-right-4 right-full mr-[-4px]' : 'md:-left-4 left-full ml-[-4px]'}`} />
+                <div className="p-8 rounded-[32px] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                  <span className="text-blue-600 dark:text-blue-400 font-black text-xl mb-2 block">{item.year}</span>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3 tracking-tight">{item.title}</h3>
+                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Newsletter Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
-        <motion.div 
-          className="container mx-auto px-4"
+      <section className="py-24 bg-slate-50 dark:bg-slate-900/40 relative overflow-hidden">
+        <motion.div
+          className="container mx-auto px-4 relative z-10"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.3 }}
@@ -373,8 +290,12 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         >
           <div className="max-w-4xl mx-auto">
             <motion.div className="text-center mb-12" variants={fadeUp}>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">{settings.aboutme_newsletter_title}</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{settings.aboutme_newsletter_description}</p>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 italic uppercase tracking-tighter">
+                {settings.aboutme_newsletter_title}
+              </h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                {settings.aboutme_newsletter_description}
+              </p>
             </motion.div>
             <motion.div className="max-w-2xl mx-auto" variants={fadeInScale}>
               <NewsletterSignup />
