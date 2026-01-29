@@ -46,8 +46,8 @@ export default function LoginForm() {
       if (data.user) {
         // Small delay to ensure session is properly set
         await new Promise(resolve => setTimeout(resolve, 100))
-        // Redirect to admin panel
-        router.push('/admin')
+        // Redirect to homepage
+        router.push('/')
         router.refresh()
       }
     } catch (err) {

@@ -29,7 +29,7 @@ export default async function LoginPage() {
 
         <Card className="shadow-lg">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl">User Login Page</CardTitle>
             <CardDescription>
               Sign in to your account
             </CardDescription>

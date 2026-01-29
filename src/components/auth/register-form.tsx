@@ -62,7 +62,7 @@ export default function RegisterForm() {
                 setSuccess(true)
                 // If email confirmation is disabled, we might already have a session
                 if (data.session) {
-                    router.push('/admin')
+                    router.push('/')
                     router.refresh()
                 }
             }
