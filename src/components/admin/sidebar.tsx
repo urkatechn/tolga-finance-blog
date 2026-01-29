@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Tag, 
-  Settings, 
-  Upload, 
+import {
+  LayoutDashboard,
+  FileText,
+  Tag,
+  Settings,
+  Upload,
   MessageSquare,
   Users,
   Globe,
@@ -16,6 +16,7 @@ import {
   ChevronDown,
   UserCircle,
   BookOpen,
+  Briefcase,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -112,6 +113,11 @@ const navItems: NavItem[] = [
         icon: Globe,
       },
       {
+        title: "Services",
+        href: "/admin/settings/services",
+        icon: Briefcase,
+      },
+      {
         title: "Authors",
         href: "/admin/settings/authors",
         icon: User,
@@ -166,9 +172,9 @@ export function AppSidebar() {
                 <Link href="/admin" className="flex items-center gap-2">
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     {settings?.site_logo_url ? (
-                      <img 
-                        src={settings.site_logo_url} 
-                        alt="Logo" 
+                      <img
+                        src={settings.site_logo_url}
+                        alt="Logo"
                         className="size-6 object-contain"
                       />
                     ) : settings?.site_brand_initials ? (
@@ -191,7 +197,7 @@ export function AppSidebar() {
           </SidebarMenu>
         )}
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -202,7 +208,7 @@ export function AppSidebar() {
                   // Handle items with sub-items
                   const isOpen = openSubMenus[item.title];
                   const hasActiveSubItem = item.subItems.some(subItem => pathname === subItem.href);
-                  
+
                   // While settings are loading, show skeletons for the Settings menu and its sub-items
                   if (item.title === 'Settings' && loading) {
                     return (
@@ -231,14 +237,13 @@ export function AppSidebar() {
                       >
                         <item.icon className="size-4" />
                         <span>{item.title}</span>
-                        <ChevronDown 
-                          className={`ml-auto size-4 transition-transform ${
-                            isOpen ? 'rotate-180' : ''
-                          }`} 
+                        <ChevronDown
+                          className={`ml-auto size-4 transition-transform ${isOpen ? 'rotate-180' : ''
+                            }`}
                         />
                         {item.badge && (
-                          <Badge 
-                            variant={item.badge === 'BETA' ? 'secondary' : 'outline'} 
+                          <Badge
+                            variant={item.badge === 'BETA' ? 'secondary' : 'outline'}
                             className="text-xs px-1.5 py-0.5"
                           >
                             {item.badge}
@@ -281,8 +286,8 @@ export function AppSidebar() {
                           <item.icon className="size-4" />
                           <span>{item.title}</span>
                           {item.badge && (
-                            <Badge 
-                              variant={item.badge === 'BETA' ? 'secondary' : 'outline'} 
+                            <Badge
+                              variant={item.badge === 'BETA' ? 'secondary' : 'outline'}
                               className="ml-auto text-xs px-1.5 py-0.5"
                             >
                               {item.badge}
@@ -298,7 +303,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -306,7 +311,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      
+
       <SidebarRail />
     </Sidebar>
   );

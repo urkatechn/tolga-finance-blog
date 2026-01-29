@@ -43,21 +43,9 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              {settings.site_logo_url ? (
-                <Image
-                  src={settings.site_logo_url}
-                  alt={settings.site_brand_name}
-                  width={32}
-                  height={32}
-                  className="h-8 w-8"
-                />
-              ) : (
-                <div className={`h-8 w-8 rounded flex items-center justify-center font-bold text-lg ${transparent ? "bg-white/20 text-white" : "bg-primary text-primary-foreground"
-                  }`}>
-                  {settings.site_brand_initials || settings.site_brand_name?.charAt(0) || 'B'}
-                </div>
-              )}
-              <span className={`font-bold text-xl ${transparent ? "text-white" : ""}`}>{settings.site_brand_name}</span>
+              <span className={`font-bold text-lg md:text-xl tracking-tight transition-colors ${transparent ? "text-white" : "text-slate-900"}`}>
+                Tolga Tanagardigil <span className="font-medium text-slate-500 hidden sm:inline">-</span> <span className="font-normal text-slate-500 text-base md:text-lg block sm:inline">Finance & Operations Advisory</span>
+              </span>
             </Link>
           </div>
 

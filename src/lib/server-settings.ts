@@ -27,6 +27,45 @@ function createDefaultSettings(): SiteSettings {
     hero_image_1: DEFAULT_SITE_CONFIG.hero.images.image1,
     hero_image_2: DEFAULT_SITE_CONFIG.hero.images.image2,
     hero_image_3: DEFAULT_SITE_CONFIG.hero.images.image3,
+    services_json: JSON.stringify([
+      {
+        title: "Financial Analysis & Planning",
+        description: "Deep-dive analysis of your current financial standing with data-driven projections for future growth and stability.",
+        features: ["Cash Flow Management", "Budget Optimization", "Retirement Planning"],
+        icon_name: "BarChart3"
+      },
+      {
+        title: "Strategic Investment Advisory",
+        description: "Customized investment strategies aligned with your risk tolerance and long-term financial objectives.",
+        features: ["Portfolio Diversification", "Market Analysis", "Risk Assessment"],
+        icon_name: "Target"
+      },
+      {
+        title: "Wealth Management",
+        description: "Comprehensive wealth preservation and growth strategies designed for individuals and corporate entities.",
+        features: ["Estate Planning", "Asset Protection", "Tax Optimization"],
+        icon_name: "LineChart"
+      },
+      {
+        title: "Risk & Compliance",
+        description: "Ensuring your financial operations meet all regulatory requirements while minimizing institutional risks.",
+        features: ["Regulatory Audits", "Internal Controls", "Compliance Roadmaps"],
+        icon_name: "ShieldCheck"
+      },
+      {
+        title: "Corporate Finance",
+        description: "Strategic advisory for business expansion, mergers, acquisitions, and capital structure optimization.",
+        features: ["M&A Advisory", "Capital Raising", "Business Valuation"],
+        icon_name: "Users2"
+      },
+      {
+        title: "Exclusive Consulting",
+        description: "One-on-one executive consulting for high-stakes financial decisions and complex economic challenges.",
+        features: ["Executive Coaching", "Strategic Workshops", "Crisis Management"],
+        icon_name: "Briefcase"
+      }
+    ]),
+    google_meet_url: "https://meet.google.com/new",
 
     // Hero Stats
     hero_stats_articles_count: DEFAULT_SITE_CONFIG.hero.stats.articlesCount,
@@ -159,7 +198,7 @@ function createDefaultSettings(): SiteSettings {
       "Get my latest thoughts on investing, money, and life delivered weekly. No spam, just honest insights.",
 
     // Contact Page defaults
-    contact_hero_line1: "Let’s Chat About",
+    contact_hero_line1: "Let's Chat About",
     contact_hero_title: "Money & Life",
     contact_hero_subtitle:
       "Got questions? Want to share your financial wins or disasters? Or maybe you just want to tell me I'm completely wrong about something? I'd love to hear from you.",

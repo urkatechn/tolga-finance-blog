@@ -35,6 +35,10 @@ export interface SiteSettings {
   hero_stats_success_count: string;
   hero_stats_success_label: string;
 
+  // Services
+  services_json: string;
+  google_meet_url: string;
+
   // Social Media
   social_twitter: string;
   social_linkedin: string;
@@ -98,7 +102,7 @@ export interface SiteSettings {
   aboutme_story_reality_content1: string;
   aboutme_story_reality_content2: string;
 
-  // Journey Timeline (preferred)
+  // Journey Timeline
   aboutme_journey_items: Array<{ year: string; title: string; description: string }>;
 
   // Topics Section
@@ -140,7 +144,6 @@ export interface SiteSettings {
   contact_faq_enabled: boolean;
 
   // Blog Page Settings
-  // Hero Section
   blog_hero_title: string;
   blog_hero_subtitle: string;
   blog_hero_gradient_from: string;
@@ -246,6 +249,47 @@ function createDefaultSettings(): SiteSettings {
     hero_stats_subscribers_label: DEFAULT_SITE_CONFIG.hero.stats.subscribersLabel,
     hero_stats_success_count: DEFAULT_SITE_CONFIG.hero.stats.successCount,
     hero_stats_success_label: DEFAULT_SITE_CONFIG.hero.stats.successLabel,
+
+    // Services
+    services_json: JSON.stringify([
+      {
+        title: "Financial Analysis & Planning",
+        description: "Deep-dive analysis of your current financial standing with data-driven projections for future growth and stability.",
+        features: ["Cash Flow Management", "Budget Optimization", "Retirement Planning"],
+        icon_name: "BarChart3"
+      },
+      {
+        title: "Strategic Investment Advisory",
+        description: "Customized investment strategies aligned with your risk tolerance and long-term financial objectives.",
+        features: ["Portfolio Diversification", "Market Analysis", "Risk Assessment"],
+        icon_name: "Target"
+      },
+      {
+        title: "Wealth Management",
+        description: "Comprehensive wealth preservation and growth strategies designed for individuals and corporate entities.",
+        features: ["Estate Planning", "Asset Protection", "Tax Optimization"],
+        icon_name: "LineChart"
+      },
+      {
+        title: "Risk & Compliance",
+        description: "Ensuring your financial operations meet all regulatory requirements while minimizing institutional risks.",
+        features: ["Regulatory Audits", "Internal Controls", "Compliance Roadmaps"],
+        icon_name: "ShieldCheck"
+      },
+      {
+        title: "Corporate Finance",
+        description: "Strategic advisory for business expansion, mergers, acquisitions, and capital structure optimization.",
+        features: ["M&A Advisory", "Capital Raising", "Business Valuation"],
+        icon_name: "Users2"
+      },
+      {
+        title: "Exclusive Consulting",
+        description: "One-on-one executive consulting for high-stakes financial decisions and complex economic challenges.",
+        features: ["Executive Coaching", "Strategic Workshops", "Crisis Management"],
+        icon_name: "Briefcase"
+      }
+    ]),
+    google_meet_url: "https://meet.google.com/new",
 
     // Social Media
     social_twitter: DEFAULT_SITE_CONFIG.meta.twitterCreator,
