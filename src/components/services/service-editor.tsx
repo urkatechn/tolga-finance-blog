@@ -57,35 +57,35 @@ export function ServiceEditor({ service, index, allServices }: ServiceEditorProp
 
             const result = await updateServices(updatedAllServices);
             if (result.success) {
-                toast.success("Service updated successfully");
+                toast.success("System: Service parameters synchronized.");
                 setIsOpen(false);
                 router.refresh();
             } else {
-                toast.error(result.error || "Failed to update service");
+                toast.error(result.error || "Sync Error: Operation failed.");
             }
         } catch (error) {
-            toast.error("An unexpected error occurred");
+            toast.error("Critical: Database sync failure.");
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleRemove = async () => {
-        if (!confirm("Are you sure you want to remove this service?")) return;
+        if (!confirm("Confirm decommissioning of this service pillar?")) return;
 
         setIsSaving(true);
         try {
             const updatedAllServices = allServices.filter((_, i) => i !== index);
             const result = await updateServices(updatedAllServices);
             if (result.success) {
-                toast.success("Service removed successfully");
+                toast.success("System: Service decommissioned.");
                 setIsOpen(false);
                 router.refresh();
             } else {
-                toast.error(result.error || "Failed to remove service");
+                toast.error(result.error || "Error: Decommission failed.");
             }
         } catch (error) {
-            toast.error("An unexpected error occurred");
+            toast.error("Critical Failure: Unexpected end of process.");
         } finally {
             setIsSaving(false);
         }
@@ -97,68 +97,69 @@ export function ServiceEditor({ service, index, allServices }: ServiceEditorProp
                 <Button
                     variant="secondary"
                     size="icon"
-                    className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity rounded-full shadow-lg z-20 bg-white/90 dark:bg-slate-800/90 hover:scale-110"
+                    className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl shadow-xl z-20 bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-none hover:scale-110 flex items-center justify-center backdrop-blur-md"
                 >
                     <Pencil className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl">
-                <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">Edit Service</DialogTitle>
-                    <DialogDescription>
-                        Modify the details of your service below.
+            <DialogContent className="sm:max-w-[550px] border-slate-800 dark:border-slate-200 bg-slate-900 dark:bg-white rounded-[32px] p-8 lg:p-10 shadow-3xl">
+                <DialogHeader className="mb-8">
+                    <div className="w-12 h-1 bg-amber-500 mb-6" />
+                    <DialogTitle className="text-3xl font-black text-white dark:text-slate-900 tracking-tight">Modify Strategic Pillar</DialogTitle>
+                    <DialogDescription className="text-slate-400 dark:text-slate-500 font-medium">
+                        Adjust the parameters of your elite service offering.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="grid gap-6 py-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="title" className="text-sm font-semibold">Service Title</Label>
+
+                <div className="grid gap-8 py-2">
+                    <div className="grid gap-3">
+                        <Label htmlFor="title" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Institutional Title</Label>
                         <Input
                             id="title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="e.g. Financial Advisory"
-                            className="bg-slate-50 dark:bg-slate-800/50"
+                            placeholder="e.g. Wealth Architecture"
+                            className="bg-white/5 dark:bg-black/5 border-white/10 dark:border-black/10 rounded-xl h-12 text-white dark:text-slate-900 font-bold focus:ring-amber-500"
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="description" className="text-sm font-semibold">Description</Label>
+                    <div className="grid gap-3">
+                        <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Service Narrative</Label>
                         <Textarea
                             id="description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Briefly describe what you offer..."
-                            className="min-h-[100px] bg-slate-50 dark:bg-slate-800/50"
+                            placeholder="Describe the strategic impact..."
+                            className="min-h-[100px] bg-white/5 dark:bg-black/5 border-white/10 dark:border-black/10 rounded-xl text-white dark:text-slate-900 font-medium py-3 focus:ring-amber-500"
                         />
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="features" className="text-sm font-semibold">Features (One per line)</Label>
+                    <div className="grid gap-3">
+                        <Label htmlFor="features" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Core Provisions (One per line)</Label>
                         <Textarea
                             id="features"
                             value={features}
                             onChange={(e) => setFeatures(e.target.value)}
-                            placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
-                            className="min-h-[120px] bg-slate-50 dark:bg-slate-800/50 font-mono text-xs"
+                            className="min-h-[140px] bg-white/5 dark:bg-black/5 border-white/10 dark:border-black/10 rounded-xl text-white dark:text-slate-900 font-mono text-xs p-4 focus:ring-amber-500"
                         />
                     </div>
                 </div>
-                <DialogFooter className="flex items-center justify-between sm:justify-between gap-2">
+
+                <DialogFooter className="flex items-center justify-between sm:justify-between gap-4 mt-12 bg-white/5 dark:bg-black/5 -mx-8 -mb-8 p-8 rounded-b-[32px]">
                     <Button
-                        variant="destructive"
+                        variant="ghost"
                         size="sm"
                         onClick={handleRemove}
                         disabled={isSaving}
-                        className="bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white border-none shadow-none"
+                        className="text-red-400 hover:text-red-500 hover:bg-red-500/10 font-black uppercase tracking-widest text-[10px]"
                     >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Remove
+                        Decommission
                     </Button>
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isSaving}>
-                            Cancel
+                    <div className="flex gap-4">
+                        <Button variant="ghost" className="text-slate-400 hover:text-white dark:text-slate-500 dark:hover:text-slate-900" onClick={() => setIsOpen(false)} disabled={isSaving}>
+                            Abort
                         </Button>
-                        <Button onClick={handleSave} disabled={isSaving} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6">
-                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                            Save Changes
+                        <Button onClick={handleSave} disabled={isSaving} className="bg-amber-600 hover:bg-amber-500 text-white rounded-xl px-8 h-12 font-bold transition-all hover:scale-105 active:scale-95">
+                            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Sync Changes"}
                         </Button>
                     </div>
                 </DialogFooter>

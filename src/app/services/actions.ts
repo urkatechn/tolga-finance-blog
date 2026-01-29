@@ -13,8 +13,11 @@ export async function updateServices(services: any[]) {
 
     const { error } = await supabase
         .from('settings')
-        .update({ value: JSON.stringify(services) })
-        .eq('key', 'services')
+        .upsert({
+            key: 'services',
+            value: JSON.stringify(services),
+            updated_at: new Date().toISOString()
+        }, { onConflict: 'key' })
 
     if (error) {
         console.error('Error updating services:', error)
