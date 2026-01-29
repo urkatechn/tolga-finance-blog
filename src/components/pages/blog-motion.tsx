@@ -9,6 +9,21 @@ import { motion } from "framer-motion";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
 import type { SiteSettings } from "@/contexts/settings-context";
 import { AdminBlogBar } from "@/components/blog/admin-blog-bar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+import { Loader2, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { PostEditor } from "@/components/blog/post-editor";
 
 interface Category {
   id: string;
@@ -90,6 +105,35 @@ export function BlogMotion({
   settings,
   isAdmin = false,
 }: BlogMotionProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<any>(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    if (!postToDelete) return;
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/posts/${postToDelete.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete post");
+      toast.success("Post deleted successfully");
+      router.refresh();
+      setPostToDelete(null);
+    } catch (error: any) {
+      console.error("Error:", error);
+      toast.error(error.message || "Failed to delete post");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleEdit = (post: any) => {
+    setSelectedPost(post);
+    setIsEditorOpen(true);
+  };
   const featuredPosts = posts.filter(post => post.featured);
   const regularPosts = posts.filter(post => !post.featured);
   const showingFeaturedSeparately = settings.blog_show_featured_separately && featuredPosts.length > 0 && !sp.search && !sp.category;
@@ -193,7 +237,7 @@ export function BlogMotion({
             <div className={`lg:grid ${settings.blog_enable_sidebar ? 'lg:grid-cols-12' : 'lg:grid-cols-1'} lg:gap-8`}>
               {/* Main Content Area */}
               <motion.div className={settings.blog_enable_sidebar ? "lg:col-span-8" : "lg:col-span-12"} variants={slideInLeft}>
-                {isAdmin && <AdminBlogBar posts={posts} />}
+                {isAdmin && <AdminBlogBar posts={posts} categories={categories} />}
 
                 {posts.length === 0 ? (
                   <motion.div
@@ -292,7 +336,9 @@ export function BlogMotion({
                                 <PostCard
                                   post={post}
                                   showFeaturedBadge={showFeaturedBadgeInList}
-                                  commentCount={commentsCountMap[post.id] || 0}
+                                  onEdit={handleEdit}
+                                  onDelete={setPostToDelete}
+                                  isAdmin={isAdmin}
                                   settings={settings}
                                 />
                               </motion.div>
@@ -301,6 +347,43 @@ export function BlogMotion({
                         </div>
                       ))}
                     </motion.div>
+
+                    {isAdmin && (
+                      <>
+                        <PostEditor
+                          isOpen={isEditorOpen}
+                          onClose={() => setIsEditorOpen(false)}
+                          post={selectedPost}
+                          categories={categories}
+                        />
+
+                        <AlertDialog open={!!postToDelete} onOpenChange={(open) => !open && setPostToDelete(null)}>
+                          <AlertDialogContent className="bg-slate-900 border-slate-800 rounded-[32px] p-8 shadow-3xl">
+                            <AlertDialogHeader>
+                              <div className="w-12 h-1 bg-red-500 mb-6" />
+                              <AlertDialogTitle className="text-3xl font-black text-white tracking-tight">Confirm Decommissioning</AlertDialogTitle>
+                              <AlertDialogDescription className="text-slate-400 font-medium pt-2">
+                                Permanently remove "<span className="text-white font-bold">{postToDelete?.title}</span>" from the strategic archives?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className="mt-10 gap-3">
+                              <AlertDialogCancel className="bg-transparent border-slate-800 text-slate-400 hover:bg-white/5 hover:text-white rounded-xl h-12">Abort</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleDelete();
+                                }}
+                                className="bg-red-600 hover:bg-red-500 text-white rounded-xl px-8 h-12 font-bold shadow-xl transition-all hover:scale-105 active:scale-95 border-none"
+                                disabled={isDeleting}
+                              >
+                                {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                                Confirm Decommission
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
                   </>
                 )}
               </motion.div>

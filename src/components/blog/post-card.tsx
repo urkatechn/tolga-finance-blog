@@ -1,11 +1,13 @@
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Star, MessageCircle } from "lucide-react";
+import { Clock, Star, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { formatDate, estimateReadTime } from "@/lib/api/supabase-posts";
 import type { PostWithCategory } from "@/lib/api/supabase-posts";
 import type { SiteSettings } from "@/contexts/settings-context";
+import { Button } from "@/components/ui/button";
 
 interface PostCardProps {
   post: PostWithCategory;
@@ -13,9 +15,21 @@ interface PostCardProps {
   showFeaturedBadge?: boolean;
   commentCount?: number;
   settings?: SiteSettings;
+  isAdmin?: boolean;
+  onEdit?: (post: any) => void;
+  onDelete?: (post: any) => void;
 }
 
-export default function PostCard({ post, featured = false, showFeaturedBadge = false, commentCount = 0, settings }: PostCardProps) {
+export default function PostCard({
+  post,
+  featured = false,
+  showFeaturedBadge = false,
+  commentCount = 0,
+  settings,
+  isAdmin = false,
+  onEdit,
+  onDelete
+}: PostCardProps) {
   const readTime = estimateReadTime(post.content);
 
   // Visual settings with defaults
@@ -28,7 +42,7 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
   const cardHoverClass = "group-hover:text-blue-600 transition-colors";
 
   return (
-    <article className="group relative py-4 px-4 sm:px-6 transition-all">
+    <article className="group relative py-6 px-4 sm:px-6 transition-all border-l-2 border-transparent hover:border-blue-500/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
       <div className="flex items-start gap-4">
         {/* Forum Style Vertical Bar */}
         <div
@@ -55,24 +69,53 @@ export default function PostCard({ post, featured = false, showFeaturedBadge = f
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-            <Link href={`/blog/${post.slug}`}>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1 leading-tight">
-                {post.title}
-              </h2>
-            </Link>
-            {post.featured && (
-              <Star className="h-3 w-3 text-yellow-500 fill-current" />
-            )}
-            {showFeaturedBadge && post.featured && (
-              <Badge className="text-[10px] uppercase font-black px-2 py-0 bg-yellow-400 text-yellow-900 border-none">
-                Featured
-              </Badge>
+          <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+            <div className="flex items-center gap-3">
+              <Link href={`/blog/${post.slug}`}>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1 leading-tight">
+                  {post.title}
+                </h2>
+              </Link>
+              {post.featured && (
+                <Star className="h-3 w-3 text-yellow-500 fill-current" />
+              )}
+              {showFeaturedBadge && post.featured && (
+                <Badge className="text-[10px] uppercase font-black px-2 py-0 bg-yellow-400 text-yellow-900 border-none">
+                  Featured
+                </Badge>
+              )}
+            </div>
+
+            {isAdmin && (
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onEdit?.(post);
+                  }}
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onDelete?.(post);
+                  }}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             )}
           </div>
 
           {showExcerpt && (
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-1 mb-2 font-medium opacity-80 decoration-slate-200 dark:decoration-slate-800 decoration-1 underline-offset-2">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-1 mb-3 font-medium opacity-80 decoration-slate-200 dark:decoration-slate-800 decoration-1 underline-offset-2">
               {post.excerpt || post.content.substring(0, 100) + '...'}
             </p>
           )}
