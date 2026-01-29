@@ -38,7 +38,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
   return (
     <header className={`sticky top-0 z-50 transition-all duration-500 ${transparent
       ? "bg-transparent border-transparent"
-      : "border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm border-slate-200/50 dark:border-slate-800/50"
+      : "border-b bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-sm border-slate-200/50 dark:border-slate-800/50"
       }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">

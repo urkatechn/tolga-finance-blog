@@ -57,9 +57,9 @@ function HeroBackgroundSlider({ images }: { images: string[] }) {
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[5000ms]"
             style={{ backgroundImage: `url(${images[index]})` }}
           />
-          {/* Cinematic Dark Overlays */}
-          <div className="absolute inset-0 bg-slate-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40" />
+          {/* Cinematic Slate Overlays */}
+          <div className="absolute inset-0 bg-slate-950/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/50" />
         </motion.div>
       </AnimatePresence>
     </div>
@@ -90,15 +90,15 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
       >
         <div className="max-w-5xl mx-auto text-center">
           <motion.div className="mb-8" variants={fadeUp}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight mb-6 leading-[1.1] text-white drop-shadow-2xl">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight mb-6 leading-[1.1] text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
               {settings.hero_title}
             </h1>
           </motion.div>
 
-          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
+          <motion.p variants={fadeUp} className="text-xl md:text-2xl text-white/95 mb-4 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-md">
             {settings.hero_subtitle_primary}
           </motion.p>
-          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto drop-shadow-md">
+          <motion.p variants={fadeUp} className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl mx-auto drop-shadow-sm">
             {settings.hero_subtitle_secondary}
           </motion.p>
 

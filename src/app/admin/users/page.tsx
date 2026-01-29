@@ -114,7 +114,7 @@ export default function UsersPage() {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <UsersIcon className="h-5 w-5 text-blue-600" />
+                                <UsersIcon className="h-5 w-5 text-primary" />
                                 <CardTitle>Registered Users</CardTitle>
                             </div>
                             <Badge variant="secondary" className="font-mono">
@@ -128,7 +128,7 @@ export default function UsersPage() {
                     <CardContent>
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
                                 <p className="text-sm text-muted-foreground">Loading users...</p>
                             </div>
                         ) : profiles.length === 0 ? (
@@ -168,7 +168,7 @@ export default function UsersPage() {
                                                 <td className="p-4 align-middle">
                                                     <div className="flex items-center gap-1.5">
                                                         <Trophy className={`h-3 w-3 ${profile.member_level === 'Gold' ? 'text-yellow-500' :
-                                                                profile.member_level === 'Silver' ? 'text-slate-400' : 'text-orange-500'
+                                                            profile.member_level === 'Silver' ? 'text-slate-400' : 'text-orange-500'
                                                             }`} />
                                                         <span className="font-medium">{profile.member_level || 'Starter'}</span>
                                                     </div>
