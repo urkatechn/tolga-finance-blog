@@ -58,7 +58,7 @@ function HeroBackgroundSlider({ images }: { images: string[] }) {
             style={{ backgroundImage: `url(${images[index]})` }}
           />
           {/* Light Overlay for fresh/airy feel - lighter at top */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/40 to-white/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/20 to-white/40" />
         </motion.div>
       </AnimatePresence>
     </div>

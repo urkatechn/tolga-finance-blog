@@ -7,8 +7,10 @@ import type { SiteSettings } from "@/contexts/settings-context";
 import NewsletterSignup from "@/components/blog/newsletter-signup";
 import Image from "next/image";
 import { MobileNavigation } from "@/components/mobile-navigation";
+import { ClientNavigation } from "@/components/client-navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { cn } from "@/lib/utils";
 
 interface ServerHeaderProps {
   settings: SiteSettings;
@@ -40,34 +42,26 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
       }`}>
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+          {/* Logo / Title */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <span className={`font-bold text-lg md:text-xl tracking-tight transition-colors ${transparent ? "text-white" : "text-slate-900"}`}>
+              <span className={cn(
+                "font-bold text-lg md:text-xl tracking-tight transition-all duration-500",
+                transparent
+                  ? "text-slate-900 invert mix-blend-difference"
+                  : "text-slate-900"
+              )}>
                 Tolga Tanagardigil <span className="font-medium text-slate-500 hidden sm:inline">-</span> <span className="font-normal text-slate-500 text-base md:text-lg block sm:inline">Finance & Operations Advisory</span>
               </span>
             </Link>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  target={item.target}
-                  rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
-                  className={`transition-colors ${transparent
-                    ? "text-white/80 hover:text-white"
-                    : "text-muted-foreground hover:text-foreground"
-                    }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              {user && <LogoutButton variant={transparent ? "ghost" : "ghost"} className={transparent ? "text-white hover:text-white" : ""} />}
-            </nav>
+            <ClientNavigation
+              navigation={navigation}
+              transparent={transparent}
+              hasUser={!!user}
+            />
             <MobileNavigation navigation={navigation} showLogout={!!user} />
           </div>
 
