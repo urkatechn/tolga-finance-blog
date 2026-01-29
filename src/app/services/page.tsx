@@ -48,7 +48,7 @@ export default async function ServicesPage() {
                             <h1 className="text-5xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.95] text-slate-900 dark:text-white drop-shadow-sm">
                                 Engineering <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-600 via-slate-800 to-slate-900 dark:from-slate-100 dark:via-slate-300 dark:to-slate-500">
-                                    Financial Future (Urka)
+                                    Financial Future Matters!
                                 </span>
                             </h1>
 

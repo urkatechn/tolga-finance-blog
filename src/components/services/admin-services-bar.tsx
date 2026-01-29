@@ -67,7 +67,7 @@ export function AdminServicesBar({ services }: { services: any[] }) {
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
                     <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping opacity-40" />
                 </div>
-                <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Service Architecture</span>
+                <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Add Services</span>
             </div>
 
             <Dialog open={isAdding} onOpenChange={setIsAdding}>
