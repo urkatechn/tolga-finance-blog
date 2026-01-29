@@ -264,45 +264,35 @@ export function ServerFooter({ settings }: ServerFooterProps) {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
-            {/* Company Info */}
+            {/* Branding & Slogan */}
             <div className="md:col-span-2">
-              <div className="flex items-center space-x-2 mb-4">
-                {settings.site_logo_url ? (
-                  <Image
-                    src={settings.site_logo_url}
-                    alt={settings.site_brand_name}
-                    width={32}
-                    height={32}
-                    className="h-8 w-8"
-                  />
-                ) : (
-                  <div className="h-8 w-8 rounded bg-white text-black flex items-center justify-center font-bold text-lg">
-                    {settings.site_brand_initials || settings.site_brand_name?.charAt(0) || 'B'}
-                  </div>
-                )}
-                <span className="font-bold text-xl">{settings.site_brand_name}</span>
+              <div className="mb-6">
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-2 uppercase italic leading-none">
+                  {settings.hero_title || settings.site_brand_name}
+                </h2>
+                <div className="w-12 h-1 bg-blue-600 mb-6" />
+                <p className="text-sm md:text-base text-slate-400 font-medium max-w-md leading-relaxed">
+                  {settings.hero_subtitle_primary}
+                </p>
               </div>
-              <p className="text-gray-300 mb-4 max-w-md">
-                {settings.site_description}
-              </p>
-              <div className="flex space-x-4">
-                {settings.social_twitter && (
-                  <Link href={settings.social_twitter} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
-                    <Twitter className="h-5 w-5" />
-                  </Link>
-                )}
+              <div className="flex space-x-6">
                 {settings.social_linkedin && (
-                  <Link href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-all transform hover:scale-110">
                     <Linkedin className="h-5 w-5" />
                   </Link>
                 )}
+                {settings.social_twitter && (
+                  <Link href={settings.social_twitter} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-all transform hover:scale-110">
+                    <Twitter className="h-5 w-5" />
+                  </Link>
+                )}
                 {settings.social_github && (
-                  <Link href={settings.social_github} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={settings.social_github} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-all transform hover:scale-110">
                     <Github className="h-5 w-5" />
                   </Link>
                 )}
                 {settings.social_email && (
-                  <Link href={`mailto:${settings.social_email}`} className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={`mailto:${settings.social_email}`} className="text-slate-500 hover:text-white transition-all transform hover:scale-110">
                     <Mail className="h-5 w-5" />
                   </Link>
                 )}
@@ -311,12 +301,13 @@ export function ServerFooter({ settings }: ServerFooterProps) {
 
             {/* Quick Links */}
             <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><Link href="/" className="text-gray-300 hover:text-white transition-colors">Home</Link></li>
-                <li><Link href="/blog" className="text-gray-300 hover:text-white transition-colors">Blog</Link></li>
-                <li><Link href="/about" className="text-gray-300 hover:text-white transition-colors">About</Link></li>
-                <li><Link href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
+              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 mb-6">Navigational Hub</h3>
+              <ul className="space-y-4">
+                <li><Link href="/" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Home</Link></li>
+                <li><Link href="/blog" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Strategic Blog</Link></li>
+                <li><Link href="/services" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Services</Link></li>
+                <li><Link href="/about" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">About</Link></li>
+                <li><Link href="/contact" className="text-sm font-bold text-slate-400 hover:text-white transition-colors">Secure Contact</Link></li>
               </ul>
             </div>
 
