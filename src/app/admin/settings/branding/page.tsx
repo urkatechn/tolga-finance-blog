@@ -16,11 +16,14 @@ import { MediaPicker } from '@/components/admin/media-picker';
 export default function BrandingSettingsPage() {
   const { settings, loading, refreshSettings } = useSettings();
   const { toast } = useToast();
-  
+
   const [saving, setSaving] = useState(false);
   const [showLogoMediaPicker, setShowLogoMediaPicker] = useState(false);
   const [showFaviconMediaPicker, setShowFaviconMediaPicker] = useState(false);
-  
+  const [showHero1MediaPicker, setShowHero1MediaPicker] = useState(false);
+  const [showHero2MediaPicker, setShowHero2MediaPicker] = useState(false);
+  const [showHero3MediaPicker, setShowHero3MediaPicker] = useState(false);
+
   // Local form state
   const [formData, setFormData] = useState(() => ({
     // Site Identity & Header
@@ -32,7 +35,7 @@ export default function BrandingSettingsPage() {
     site_logo_url: '',
     site_favicon_url: '',
     site_description: '',
-    
+
     // Hero Section Content
     hero_title: '',
     hero_subtitle_primary: '',
@@ -41,7 +44,10 @@ export default function BrandingSettingsPage() {
     hero_cta_primary_link: '',
     hero_cta_secondary_text: '',
     hero_cta_secondary_link: '',
-    
+    hero_image_1: '',
+    hero_image_2: '',
+    hero_image_3: '',
+
     // Hero Stats
     hero_stats_articles_count: '',
     hero_stats_articles_label: '',
@@ -49,7 +55,7 @@ export default function BrandingSettingsPage() {
     hero_stats_subscribers_label: '',
     hero_stats_success_count: '',
     hero_stats_success_label: '',
-    
+
     // Landing Page Features Section
     landing_section_title: '',
     landing_section_subtitle: '',
@@ -59,11 +65,11 @@ export default function BrandingSettingsPage() {
     feature_2_description: '',
     feature_3_title: '',
     feature_3_description: '',
-    
+
     // Newsletter Section
     newsletter_title: '',
     newsletter_description: '',
-    
+
     // SEO Meta Settings
     meta_author: '',
     meta_creator: '',
@@ -71,7 +77,7 @@ export default function BrandingSettingsPage() {
     meta_og_type: 'website',
     meta_twitter_card: 'summary_large_image',
     meta_twitter_creator: '',
-    
+
     // Colors
     brand_primary_color: '#3B82F6',
     brand_secondary_color: '#10B981',
@@ -91,7 +97,7 @@ export default function BrandingSettingsPage() {
         site_logo_url: settings.site_logo_url || '',
         site_favicon_url: settings.site_favicon_url || '',
         site_description: settings.site_description || '',
-        
+
         // Hero Section Content
         hero_title: settings.hero_title || '',
         hero_subtitle_primary: settings.hero_subtitle_primary || '',
@@ -100,7 +106,10 @@ export default function BrandingSettingsPage() {
         hero_cta_primary_link: settings.hero_cta_primary_link || '',
         hero_cta_secondary_text: settings.hero_cta_secondary_text || '',
         hero_cta_secondary_link: settings.hero_cta_secondary_link || '',
-        
+        hero_image_1: settings.hero_image_1 || '',
+        hero_image_2: settings.hero_image_2 || '',
+        hero_image_3: settings.hero_image_3 || '',
+
         // Hero Stats
         hero_stats_articles_count: settings.hero_stats_articles_count || '',
         hero_stats_articles_label: settings.hero_stats_articles_label || '',
@@ -108,7 +117,7 @@ export default function BrandingSettingsPage() {
         hero_stats_subscribers_label: settings.hero_stats_subscribers_label || '',
         hero_stats_success_count: settings.hero_stats_success_count || '',
         hero_stats_success_label: settings.hero_stats_success_label || '',
-        
+
         // Landing Page Features Section
         landing_section_title: settings.landing_section_title || '',
         landing_section_subtitle: settings.landing_section_subtitle || '',
@@ -118,11 +127,11 @@ export default function BrandingSettingsPage() {
         feature_2_description: settings.feature_2_description || '',
         feature_3_title: settings.feature_3_title || '',
         feature_3_description: settings.feature_3_description || '',
-        
+
         // Newsletter Section
         newsletter_title: settings.newsletter_title || '',
         newsletter_description: settings.newsletter_description || '',
-        
+
         // SEO Meta Settings
         meta_author: settings.meta_author || '',
         meta_creator: settings.meta_creator || '',
@@ -130,7 +139,7 @@ export default function BrandingSettingsPage() {
         meta_og_type: settings.meta_og_type || 'website',
         meta_twitter_card: settings.meta_twitter_card || 'summary_large_image',
         meta_twitter_creator: settings.meta_twitter_creator || '',
-        
+
         // Colors
         brand_primary_color: settings.brand_primary_color || '#3B82F6',
         brand_secondary_color: settings.brand_secondary_color || '#10B981',
@@ -155,9 +164,24 @@ export default function BrandingSettingsPage() {
     });
   };
 
+  const handleHero1Select = (file: { url: string }) => {
+    setFormData(prev => ({ ...prev, hero_image_1: file.url }));
+    toast({ title: "Success", description: "Hero Image 1 selected!" });
+  };
+
+  const handleHero2Select = (file: { url: string }) => {
+    setFormData(prev => ({ ...prev, hero_image_2: file.url }));
+    toast({ title: "Success", description: "Hero Image 2 selected!" });
+  };
+
+  const handleHero3Select = (file: { url: string }) => {
+    setFormData(prev => ({ ...prev, hero_image_3: file.url }));
+    toast({ title: "Success", description: "Hero Image 3 selected!" });
+  };
+
   const handleSave = async () => {
     setSaving(true);
-    
+
     try {
       const response = await fetch('/api/settings', {
         method: 'PUT',
@@ -166,20 +190,20 @@ export default function BrandingSettingsPage() {
         },
         body: JSON.stringify({ settings: formData }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to save settings');
       }
-      
+
       toast({
         title: "Success",
         description: "Branding settings saved successfully!",
       });
-      
+
       // Refresh settings context
       await refreshSettings();
-      
+
     } catch (error) {
       console.error('Error saving settings:', error);
       toast({
@@ -242,7 +266,7 @@ export default function BrandingSettingsPage() {
                     The main title of your website (used in page titles).
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="site_tagline">Site Tagline</Label>
                   <Input
@@ -256,7 +280,7 @@ export default function BrandingSettingsPage() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="site_keywords">SEO Keywords</Label>
                 <Input
@@ -273,9 +297,9 @@ export default function BrandingSettingsPage() {
                 </p>
               </div>
             </div>
-            
+
             <Separator />
-            
+
             {/* Brand Identity */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold">Brand Identity</h4>
@@ -292,7 +316,7 @@ export default function BrandingSettingsPage() {
                     The brand name displayed in the header and footer.
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="site_brand_initials">Brand Initials</Label>
                   <Input
@@ -308,7 +332,7 @@ export default function BrandingSettingsPage() {
                 </div>
               </div>
             </div>
-            
+
             {/* Site Description */}
             <div className="space-y-2">
               <Label htmlFor="site_description">Site Description</Label>
@@ -323,9 +347,9 @@ export default function BrandingSettingsPage() {
                 The description displayed in the footer and used for SEO.
               </p>
             </div>
-            
+
             <Separator />
-            
+
             {/* Logo and Favicon Section */}
             <div className="space-y-6">
               <div className="space-y-2">
@@ -333,9 +357,9 @@ export default function BrandingSettingsPage() {
                 <div className="flex items-center gap-4">
                   {formData.site_logo_url ? (
                     <div className="w-16 h-16 border rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-                      <img 
-                        src={formData.site_logo_url} 
-                        alt="Logo preview" 
+                      <img
+                        src={formData.site_logo_url}
+                        alt="Logo preview"
                         className="max-w-full max-h-full object-contain"
                       />
                     </div>
@@ -368,15 +392,15 @@ export default function BrandingSettingsPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Favicon</Label>
                 <div className="flex items-center gap-4">
                   {formData.site_favicon_url ? (
                     <div className="w-8 h-8 border rounded overflow-hidden bg-muted flex items-center justify-center">
-                      <img 
-                        src={formData.site_favicon_url} 
-                        alt="Favicon preview" 
+                      <img
+                        src={formData.site_favicon_url}
+                        alt="Favicon preview"
                         className="max-w-full max-h-full object-contain"
                       />
                     </div>
@@ -410,9 +434,9 @@ export default function BrandingSettingsPage() {
                 </div>
               </div>
             </div>
-            
+
             <Separator />
-            
+
             {/* Brand Colors Section */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold">Brand Colors</h4>
@@ -434,7 +458,7 @@ export default function BrandingSettingsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="brand_secondary_color">Secondary Color</Label>
                   <div className="flex items-center gap-3">
@@ -452,7 +476,7 @@ export default function BrandingSettingsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="brand_accent_color">Accent Color</Label>
                   <div className="flex items-center gap-3">
@@ -474,7 +498,7 @@ export default function BrandingSettingsPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Hero Section Content */}
         <Card>
           <CardHeader>
@@ -500,7 +524,7 @@ export default function BrandingSettingsPage() {
                     The main headline displayed prominently in the hero section.
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="hero_subtitle_primary">Primary Subtitle</Label>
                   <Input
@@ -513,7 +537,7 @@ export default function BrandingSettingsPage() {
                     The first subtitle line below the main title.
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="hero_subtitle_secondary">Secondary Description</Label>
                   <Textarea
@@ -529,9 +553,9 @@ export default function BrandingSettingsPage() {
                 </div>
               </div>
             </div>
-            
+
             <Separator />
-            
+
             {/* Call to Action Buttons */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold">Call-to-Action Buttons</h4>
@@ -557,7 +581,7 @@ export default function BrandingSettingsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <h5 className="font-medium">Secondary Button</h5>
                   <div className="space-y-2">
@@ -581,9 +605,9 @@ export default function BrandingSettingsPage() {
                 </div>
               </div>
             </div>
-            
+
             <Separator />
-            
+
             {/* Hero Stats */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold">Hero Statistics</h4>
@@ -610,7 +634,7 @@ export default function BrandingSettingsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <h5 className="font-medium">Subscribers Stat</h5>
                   <div className="space-y-2">
@@ -632,7 +656,7 @@ export default function BrandingSettingsPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <h5 className="font-medium">Success Rate Stat</h5>
                   <div className="space-y-2">
@@ -656,9 +680,60 @@ export default function BrandingSettingsPage() {
                 </div>
               </div>
             </div>
+
+            <Separator />
+
+            {/* Hero Background Images */}
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold">Hero Background Images (Slider)</h4>
+              <p className="text-sm text-muted-foreground">Select 3 images for the background slider.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-4 border p-4 rounded-lg">
+                  <Label>Image 1</Label>
+                  <div className="aspect-video bg-muted rounded-md overflow-hidden flex items-center justify-center border">
+                    {formData.hero_image_1 ? (
+                      <img src={formData.hero_image_1} alt="Hero 1" className="object-cover w-full h-full" />
+                    ) : (
+                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <Button variant="outline" className="w-full" onClick={() => setShowHero1MediaPicker(true)}>
+                    <Upload className="mr-2 h-4 w-4" /> Pick Image 1
+                  </Button>
+                </div>
+
+                <div className="space-y-4 border p-4 rounded-lg">
+                  <Label>Image 2</Label>
+                  <div className="aspect-video bg-muted rounded-md overflow-hidden flex items-center justify-center border">
+                    {formData.hero_image_2 ? (
+                      <img src={formData.hero_image_2} alt="Hero 2" className="object-cover w-full h-full" />
+                    ) : (
+                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <Button variant="outline" className="w-full" onClick={() => setShowHero2MediaPicker(true)}>
+                    <Upload className="mr-2 h-4 w-4" /> Pick Image 2
+                  </Button>
+                </div>
+
+                <div className="space-y-4 border p-4 rounded-lg">
+                  <Label>Image 3</Label>
+                  <div className="aspect-video bg-muted rounded-md overflow-hidden flex items-center justify-center border">
+                    {formData.hero_image_3 ? (
+                      <img src={formData.hero_image_3} alt="Hero 3" className="object-cover w-full h-full" />
+                    ) : (
+                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <Button variant="outline" className="w-full" onClick={() => setShowHero3MediaPicker(true)}>
+                    <Upload className="mr-2 h-4 w-4" /> Pick Image 3
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
-        
+
         {/* Landing Page Features Section */}
         <Card>
           <CardHeader>
@@ -681,7 +756,7 @@ export default function BrandingSettingsPage() {
                     placeholder="What You'll Find Here"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="landing_section_subtitle">Section Subtitle</Label>
                   <Textarea
@@ -694,13 +769,13 @@ export default function BrandingSettingsPage() {
                 </div>
               </div>
             </div>
-            
+
             <Separator />
-            
+
             {/* Feature Cards */}
             <div className="space-y-6">
               <h4 className="text-lg font-semibold">Feature Cards</h4>
-              
+
               {/* Feature 1 */}
               <div className="space-y-4 p-4 border rounded-lg">
                 <h5 className="font-medium">Feature Card 1</h5>
@@ -726,7 +801,7 @@ export default function BrandingSettingsPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Feature 2 */}
               <div className="space-y-4 p-4 border rounded-lg">
                 <h5 className="font-medium">Feature Card 2</h5>
@@ -752,7 +827,7 @@ export default function BrandingSettingsPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Feature 3 */}
               <div className="space-y-4 p-4 border rounded-lg">
                 <h5 className="font-medium">Feature Card 3</h5>
@@ -781,7 +856,7 @@ export default function BrandingSettingsPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Newsletter Section */}
         <Card>
           <CardHeader>
@@ -800,7 +875,7 @@ export default function BrandingSettingsPage() {
                 placeholder="Join the Journey"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="newsletter_description">Newsletter Description</Label>
               <Textarea
@@ -813,7 +888,7 @@ export default function BrandingSettingsPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* SEO Settings Section */}
         <Card>
           <CardHeader>
@@ -836,7 +911,7 @@ export default function BrandingSettingsPage() {
                     placeholder="Finance Blog Team"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="meta_creator">Meta Creator</Label>
                   <Input
@@ -846,7 +921,7 @@ export default function BrandingSettingsPage() {
                     placeholder="Finance Blog Team"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="meta_og_locale">Open Graph Locale</Label>
                   <Input
@@ -856,7 +931,7 @@ export default function BrandingSettingsPage() {
                     placeholder="en_US"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="meta_og_type">Open Graph Type</Label>
                   <Input
@@ -866,7 +941,7 @@ export default function BrandingSettingsPage() {
                     placeholder="website"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="meta_twitter_card">Twitter Card Type</Label>
                   <Input
@@ -876,7 +951,7 @@ export default function BrandingSettingsPage() {
                     placeholder="summary_large_image"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="meta_twitter_creator">Twitter Creator Handle</Label>
                   <Input
@@ -891,7 +966,7 @@ export default function BrandingSettingsPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Media Pickers */}
       <MediaPicker
         open={showLogoMediaPicker}
@@ -900,13 +975,37 @@ export default function BrandingSettingsPage() {
         title="Select Logo"
         description="Choose an image for your site logo from the media library or upload a new one."
       />
-      
+
       <MediaPicker
         open={showFaviconMediaPicker}
         onOpenChange={setShowFaviconMediaPicker}
         onSelect={handleFaviconSelect}
         title="Select Favicon"
         description="Choose an image for your favicon from the media library or upload a new one."
+      />
+
+      <MediaPicker
+        open={showHero1MediaPicker}
+        onOpenChange={setShowHero1MediaPicker}
+        onSelect={handleHero1Select}
+        title="Select Hero Image 1"
+        description="Choose the first background image for the hero slider."
+      />
+
+      <MediaPicker
+        open={showHero2MediaPicker}
+        onOpenChange={setShowHero2MediaPicker}
+        onSelect={handleHero2Select}
+        title="Select Hero Image 2"
+        description="Choose the second background image for the hero slider."
+      />
+
+      <MediaPicker
+        open={showHero3MediaPicker}
+        onOpenChange={setShowHero3MediaPicker}
+        onSelect={handleHero3Select}
+        title="Select Hero Image 3"
+        description="Choose the third background image for the hero slider."
       />
     </div>
   );

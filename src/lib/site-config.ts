@@ -9,7 +9,7 @@ export const DEFAULT_SITE_CONFIG = {
     github: process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com",
     email: "info@tolgatanagardigil.com",
   },
-  
+
   // Site Branding
   site: {
     title: "Finance Blog",
@@ -21,7 +21,7 @@ export const DEFAULT_SITE_CONFIG = {
     logoUrl: "",
     faviconUrl: "/favicon.ico",
   },
-  
+
   // Hero Section
   hero: {
     title: "Smart Financial Insights & Analysis",
@@ -31,6 +31,11 @@ export const DEFAULT_SITE_CONFIG = {
     ctaPrimaryLink: "/blog",
     ctaSecondaryText: "Get Weekly Insights",
     ctaSecondaryLink: "#newsletter",
+    images: {
+      image1: "https://images.unsplash.com/photo-1454165833767-02741a79803a?q=80&w=2070&auto=format&fit=crop",
+      image2: "https://images.unsplash.com/photo-1554224155-6726b3887676?q=80&w=2011&auto=format&fit=crop",
+      image3: "https://images.unsplash.com/photo-1591696208199-74586348ef3c?q=80&w=2070&auto=format&fit=crop",
+    },
     stats: {
       articlesCount: "150+",
       articlesLabel: "Expert Articles",
@@ -40,33 +45,33 @@ export const DEFAULT_SITE_CONFIG = {
       successLabel: "Success Rate",
     },
   },
-  
+
   // Brand Colors
   brand: {
     primaryColor: "#3B82F6",
     secondaryColor: "#10B981",
     accentColor: "#8B5CF6",
   },
-  
+
   // Content Settings
   content: {
     postsPerPage: 10,
     enableComments: true,
     socialSharing: true,
   },
-  
+
   // Newsletter
   newsletter: {
     title: "Join the Journey",
     description: "Get my latest thoughts on investing, money, and life delivered weekly. No spam, no sales pitches - just honest insights from someone still figuring it out.",
   },
-  
+
   // Footer
   footer: {
     brandDescription: "Your friendly guide to making smarter financial decisions. No fluff, no get-rich-quick schemes - just honest insights from someone who has made plenty of mistakes so you do not have to.",
     copyrightText: "Made with ❤️ for better financial decisions.",
   },
-  
+
   // Landing Page Features
   features: {
     sectionTitle: "What You'll Find Here",
@@ -86,7 +91,7 @@ export const DEFAULT_SITE_CONFIG = {
       },
     ],
   },
-  
+
   // SEO Meta
   meta: {
     keywords: ["finance", "investing", "money", "retirement", "blog"],

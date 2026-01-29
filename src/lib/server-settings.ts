@@ -15,7 +15,7 @@ function createDefaultSettings(): SiteSettings {
     site_favicon_url: DEFAULT_SITE_CONFIG.site.faviconUrl,
     site_brand_name: DEFAULT_SITE_CONFIG.site.brandName,
     site_brand_initials: DEFAULT_SITE_CONFIG.site.brandInitials,
-    
+
     // Hero Section
     hero_title: DEFAULT_SITE_CONFIG.hero.title,
     hero_subtitle_primary: DEFAULT_SITE_CONFIG.hero.subtitlePrimary,
@@ -24,7 +24,10 @@ function createDefaultSettings(): SiteSettings {
     hero_cta_primary_link: DEFAULT_SITE_CONFIG.hero.ctaPrimaryLink,
     hero_cta_secondary_text: DEFAULT_SITE_CONFIG.hero.ctaSecondaryText,
     hero_cta_secondary_link: DEFAULT_SITE_CONFIG.hero.ctaSecondaryLink,
-    
+    hero_image_1: DEFAULT_SITE_CONFIG.hero.images.image1,
+    hero_image_2: DEFAULT_SITE_CONFIG.hero.images.image2,
+    hero_image_3: DEFAULT_SITE_CONFIG.hero.images.image3,
+
     // Hero Stats
     hero_stats_articles_count: DEFAULT_SITE_CONFIG.hero.stats.articlesCount,
     hero_stats_articles_label: DEFAULT_SITE_CONFIG.hero.stats.articlesLabel,
@@ -32,32 +35,32 @@ function createDefaultSettings(): SiteSettings {
     hero_stats_subscribers_label: DEFAULT_SITE_CONFIG.hero.stats.subscribersLabel,
     hero_stats_success_count: DEFAULT_SITE_CONFIG.hero.stats.successCount,
     hero_stats_success_label: DEFAULT_SITE_CONFIG.hero.stats.successLabel,
-    
+
     // Social Media
     social_twitter: DEFAULT_SITE_CONFIG.meta.twitterCreator,
     social_linkedin: DEFAULT_SITE_CONFIG.social.linkedin,
     social_github: DEFAULT_SITE_CONFIG.social.github,
     social_email: DEFAULT_SITE_CONFIG.social.email,
-    
+
     // Brand Colors
     brand_primary_color: DEFAULT_SITE_CONFIG.brand.primaryColor,
     brand_secondary_color: DEFAULT_SITE_CONFIG.brand.secondaryColor,
     brand_accent_color: DEFAULT_SITE_CONFIG.brand.accentColor,
-    
+
     // Content Settings
     posts_per_page: DEFAULT_SITE_CONFIG.content.postsPerPage,
     enable_comments: DEFAULT_SITE_CONFIG.content.enableComments,
     social_sharing: DEFAULT_SITE_CONFIG.content.socialSharing,
     default_author_id: '',
-    
+
     // Newsletter
     newsletter_title: DEFAULT_SITE_CONFIG.newsletter.title,
     newsletter_description: DEFAULT_SITE_CONFIG.newsletter.description,
-    
+
     // Footer
     footer_brand_description: DEFAULT_SITE_CONFIG.footer.brandDescription,
     footer_copyright_text: DEFAULT_SITE_CONFIG.footer.copyrightText,
-    
+
     // Landing Page Features
     landing_section_title: DEFAULT_SITE_CONFIG.features.sectionTitle,
     landing_section_subtitle: DEFAULT_SITE_CONFIG.features.sectionSubtitle,
@@ -67,7 +70,7 @@ function createDefaultSettings(): SiteSettings {
     feature_2_description: DEFAULT_SITE_CONFIG.features.items[1].description,
     feature_3_title: DEFAULT_SITE_CONFIG.features.items[2].title,
     feature_3_description: DEFAULT_SITE_CONFIG.features.items[2].description,
-    
+
     // SEO Meta
     meta_author: DEFAULT_SITE_CONFIG.meta.author,
     meta_creator: DEFAULT_SITE_CONFIG.meta.creator,
@@ -193,7 +196,7 @@ function createDefaultSettings(): SiteSettings {
       },
     ],
     contact_faq_enabled: true,
-    
+
     // Blog Page Settings - Default values
     // Hero Section
     blog_hero_title: "Blog & Insights",
@@ -204,7 +207,7 @@ function createDefaultSettings(): SiteSettings {
     blog_hero_gradient_from_dark: "dark:from-gray-900",
     blog_hero_gradient_via_dark: "dark:via-gray-800",
     blog_hero_gradient_to_dark: "dark:to-gray-900",
-    
+
     // Content & Layout
     blog_posts_per_page: 12,
     blog_show_featured_separately: true,
@@ -213,30 +216,30 @@ function createDefaultSettings(): SiteSettings {
     blog_enable_category_filter: true,
     blog_enable_sidebar: true,
     blog_recent_posts_limit: 5,
-    
+
     // Stats Display
     blog_show_stats: true,
     blog_stats_articles_label: "Articles",
     blog_stats_categories_label: "Categories",
     blog_stats_featured_label: "Featured",
-    
+
     // Empty State
     blog_empty_title: "No articles found",
     blog_empty_description_search: "Try adjusting your search or filter criteria to find more articles.",
     blog_empty_description_general: "No articles have been published yet. Check back soon for new content!",
     blog_empty_cta_text: "View All Articles",
-    
+
     // Section Headers
     blog_featured_section_title: "Featured Articles",
     blog_latest_section_title: "Latest Articles",
-    
+
     // UI Customization
     blog_enable_animations: true,
     blog_card_hover_effects: true,
     blog_show_excerpt: true,
     blog_show_read_time: true,
     blog_show_comment_count: true,
-    
+
     // Blog Sidebar Configuration
     sidebar_show_newsletter: true,
     sidebar_newsletter_title: "Stay Updated",
@@ -267,17 +270,17 @@ function createDefaultSettings(): SiteSettings {
 export async function getServerSettings(): Promise<SiteSettings> {
   try {
     const supabase = await createClient();
-    
+
     const { data: settings, error } = await supabase
       .from('settings')
       .select('*')
       .order('key');
-    
+
     if (error) {
       console.error('Error fetching server settings:', error);
       return createDefaultSettings();
     }
-    
+
     // Convert to key-value object
     const settingsMap = settings.reduce((acc: Record<string, unknown>, setting: { key: string; value: unknown }) => {
       // Parse JSON value if it's a string, otherwise use as-is
@@ -293,11 +296,11 @@ export async function getServerSettings(): Promise<SiteSettings> {
       acc[setting.key] = parsedValue;
       return acc;
     }, {} as Record<string, unknown>);
-    
+
     // Create default settings and override with database values
     const defaultSettings = createDefaultSettings();
     const mergedSettings: SiteSettings = { ...defaultSettings };
-    
+
     // Override with database values where they exist
     Object.keys(mergedSettings).forEach((key) => {
       const settingKey = key as keyof SiteSettings;
@@ -305,9 +308,9 @@ export async function getServerSettings(): Promise<SiteSettings> {
         (mergedSettings as unknown as Record<string, unknown>)[settingKey] = settingsMap[settingKey];
       }
     });
-    
+
     return mergedSettings;
-    
+
   } catch (error) {
     console.error('Error loading server settings:', error);
     return createDefaultSettings();
