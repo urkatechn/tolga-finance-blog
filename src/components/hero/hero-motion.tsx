@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 
 interface ClientHeroProps {
   settings: SiteSettings;
+  articleCount?: number;
 }
 
 const easing = [0.16, 1, 0.3, 1] as const;
@@ -67,7 +68,7 @@ function HeroBackgroundSlider({ images }: { images: string[] }) {
   );
 }
 
-export function ClientHeroSection({ settings }: ClientHeroProps) {
+export function ClientHeroSection({ settings, articleCount }: ClientHeroProps) {
   const heroImages = [
     settings.hero_image_1,
     settings.hero_image_2,
@@ -120,7 +121,7 @@ export function ClientHeroSection({ settings }: ClientHeroProps) {
                 <div className="p-3 rounded-2xl bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors mb-4 border border-blue-500/20 shadow-inner">
                   <BookOpen className="h-6 w-6 text-blue-400" />
                 </div>
-                <div className="text-2xl font-black text-white mb-1 tracking-tight">{settings.hero_stats_articles_count}</div>
+                <div className="text-2xl font-black text-white mb-1 tracking-tight">{articleCount !== undefined ? articleCount : settings.hero_stats_articles_count}</div>
                 <div className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">Articles</div>
               </motion.div>
             </Link>

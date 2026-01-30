@@ -42,6 +42,13 @@ export default async function Home() {
   // Fetch featured posts from database
   const featuredPosts = await getFeaturedPosts();
 
+  // Fetch total article count
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'published');
+
   // Load settings server-side to prevent hydration mismatch
   const settings = await getServerSettings();
 
@@ -51,7 +58,7 @@ export default async function Home() {
         <div className="absolute top-0 left-0 right-0 z-50">
           <ServerHeader settings={settings} transparent={true} />
         </div>
-        <ClientHeroSection settings={settings} />
+        <ClientHeroSection settings={settings} articleCount={count || 0} />
       </div>
 
       {/* What You'll Find Here - Animated */}
