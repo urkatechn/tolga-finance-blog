@@ -88,74 +88,63 @@ export function AboutMotion({ settings }: AboutMotionProps) {
 
   return (
     <>
-      {/* LinkedIn Style Profile Header */}
-      <section className="relative pt-24 pb-16 bg-white dark:bg-slate-950">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto overflow-hidden rounded-[32px] border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 shadow-2xl">
-            {/* Cover Image / Gradient */}
-            <div className="h-48 md:h-64 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-20 bg-grid-white/[0.2] [mask-image:linear-gradient(0deg,white,transparent)]" />
-              <div className="absolute top-0 right-0 p-6">
-                <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest text-white/80">
-                  Professional Profile
-                </div>
-              </div>
+      {/* Simplified Hero Section */}
+      <section className="relative pt-32 pb-16 bg-white dark:bg-slate-950 overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, ease: easing }}
+              className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-blue-600 mx-auto mb-8 flex items-center justify-center text-3xl md:text-4xl font-black text-white shadow-2xl shadow-blue-500/20"
+            >
+              {settings.site_brand_initials || "TT"}
+            </motion.div>
+
+            <motion.h1
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight italic uppercase"
+            >
+              {settings.site_brand_name}
+            </motion.h1>
+
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 font-medium mb-10 leading-relaxed max-w-2xl mx-auto"
+            >
+              {settings.aboutme_hero_title}
+            </motion.p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              <Button size="lg" className="h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-10 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95" asChild>
+                <Link href="/contact"><LocalizedText tKey="button.message" fallback="Message" /></Link>
+              </Button>
+              <Button variant="outline" size="lg" className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest border-2 border-slate-200 dark:border-slate-800 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all" asChild>
+                <Link href={LINKEDIN_URL} target="_blank"><LocalizedText tKey="button.connect" fallback="Connect" /></Link>
+              </Button>
             </div>
 
-            {/* Profile Info Overlay */}
-            <div className="px-8 md:px-12 pb-12 relative">
-              <div className="relative -mt-16 md:-mt-20 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: easing }}
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-[40px] bg-white dark:bg-slate-900 p-2 shadow-2xl border-4 border-white dark:border-slate-800"
-                >
-                  <div className="w-full h-full rounded-[32px] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl md:text-5xl font-black text-slate-400">
-                    {settings.site_brand_initials || "TT"}
-                  </div>
-                </motion.div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-8 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95" asChild>
-                    <Link href="/contact"><LocalizedText tKey="button.message" fallback="Message" /></Link>
-                  </Button>
-                  <Button variant="outline" size="lg" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest border-2 hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all" asChild>
-                    <Link href={LINKEDIN_URL} target="_blank"><LocalizedText tKey="button.connect" fallback="Connect" /></Link>
-                  </Button>
-                </div>
-              </div>
-
-              <div className="max-w-3xl">
-                <motion.h1
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                  className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight"
-                >
-                  {settings.site_brand_name}
-                </motion.h1>
-                <motion.p
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                  className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium mb-6 leading-relaxed"
-                >
-                  {settings.aboutme_hero_title}
-                </motion.p>
-                <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-slate-400">
-                  <span className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" /> Strategic Advisor
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <Heart className="w-4 h-4" /> Global Finance
-                  </span>
-                </div>
-              </div>
+            <div className="flex flex-wrap items-center justify-center gap-8 text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+              <span className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-600" /> Strategic Advisor
+              </span>
+              <span className="flex items-center gap-2">
+                <Heart className="w-4 h-4 text-red-500" /> Global Finance
+              </span>
             </div>
           </div>
+        </div>
+
+        {/* Subtle background elements */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-0 pointer-events-none opacity-20">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/20 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400/20 blur-[120px] rounded-full" />
         </div>
       </section>
 
