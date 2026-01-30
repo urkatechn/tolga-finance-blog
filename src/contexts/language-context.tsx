@@ -1,0 +1,323 @@
+"use client";
+
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+
+export type Language = "tr" | "en" | "de";
+
+interface LanguageContextType {
+    language: Language;
+    setLanguage: (lang: Language) => void;
+    t: (key: string) => string;
+}
+
+const translations: Record<Language, Record<string, string>> = {
+    tr: {
+        "nav.home": "Ana Sayfa",
+        "nav.blog": "Blog",
+        "nav.services": "Hizmetler",
+        "nav.about": "Hakkımda",
+        "nav.contact": "İletişim",
+        "nav.profile": "Profil",
+        "nav.admin": "Admin Paneli",
+        "nav.signin": "Giriş Yap",
+        "nav.register": "Kayıt Ol",
+        "auth.logout": "Çıkış",
+        "hero.title": "Veriden Vizyona: Finansal Operasyonlarda Mükemmellik",
+        "hero.subtitle_primary": "Stratejik planlama, operasyonel verimlilik ve veri odaklı kararlar ile işinizi geleceğe taşıyın.",
+        "hero.subtitle_secondary": "Tolga Tanagardigil ile finansal süreçlerinizi optimize edin.",
+        "hero.cta_primary": "Ücretsiz Danışmanlık",
+        "hero.cta_secondary": "Hizmetlerimizi İnceleyin",
+        "features.title": "Neden Bizimle Çalışmalısınız?",
+        "features.subtitle": "Modern iş dünyasında fark yaratan stratejik yaklaşımlar",
+        "feature.1.title": "Operasyonel Verimlilik",
+        "feature.1.desc": "Süreçlerinizi analiz ediyor ve maksimum verimlilik için optimize ediyoruz.",
+        "feature.2.title": "Finansal Strateji",
+        "feature.2.desc": "Sadece bugünü değil, yarını da planlayan güçlü finansal modeller.",
+        "feature.3.title": "Veri Analitiği",
+        "feature.3.desc": "Rakamların ötesindeki hikayeyi görerek doğru kararlar almanızı sağlıyoruz.",
+        "notification.title": "Bildirimler",
+        "notification.empty": "Yeni bildirim yok",
+        "notification.mark_as_read": "Okundu işaretle",
+        "notification.view_admin": "Admin Paneli",
+        "about.professional_heritage": "MESLEKİ MİRAS",
+        "about.professional_experiences": "MESLEKİ DENEYİMLER",
+        "about.professional_summary": "MESLEKİ ÖZET",
+        "about.key_statistics": "TEMEL İSTATİSTİKLER",
+        "about.networking": "AĞ OLUŞTURMA",
+        "about.engagement": "PROFESYONEL ETKİLEŞİM",
+        "button.message": "Mesaj Gönder",
+        "button.connect": "Bağlan",
+        "button.send_email": "E-posta Gönder",
+        "button.meeting_request": "Toplantı Talebi",
+        "button.linkedin": "LinkedIn Bağlantısı",
+        "contact.get_in_touch": "Bize Ulaşın",
+        "contact.hero_title": "Sadece bir tık uzağınızda!",
+        "contact.hero_subtitle": "Bizimle iletişime geçmekten çekinmeyin.",
+        "contact.commitment": "TAAHHÜTÜMÜZ",
+        "contact.response_time": "MAKSİMUM 24 SAAT DÖNÜŞ",
+        "contact.direct_correspondence_title": "Doğrudan İletişim",
+        "contact.direct_correspondence_desc": "Kurumsal sorular ve ortaklık teklifleri için lütfen doğrudan ana e-posta adresimiz üzerinden iletişime geçin.",
+        "contact.professional_network_title": "Profesyonel Ağ",
+        "contact.professional_network_desc": "Finansal içgörülerden haberdar olmak ve sektör içinde ağ kurmak için Tolga Tanagardigil ile LinkedIn'de bağlantı kurun.",
+        "contact.linkedin_button": "LinkedIn'de Bağlan",
+        "services.hero_badge": "Finansal ve Operasyonel Süreç Danışmanlığı",
+        "services.hero_title": "Finansal Gelecek Önemlidir!",
+        "services.hero_subtitle": "Operasyonel hassasiyet ve stratejik ustalık talep eden seçkin karar vericiler için tasarlanmış, yüksek riskli finansal mimari.",
+        "services.button_booking": "Yönetici Randevusu",
+        "services.button_methodology": "Metodoloji",
+        "services.booking_title": "Stratejik Danışmanlığı Başlatın",
+        "services.booking_desc": "Kurumsal mükemmelliğe giden ilk adım, stratejik hedeflerinizi belirlemek için özel bir konsültasyonla başlar.",
+        "services.booking_time_label": "Zaman Dilimi",
+        "services.booking_time_value": "30 Dakikalık Yönetici İncelemesi",
+        "services.booking_channel_label": "Güvenli Kanal",
+        "services.booking_channel_value": "Google Meet Altyapısı",
+        "services.booking_quote": "Biz sadece danışmanlık yapmıyoruz; titiz analiz ve stratejik öngörü yoluyla mutlak finansal hakimiyete giden yolları mimari ediyoruz.",
+        "services.form_title": "Kayıt",
+        "services.form_desc": "İletişime başlamak için iletişim bilgilerinizi girin.",
+        "footer.nav_hub": "Navigasyon Merkezi",
+        "footer.blog": "Stratejik Blog",
+        "footer.contact": "Güvenli İletişim",
+        "footer.rights": "Tüm hakları saklıdır.",
+        "blog.no_articles": "Makale bulunamadı",
+        "blog.adjust_criteria": "Daha fazla makale bulmak için arama veya filtre kriterlerinizi düzenlemeyi deneyin.",
+        "blog.no_published": "Henüz makale yayınlanmadı. Yeni içerikler için takipte kalın!",
+        "blog.view_all": "Tüm Makaleleri Görüntüle",
+        "blog.previous": "Önceki",
+        "blog.next": "Sonraki",
+        "blog.page": "Sayfa",
+        "blog.hero_title": "Stratejik Öngörüler",
+        "blog.hero_subtitle": "Finansal mimari, operasyonel mükemmellik ve pazar dinamikleri üzerine analizler.",
+        "service.1.title": "Operasyonel Hassasiyet",
+        "service.1.desc": "Maksimum verimlilik ve minimum risk sağlamak için kritik iş akışlarının titizlikle incelenmesi ve optimizasyonu.",
+        "service.2.title": "Stratejik Finansal Mimari",
+        "service.2.desc": "Sadece bugünü korumakla kalmayıp yarının büyümesini destekleyen özel finansal sistemler tasarlamak.",
+        "service.3.title": "Servet Yönetimi",
+        "service.3.desc": "Hem bireyler hem de kurumlar için varlıkların korunması ve büyütülmesine yönelik kapsamlı stratejiler.",
+        "service.4.title": "Risk ve Uyumluluk",
+        "service.4.desc": "Finansal operasyonlarınızın tüm düzenleyici gereklilikleri karşılamasını ve kurumsal risklerin minimize edilmesini sağlamak.",
+        "service.5.title": "Kurumsal Finansman",
+        "service.5.desc": "İş genişletme, birleşme, devralma ve sermaye yapısı optimizasyonu için stratejik danışmanlık.",
+        "service.6.title": "Yönetici Danışmanlığı",
+        "service.6.desc": "Kritik finansal kararlar ve karmaşık ekonomik zorluklar karşısında yöneticiler için birebir danışmanlık."
+    },
+    en: {
+        "nav.home": "Home",
+        "nav.blog": "Blog",
+        "nav.services": "Services",
+        "nav.about": "About",
+        "nav.contact": "Contact",
+        "nav.profile": "Profile",
+        "nav.admin": "Admin Portal",
+        "nav.signin": "Sign In",
+        "nav.register": "Register",
+        "auth.logout": "Logout",
+        "hero.title": "From Data to Vision: Operational Excellence",
+        "hero.subtitle_primary": "Advance your business through strategic planning, operational efficiency, and data-driven decisions.",
+        "hero.subtitle_secondary": "Optimize your financial processes with Tolga Tanagardigil.",
+        "hero.cta_primary": "Free Consultation",
+        "hero.cta_secondary": "Explore Services",
+        "features.title": "Why Work With Us?",
+        "features.subtitle": "Strategic approaches that make a difference in the modern business world",
+        "feature.1.title": "Operational Efficiency",
+        "feature.1.desc": "We analyze your processes and optimize them for maximum efficiency.",
+        "feature.2.title": "Financial Strategy",
+        "feature.2.desc": "Powerful financial models that plan not just for today, but for tomorrow.",
+        "feature.3.title": "Data Analytics",
+        "feature.3.desc": "We enable you to make the right decisions by seeing the story beyond the numbers.",
+        "notification.title": "Recent Notifications",
+        "notification.empty": "No recent activity",
+        "notification.mark_as_read": "Mark as read",
+        "notification.view_admin": "View Admin Portal",
+        "about.professional_heritage": "PROFESSIONAL HERITAGE",
+        "about.professional_experiences": "PROFESSIONAL EXPERIENCES",
+        "about.professional_summary": "PROFESSIONAL SUMMARY",
+        "about.key_statistics": "KEY STATISTICS",
+        "about.networking": "NETWORKING",
+        "about.engagement": "PROFESSIONAL ENGAGEMENT",
+        "button.message": "Message",
+        "button.connect": "Connect",
+        "button.send_email": "Send E-mail",
+        "button.meeting_request": "Meeting Request",
+        "button.linkedin": "LinkedIn Connect",
+        "contact.get_in_touch": "Get In Touch",
+        "contact.hero_title": "Just one click away!",
+        "contact.hero_subtitle": "Feel free to reach out to us.",
+        "contact.direct_correspondence_title": "Direct Correspondence",
+        "contact.direct_correspondence_desc": "For institutional inquiries and partnership proposals, please reach out directly via our primary email address.",
+        "contact.professional_network_title": "Professional Network",
+        "contact.professional_network_desc": "Connect with Tolga Tanagardigil on LinkedIn to stay updated on latest financial insights and network within the industry.",
+        "contact.linkedin_button": "Connect on LinkedIn",
+        "contact.commitment": "COMMITMENT",
+        "contact.response_time": "MAXIMUM 24H RESPONSE TIME",
+        "services.hero_badge": "Financial and Operational Process Advisory",
+        "services.hero_title": "Financial Future Matters!",
+        "services.hero_subtitle": "Customized high-stakes financial architecture designed for elite decision-makers who demand operational precision and strategic mastery.",
+        "services.button_booking": "Executive Booking",
+        "services.button_methodology": "Methodology",
+        "services.booking_title": "Initiate Strategic Advisory",
+        "services.booking_desc": "The first step toward institutional excellence begins with a private consultation to establish your strategic objectives.",
+        "services.booking_time_label": "Timeframe",
+        "services.booking_time_value": "30-Min Executive Review",
+        "services.booking_channel_label": "Secure Channel",
+        "services.booking_channel_value": "Google Meet Infrastructure",
+        "services.booking_quote": "We do not merely advise; we architect paths to absolute financial dominance through rigorous analysis and strategic foresight.",
+        "services.form_title": "Registration",
+        "services.form_desc": "Provide your contact details to begin the engagement.",
+        "footer.nav_hub": "Navigational Hub",
+        "footer.blog": "Strategic Blog",
+        "footer.contact": "Secure Contact",
+        "footer.rights": "All rights reserved.",
+        "blog.no_articles": "No articles found",
+        "blog.adjust_criteria": "Try adjusting your search or filter criteria to find more articles.",
+        "blog.no_published": "No articles have been published yet. Check back soon for new content!",
+        "blog.view_all": "View All Articles",
+        "blog.previous": "Previous",
+        "blog.next": "Next",
+        "blog.page": "Page",
+        "blog.hero_title": "Strategic Insights",
+        "blog.hero_subtitle": "Analysis on financial architecture, operational excellence, and market dynamics.",
+        "service.1.title": "Operational Precision",
+        "service.1.desc": "Meticulous scrutiny and optimization of critical business workflows to ensure maximum efficiency and minimal risk.",
+        "service.2.title": "Strategic Financial Architecture",
+        "service.2.desc": "Designing bespoke financial systems that not only protect today but fuel tomorrow's expansion.",
+        "service.3.title": "Wealth Stewardship",
+        "service.3.desc": "Comprehensive strategies for asset preservation and growth for both private individuals and corporate entities.",
+        "service.4.title": "Risk & Compliance",
+        "service.4.desc": "Ensuring your financial operations meet all regulatory requirements while minimizing institutional risks.",
+        "service.5.title": "Corporate Finance",
+        "service.5.desc": "Strategic advisory for business expansion, mergers, acquisitions, and capital structure optimization.",
+        "service.6.title": "Executive Advisory",
+        "service.6.desc": "One-on-one consulting for senior leadership to navigate high-stakes financial decisions and complex economic challenges."
+    },
+    de: {
+        "nav.home": "Startseite",
+        "nav.blog": "Blog",
+        "nav.services": "Leistungen",
+        "nav.about": "Über mich",
+        "nav.contact": "Kontakt",
+        "nav.profile": "Profil",
+        "nav.admin": "Admin-Portal",
+        "nav.signin": "Anmelden",
+        "nav.register": "Registrieren",
+        "auth.logout": "Abmelden",
+        "hero.title": "Von Daten zur Vision: Operative Exzellenz",
+        "hero.subtitle_primary": "Bringen Sie Ihr Unternehmen durch strategische Planung und datengesteuerte Entscheidungen voran.",
+        "hero.subtitle_secondary": "Optimieren Sie Ihre Finanzprozesse mit Tolga Tanagardigil.",
+        "hero.cta_primary": "Kostenlose Beratung",
+        "hero.cta_secondary": "Leistungen ansehen",
+        "features.title": "Warum mit uns arbeiten?",
+        "features.subtitle": "Strategische Ansätze, die in der modernen Geschäftswelt den Unterschied machen",
+        "feature.1.title": "Operative Effizienz",
+        "feature.1.desc": "Wir analysieren Ihre Prozesse und optimieren sie für maximale Effizienz.",
+        "feature.2.title": "Finanzstrategie",
+        "feature.2.desc": "Leistungsstarke Finanzmodelle, die nicht nur für heute, sondern auch für morgen planen.",
+        "feature.3.title": "Datenanalyse",
+        "feature.3.desc": "Wir ermöglichen Ihnen die richtigen Entscheidungen, indem wir die Geschichte hinter den Zahlen sehen.",
+        "notification.title": "Benachrichtigungen",
+        "notification.empty": "Keine neuen Nachrichten",
+        "notification.mark_as_read": "Als gelesen markieren",
+        "notification.view_admin": "Admin-Bereich",
+        "about.professional_heritage": "BERUFLICHES ERBE",
+        "about.professional_experiences": "BERUFLICHE ERFAHRUNGEN",
+        "about.professional_summary": "ZUSAMMENFASSUNG",
+        "about.key_statistics": "KERNSTATISTIKEN",
+        "about.networking": "NETZWERK",
+        "about.engagement": "PROFI-ENGAGEMENT",
+        "button.message": "Nachricht",
+        "button.connect": "Vernetzen",
+        "button.send_email": "E-Mail senden",
+        "button.meeting_request": "Terminanfrage",
+        "button.linkedin": "LinkedIn-Verbindung",
+        "contact.get_in_touch": "Kontaktieren Sie uns",
+        "contact.hero_title": "Nur einen Klick entfernt!",
+        "contact.hero_subtitle": "Zögern Sie nicht, uns zu kontaktieren.",
+        "contact.commitment": "VERPFLICHTUNG",
+        "contact.response_time": "MAXIMAL 24H ANTWORTZEIT",
+        "contact.direct_correspondence_title": "Direkte Korrespondenz",
+        "contact.direct_correspondence_desc": "Für institutionelle Anfragen und Partnerschaftsvorschläge wenden Sie sich bitte direkt an unsere primäre E-Mail-Adresse.",
+        "contact.professional_network_title": "Professionelles Netzwerk",
+        "contact.professional_network_desc": "Vernetzen Sie sich mit Tolga Tanagardigil auf LinkedIn, um über die neuesten Finanzerkenntnisse auf dem Laufenden zu bleiben.",
+        "contact.linkedin_button": "Auf LinkedIn vernetzen",
+        "services.hero_badge": "Beratung für Finanz- und Betriebsprozesse",
+        "services.hero_title": "Finanzielle Zukunft ist wichtig!",
+        "services.hero_subtitle": "Maßgeschneiderte Hochrisiko-Finanzarchitektur für erstklassige Entscheidungsträger, die operative Präzision und strategische Meisterschaft fordern.",
+        "services.button_booking": "Executive Buchung",
+        "services.button_methodology": "Methodik",
+        "services.booking_title": "Strategische Beratung einleiten",
+        "services.booking_desc": "Der erste Schritt zu institutioneller Exzellenz beginnt mit einer privaten Beratung, um Ihre strategischen Ziele festzulegen.",
+        "services.booking_time_label": "Zeitrahmen",
+        "services.booking_time_value": "30-minütige Executive-Review",
+        "services.booking_channel_label": "Sicherer Kanal",
+        "services.booking_channel_value": "Google Meet Infrastruktur",
+        "services.booking_quote": "Wir beraten nicht nur; wir entwerfen Wege zur absoluten finanziellen Dominanz durch strenge Analyse und strategische Voraussicht.",
+        "services.form_title": "Anmeldung",
+        "services.form_desc": "Geben Sie Ihre Kontaktdaten an, um das Engagement zu beginnen.",
+        "footer.nav_hub": "Navigationszentrum",
+        "footer.blog": "Strategischer Blog",
+        "footer.contact": "Sicherer Kontakt",
+        "footer.rights": "Alle Rechte vorbehalten.",
+        "blog.no_articles": "Keine Artikel gefunden",
+        "blog.adjust_criteria": "Versuchen Sie, Ihre Such- oder Filterkriterien anzupassen, um mehr Artikel zu finden.",
+        "blog.no_published": "Es wurden noch keine Artikel veröffentlicht. Schauen Sie bald wieder vorbei!",
+        "blog.view_all": "Alle Artikel anzeigen",
+        "blog.previous": "Zurück",
+        "blog.next": "Weiter",
+        "blog.page": "Seite",
+        "blog.hero_title": "Strategische Einblicke",
+        "blog.hero_subtitle": "Analysen zu Finanzarchitektur, operativer Exzellenz und Marktdynamik.",
+        "service.1.title": "Operative Präzision",
+        "service.1.desc": "Sorgfältige Prüfung und Optimierung kritischer Geschäftsabläufe zur Gewährleistung maximaler Effizienz und minimaler Risiken.",
+        "service.2.title": "Strategische Finanzarchitektur",
+        "service.2.desc": "Entwurf maßgeschneiderter Finanzsysteme, die nicht nur das Heute schützen, sondern auch das Wachstum von morgen fördern.",
+        "service.3.title": "Vermögensverwaltung",
+        "service.3.desc": "Umfassende Strategien zur Erhaltung und zum Wachstum des Vermögens für Privatpersonen und Unternehmen.",
+        "service.4.title": "Risiko & Compliance",
+        "service.4.desc": "Sicherstellen, dass Ihre Finanzgeschäfte alle regulatorischen Anforderungen erfüllen und gleichzeitig institutionelle Risiken minimiert werden.",
+        "service.5.title": "Unternehmensfinanzierung",
+        "service.5.desc": "Strategische Beratung für Geschäftsexpansion, Fusionen, Übernahmen und Optimierung der Kapitalstruktur.",
+        "service.6.title": "Exklusive Beratung",
+        "service.6.desc": "Eins-zu-eins-Beratung für Führungskräfte bei weitreichenden finanziellen Entscheidungen und komplexen wirtschaftlichen Herausforderungen."
+    }
+};
+
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export function LanguageProvider({ children }: { children: ReactNode }) {
+    const [language, setLanguageState] = useState<Language>("tr");
+
+    useEffect(() => {
+        const savedLang = localStorage.getItem("site-language") as Language;
+        if (savedLang && (savedLang === "tr" || savedLang === "en" || savedLang === "de")) {
+            setLanguageState(savedLang);
+        } else {
+            const browserLang = navigator.language.split("-")[0];
+            if (browserLang === "de" || browserLang === "en") {
+                setLanguageState(browserLang as Language);
+            }
+        }
+    }, []);
+
+    const setLanguage = (lang: Language) => {
+        setLanguageState(lang);
+        localStorage.setItem("site-language", lang);
+        document.documentElement.lang = lang;
+    };
+
+    const t = (key: string): string => {
+        return translations[language][key] || key;
+    };
+
+    return (
+        <LanguageContext.Provider value={{ language, setLanguage, t }}>
+            {children}
+        </LanguageContext.Provider>
+    );
+}
+
+export function useTranslation() {
+    const context = useContext(LanguageContext);
+    if (context === undefined) {
+        throw new Error("useTranslation must be used within a LanguageProvider");
+    }
+    return context;
+}
