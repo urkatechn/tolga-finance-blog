@@ -106,9 +106,9 @@ export function AboutMotion({ settings }: AboutMotionProps) {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}
-              className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight italic uppercase"
+              className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight italic"
             >
-              {settings.site_brand_name}
+              <LocalizedText tKey="about.mission_title" fallback="Experience & Expertise" />
             </motion.h1>
 
             <motion.p
@@ -118,7 +118,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
               viewport={{ once: true }}
               className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 font-medium mb-10 leading-relaxed max-w-2xl mx-auto"
             >
-              {settings.aboutme_hero_title}
+              <LocalizedText tKey="about.mission_description" fallback="Guiding professionals of all levels towards financial excellence." />
             </motion.p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
@@ -153,10 +153,10 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="mb-16">
-              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black tracking-[0.4em] mb-4 block">
                 <LocalizedText tKey="about.professional_heritage" fallback="Professional Heritage" />
               </span>
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter italic">
                 <LocalizedText tKey="about.professional_experiences" fallback="Professional Experiences" />
               </h2>
             </div>
@@ -196,7 +196,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16">
             <div className="lg:w-2/3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 text-[10px] tracking-[0.2em] text-slate-500">
                 <LocalizedText tKey="about.professional_summary" fallback="Professional Summary" />
               </h2>
               <div className="space-y-6 text-slate-600 dark:text-slate-400 text-lg leading-relaxed font-normal">
@@ -206,7 +206,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
             </div>
 
             <div className="lg:w-1/3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 text-[10px] tracking-[0.2em] text-slate-500">
                 <LocalizedText tKey="about.key_statistics" fallback="Key Statistics" />
               </h2>
               <div className="space-y-6">
@@ -242,10 +242,10 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         >
           <div className="max-w-4xl mx-auto text-center">
             <motion.div variants={fadeUp} className="mb-12">
-              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black tracking-[0.3em] mb-4 block">
                 <LocalizedText tKey="about.engagement" fallback="Professional Engagement" />
               </span>
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic uppercase">
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic">
                 <LocalizedText tKey="about.networking" fallback="Networking" />
               </h2>
               <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
@@ -303,7 +303,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         >
           <div className="max-w-4xl mx-auto">
             <motion.div className="text-center mb-12" variants={fadeUp}>
-              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 italic uppercase tracking-tighter">
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 italic tracking-tighter">
                 {settings.aboutme_newsletter_title}
               </h2>
               <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
