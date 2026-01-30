@@ -88,128 +88,113 @@ export function AboutMotion({ settings }: AboutMotionProps) {
 
   return (
     <>
-      {/* Simplified Hero Section */}
-      <section className="relative pt-32 pb-20 bg-white dark:bg-slate-950 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.05),transparent_50%)]" />
-        <div className="absolute inset-0 bg-grid-slate-200/[0.2] dark:bg-grid-white/[0.02] [mask-image:linear-gradient(0deg,white,transparent)]" />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: easing }}
-              className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-blue-600 mx-auto mb-8 flex items-center justify-center text-3xl md:text-5xl font-black text-white shadow-2xl shadow-blue-500/20"
-            >
-              {settings.site_brand_initials || "TT"}
-            </motion.div>
-
-            <motion.div variants={container} initial="hidden" animate="show">
-              <motion.h1 
-                variants={fadeUp}
-                className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter"
-              >
-                {settings.site_brand_name}
-              </motion.h1>
-              
-              <motion.p 
-                variants={fadeUp}
-                className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 font-medium mb-10 max-w-2xl mx-auto leading-relaxed"
-              >
-                {settings.aboutme_hero_title}
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-8 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105" asChild>
-                  <Link href="/contact"><LocalizedText tKey="button.message" fallback="Message" /></Link>
-                </Button>
-                <Button variant="outline" size="lg" className="px-8 rounded-2xl font-bold border-2 transition-all hover:bg-slate-100 dark:hover:bg-slate-800" asChild>
-                  <Link href={LINKEDIN_URL} target="_blank"><LocalizedText tKey="button.connect" fallback="Connect" /></Link>
-                </Button>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Professional Summary Section */}
-      <section className="py-20 bg-slate-50/50 dark:bg-slate-900/20">
+      {/* LinkedIn Style Profile Header */}
+      <section className="relative pt-24 pb-16 bg-white dark:bg-slate-950">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-            <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest mb-6">
-                <div className="w-1 h-1 rounded-full bg-blue-600" />
-                <LocalizedText tKey="about.professional_summary" fallback="About Me" />
-              </div>
-              <div className="space-y-6 text-slate-600 dark:text-slate-400 text-lg md:text-xl leading-relaxed">
-                <p className="font-medium text-slate-900 dark:text-white leading-relaxed">
-                  {settings.aboutme_story_reality_content1}
-                </p>
-                <p className="font-normal">
-                  {settings.aboutme_story_reality_content2}
-                </p>
+          <div className="max-w-5xl mx-auto overflow-hidden rounded-[32px] border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 shadow-2xl">
+            {/* Cover Image / Gradient */}
+            <div className="h-48 md:h-64 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
+              <div className="absolute inset-0 opacity-20 bg-grid-white/[0.2] [mask-image:linear-gradient(0deg,white,transparent)]" />
+              <div className="absolute top-0 right-0 p-6">
+                <div className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-black uppercase tracking-widest text-white/80">
+                  Professional Profile
+                </div>
               </div>
             </div>
 
-            <div className="lg:col-span-5">
-              <div className="grid grid-cols-1 gap-4">
-                {personalStats.map((stat, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    viewport={{ once: true }}
-                    className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <stat.icon className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-black text-slate-900 dark:text-white">{stat.value}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{stat.label}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+            {/* Profile Info Overlay */}
+            <div className="px-8 md:px-12 pb-12 relative">
+              <div className="relative -mt-16 md:-mt-20 mb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, ease: easing }}
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-[40px] bg-white dark:bg-slate-900 p-2 shadow-2xl border-4 border-white dark:border-slate-800"
+                >
+                  <div className="w-full h-full rounded-[32px] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl md:text-5xl font-black text-slate-400">
+                    {settings.site_brand_initials || "TT"}
+                  </div>
+                </motion.div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-500 text-white rounded-2xl px-8 font-bold shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95" asChild>
+                    <Link href="/contact"><LocalizedText tKey="button.message" fallback="Message" /></Link>
+                  </Button>
+                  <Button variant="outline" size="lg" className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest border-2 hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all" asChild>
+                    <Link href={LINKEDIN_URL} target="_blank"><LocalizedText tKey="button.connect" fallback="Connect" /></Link>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="max-w-3xl">
+                <motion.h1
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight"
+                >
+                  {settings.site_brand_name}
+                </motion.h1>
+                <motion.p
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className="text-lg md:text-xl text-slate-600 dark:text-slate-400 font-medium mb-6 leading-relaxed"
+                >
+                  {settings.aboutme_hero_title}
+                </motion.p>
+                <div className="flex flex-wrap items-center gap-6 text-sm font-bold text-slate-400">
+                  <span className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4" /> Strategic Advisor
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Heart className="w-4 h-4" /> Global Finance
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Simplified Experience Section */}
-      <section className="py-24 bg-white dark:bg-slate-950">
+      {/* Professional Experiences Section */}
+      <section className="py-24 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/50">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic mb-4">
-                <LocalizedText tKey="about.professional_experiences" fallback="The Journey" />
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-16">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4 block">
+                <LocalizedText tKey="about.professional_heritage" fallback="Professional Heritage" />
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+                <LocalizedText tKey="about.professional_experiences" fallback="Professional Experiences" />
               </h2>
-              <div className="w-12 h-1.5 bg-blue-600 mx-auto rounded-full" />
             </div>
 
-            <div className="space-y-16">
+            <div className="space-y-12">
               {journeyItems.map((item, index) => (
                 <motion.div
                   key={index}
-                  className="relative pl-8 border-l-2 border-slate-100 dark:border-slate-800 group"
+                  className="group relative grid grid-cols-1 md:grid-cols-[140px_1fr] gap-6 md:gap-12 pb-12 border-b border-slate-100 dark:border-slate-800 last:border-0"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 group-hover:border-blue-600 group-hover:bg-blue-600 transition-all duration-300" />
-                  <span className="text-sm font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 block">
-                    {item.year}
-                  </span>
-                  <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                    {item.description}
-                  </p>
+                  <div className="flex flex-row md:flex-col items-center md:items-start gap-4 md:gap-1">
+                    <span className="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">{item.year}</span>
+                    <div className="h-px w-8 md:w-full bg-slate-200 dark:bg-slate-800 group-hover:bg-blue-600 transition-colors" />
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white mb-3 tracking-tight group-hover:text-blue-600 transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed font-medium text-sm md:text-base max-w-2xl">
+                      {item.description}
+                    </p>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -217,33 +202,104 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         </div>
       </section>
 
-      {/* Contact CTA Section */}
-      <section className="py-24 bg-slate-900 dark:bg-blue-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-grid-white/[0.2]" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6 uppercase italic tracking-tighter">
-              Ready to collaborate?
-            </h2>
-            <p className="text-blue-100/70 text-lg mb-10 font-medium max-w-xl mx-auto">
-              Initiate a professional engagement or request a consultation. Let's build something extraordinary together.
-            </p>
-            <div className="flex flex-wrap justify-center gap-6">
-              <Link href={`mailto:${settings.social_email}`} className="flex items-center gap-3 text-white font-bold hover:text-blue-400 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                  <Mail className="w-5 h-5" />
-                </div>
-                {settings.social_email}
-              </Link>
-              <a href={settings.google_meet_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white font-bold hover:text-blue-400 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                  <Calendar className="w-5 h-5" />
-                </div>
-                Schedule a Call
-              </a>
+      {/* About Description (Stats integrated) */}
+      <section className="py-16 bg-white dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16">
+            <div className="lg:w-2/3">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">
+                <LocalizedText tKey="about.professional_summary" fallback="Professional Summary" />
+              </h2>
+              <div className="space-y-6 text-slate-600 dark:text-slate-400 text-lg leading-relaxed font-normal">
+                <p>{settings.aboutme_story_reality_content1}</p>
+                <p>{settings.aboutme_story_reality_content2}</p>
+              </div>
+            </div>
+
+            <div className="lg:w-1/3">
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 uppercase text-[10px] tracking-[0.2em] text-slate-500">
+                <LocalizedText tKey="about.key_statistics" fallback="Key Statistics" />
+              </h2>
+              <div className="space-y-6">
+                {personalStats.map((stat, idx) => (
+                  <div key={idx} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <stat.icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{stat.value}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Networking Section (Replaces Let's Connect) */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-900/40 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-slate-200/[0.3] dark:bg-grid-white/[0.02] [mask-image:radial-gradient(ellipse_at_center,white,transparent)]" />
+
+        <motion.div
+          className="container mx-auto px-4 relative z-10"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={container}
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div variants={fadeUp} className="mb-12">
+              <span className="text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-4 block">
+                <LocalizedText tKey="about.engagement" fallback="Professional Engagement" />
+              </span>
+              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter italic uppercase">
+                <LocalizedText tKey="about.networking" fallback="Networking" />
+              </h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                Bridge the gap between vision and reality. Initiate a professional engagement through our secure channels.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <motion.div variants={fadeInScale}>
+                <Button size="lg" className="w-full h-24 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-3xl flex flex-col items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 group" asChild>
+                  <Link href={`mailto:${settings.social_email}`}>
+                    <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                      <Mail className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black uppercase tracking-widest"><LocalizedText tKey="button.send_email" fallback="Send E-mail" /></span>
+                  </Link>
+                </Button>
+              </motion.div>
+
+              <motion.div variants={fadeInScale}>
+                <Button size="lg" className="w-full h-24 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-3xl flex flex-col items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 group" asChild>
+                  <Link href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer">
+                    <div className="p-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 group-hover:scale-110 transition-transform">
+                      <Linkedin className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black uppercase tracking-widest"><LocalizedText tKey="button.linkedin" fallback="LinkedIn Connect" /></span>
+                  </Link>
+                </Button>
+              </motion.div>
+
+              <motion.div variants={fadeInScale}>
+                <Button size="lg" className="w-full h-24 bg-blue-600 hover:bg-blue-500 text-white border-0 rounded-3xl flex flex-col items-center justify-center gap-2 shadow-[0_20px_40px_rgba(37,99,235,0.2)] hover:shadow-[0_25px_50px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-1 group" asChild>
+                  <a href={settings.google_meet_url} target="_blank" rel="noopener noreferrer">
+                    <div className="p-2 rounded-xl bg-white/20 text-white group-hover:scale-110 transition-transform">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-black uppercase tracking-widest"><LocalizedText tKey="button.meeting_request" fallback="Meeting Request" /></span>
+                  </a>
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
 
