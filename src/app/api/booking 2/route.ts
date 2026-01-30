@@ -59,13 +59,9 @@ export async function POST(req: NextRequest) {
 
         if (dbError) {
             console.error("Supabase Notification Error:", dbError);
-            const isMissingTable = dbError.message.includes('relation "notifications" does not exist') || dbError.code === '42P01';
             return NextResponse.json({
-                error: isMissingTable
-                    ? "Notification table is missing. Please run the SQL migration in Supabase Editor."
-                    : "Failed to create notification. Please try again later.",
-                details: dbError.message,
-                code: dbError.code
+                error: "Notification system error. Did you run the SQL migration?",
+                details: dbError.message
             }, { status: 500 });
         }
 

@@ -98,7 +98,18 @@ const translations: Record<Language, Record<string, string>> = {
         "service.5.title": "Kurumsal Finansman",
         "service.5.desc": "İş genişletme, birleşme, devralma ve sermaye yapısı optimizasyonu için stratejik danışmanlık.",
         "service.6.title": "Yönetici Danışmanlığı",
-        "service.6.desc": "Kritik finansal kararlar ve karmaşık ekonomik zorluklar karşısında yöneticiler için birebir danışmanlık."
+        "service.6.desc": "Kritik finansal kararlar ve karmaşık ekonomik zorluklar karşısında yöneticiler için birebir danışmanlık.",
+        "services.booking_success_title": "Talep Gönderildi",
+        "services.booking_success_message": "İlginiz için teşekkür ederiz. Talebiniz alındı ve 24 saat içinde sizinle iletişime geçeceğiz.",
+        "services.booking_success_link": "Toplantı Odası Bağlantısı",
+        "services.booking_send_another": "Yeni Talep Gönder",
+        "services.form_label_name": "İsim",
+        "services.form_label_email": "E-posta",
+        "services.form_label_date": "Tercih Edilen Tarih",
+        "services.form_label_interest": "Hizmet İlgi Alanı",
+        "services.form_label_objectives": "Hedeflerinizin Kısa Özeti",
+        "services.form_button_submit": "Toplantı Daveti Talep Et",
+        "services.form_footer": "Göndererek, verilerinizin gizli yönetimine katılmış olursunuz."
     },
     en: {
         "nav.home": "Home",
@@ -187,7 +198,18 @@ const translations: Record<Language, Record<string, string>> = {
         "service.5.title": "Corporate Finance",
         "service.5.desc": "Strategic advisory for business expansion, mergers, acquisitions, and capital structure optimization.",
         "service.6.title": "Executive Advisory",
-        "service.6.desc": "One-on-one consulting for senior leadership to navigate high-stakes financial decisions and complex economic challenges."
+        "service.6.desc": "One-on-one consulting for senior leadership to navigate high-stakes financial decisions and complex economic challenges.",
+        "services.booking_success_title": "Request Sent",
+        "services.booking_success_message": "Thank you for your interest. We have received your request and will contact you within 24 hours.",
+        "services.booking_success_link": "Meeting Room Link",
+        "services.booking_send_another": "Send Another Request",
+        "services.form_label_name": "Name",
+        "services.form_label_email": "Email",
+        "services.form_label_date": "Preferred Date",
+        "services.form_label_interest": "Service Interest",
+        "services.form_label_objectives": "Brief Overview of Your Objectives",
+        "services.form_button_submit": "Request Meeting Invitation",
+        "services.form_footer": "By submitting, you agree to our confidential management of your data."
     },
     de: {
         "nav.home": "Startseite",
@@ -276,7 +298,18 @@ const translations: Record<Language, Record<string, string>> = {
         "service.5.title": "Unternehmensfinanzierung",
         "service.5.desc": "Strategische Beratung für Geschäftsexpansion, Fusionen, Übernahmen und Optimierung der Kapitalstruktur.",
         "service.6.title": "Exklusive Beratung",
-        "service.6.desc": "Eins-zu-eins-Beratung für Führungskräfte bei weitreichenden finanziellen Entscheidungen und komplexen wirtschaftlichen Herausforderungen."
+        "service.6.desc": "Eins-zu-eins-Beratung für Führungskräfte bei weitreichenden finanziellen Entscheidungen und komplexen wirtschaftlichen Herausforderungen.",
+        "services.booking_success_title": "Anfrage Gesendet",
+        "services.booking_success_message": "Vielen Dank für Ihr Interesse. Wir haben Ihre Anfrage erhalten und werden uns innerhalb von 24 Stunden mit Ihnen in Verbindung setzen.",
+        "services.booking_success_link": "Besprechungsraum-Link",
+        "services.booking_send_another": "Weitere Anfrage senden",
+        "services.form_label_name": "Name",
+        "services.form_label_email": "E-Mail",
+        "services.form_label_date": "Bevorzugtes Datum",
+        "services.form_label_interest": "Service-Interesse",
+        "services.form_label_objectives": "Kurzer Überblick über Ihre Ziele",
+        "services.form_button_submit": "Besprechungseinladung anfordern",
+        "services.form_footer": "Mit dem Absenden erklären Sie sich mit unserer vertraulichen Verwaltung Ihrer Daten einverstanden."
     }
 };
 
