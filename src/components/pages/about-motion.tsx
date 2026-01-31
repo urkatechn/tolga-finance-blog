@@ -5,8 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Coffee,
-  BookOpen,
   TrendingUp,
   Heart,
   Linkedin,
@@ -55,11 +53,7 @@ const slideInRight = {
 };
 
 export function AboutMotion({ settings }: AboutMotionProps) {
-  const personalStats = [
-    { label: settings.aboutme_stats_years_label, value: settings.aboutme_stats_years_value, icon: TrendingUp },
-    { label: settings.aboutme_stats_articles_label, value: settings.aboutme_stats_articles_value, icon: BookOpen },
-    { label: settings.aboutme_stats_coffee_label, value: settings.aboutme_stats_coffee_value, icon: Coffee },
-  ];
+
 
   const settingsWithJourney = settings as typeof settings & { aboutme_journey_items?: Array<{ year: string; title: string; description: string }> };
   const journeyItems = Array.isArray(settingsWithJourney.aboutme_journey_items)
@@ -191,43 +185,7 @@ export function AboutMotion({ settings }: AboutMotionProps) {
         </div>
       </section>
 
-      {/* About Description (Stats integrated) */}
-      <section className="py-16 bg-white dark:bg-slate-950">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16">
-            <div className="lg:w-2/3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 text-[10px] tracking-[0.2em] text-slate-500">
-                <LocalizedText tKey="about.professional_summary" fallback="Professional Summary" />
-              </h2>
-              <div className="space-y-6 text-slate-600 dark:text-slate-400 text-lg leading-relaxed font-normal">
-                <p>{settings.aboutme_story_reality_content1}</p>
-                <p>{settings.aboutme_story_reality_content2}</p>
-              </div>
-            </div>
 
-            <div className="lg:w-1/3">
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tight border-b border-slate-100 dark:border-slate-800 pb-4 text-[10px] tracking-[0.2em] text-slate-500">
-                <LocalizedText tKey="about.key_statistics" fallback="Key Statistics" />
-              </h2>
-              <div className="space-y-6">
-                {personalStats.map((stat, idx) => (
-                  <div key={idx} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <stat.icon className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-black text-slate-900 dark:text-white leading-none mb-1">{stat.value}</p>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Networking Section (Replaces Let's Connect) */}
       <section className="py-24 bg-slate-50 dark:bg-slate-900/40 relative overflow-hidden">
