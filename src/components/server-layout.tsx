@@ -26,7 +26,6 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
     { name: "Home", href: "/" },
     { name: "Blog", href: "/blog" },
     { name: "Services", href: "/services" },
-    { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -319,7 +318,6 @@ export function ServerFooter({ settings }: ServerFooterProps) {
                 <li><Link href="/" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="nav.home" fallback="Home" /></Link></li>
                 <li><Link href="/blog" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="footer.blog" fallback="Strategic Blog" /></Link></li>
                 <li><Link href="/services" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="nav.services" fallback="Services" /></Link></li>
-                <li><Link href="/about" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="nav.about" fallback="About" /></Link></li>
                 <li><Link href="/contact" className="text-sm font-bold text-slate-400 hover:text-white transition-colors"><LocalizedText tKey="footer.contact" fallback="Secure Contact" /></Link></li>
               </ul>
             </div>
