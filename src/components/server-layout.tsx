@@ -56,7 +56,7 @@ export async function ServerHeader({ settings, transparent = false }: ServerHead
                   ? "text-white drop-shadow-md"
                   : "text-slate-900 dark:text-white"
               )}>
-                Leading Finance Processes <span className={cn("font-medium hidden sm:inline", transparent ? "text-white/40" : "text-slate-400 dark:text-slate-500")}>-</span> <span className={cn("font-normal text-base md:text-lg block sm:inline", transparent ? "text-white/70" : "text-slate-500 dark:text-slate-400")}>Finance & Operations Advisory</span>
+                Finance & Operations Advisory
               </span>
             </Link>
           </div>
